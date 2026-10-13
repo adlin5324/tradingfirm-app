@@ -380,6 +380,15 @@ body::after { opacity: var(--topo); transform-origin: 50% 100%; animation: drift
 :root[data-mode="dark"] { color-scheme: dark; }
 #askInput { margin: 8px 0 4px; }
 #askErr:empty { display: none; }
+/* Hero: account value, today's change, Cash and Invested in one row from the left. */
+.hero { justify-content: flex-start; align-items: flex-end; gap: 16px 32px; }
+.acct-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.acct-head .badge { margin-bottom: 0; }
+.acct-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.acct-row .delta { margin-top: 0; }
+.badge .wb { display: inline-flex; color: var(--dot); }
+:root[data-mode="dark"] .badge { color: var(--text); }
+@media (max-width: 520px) { .stats { grid-template-columns: repeat(2, 1fr); } }
 </style>
 </head>
 <body>
@@ -412,16 +421,14 @@ body::after { opacity: var(--topo); transform-origin: 50% 100%; animation: drift
 
   <section class="card glow">
     <div class="hero">
-      <div>
-        <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" /><path d="M20 3v4" /><path d="M22 5h-4" /><path d="M4 17v2" /><path d="M5 18H3" /></svg> Live from Webull</span>
-        <div class="muted small">Account value</div>
-        <div class="big num" id="total">–</div>
-        <div class="delta num" id="today">&nbsp;</div>
+      <div class="acct">
+        <div class="acct-head"><span class="muted small">Account value</span>
+          <span class="badge" title="Connected to Webull"><span class="wb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg></span>Connected</span></div>
+        <div class="acct-row"><div class="big num" id="total">–</div><div class="delta num" id="today">&nbsp;</div></div>
       </div>
       <div class="stats">
         <div class="stat"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1" /><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4" /></svg></span><div><div class="label">Cash</div><div class="value num" id="cash">–</div></div></div>
         <div class="stat"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17" /><polyline points="16 7 22 7 22 13" /></svg></span><div><div class="label">Invested</div><div class="value num" id="invested">–</div></div></div>
-        <div class="stat"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" /><path d="M12 18V6" /></svg></span><div><div class="label">Closed-trade profit</div><div class="value num" id="profit">–</div></div></div>
       </div>
     </div>
     <div class="compare">
@@ -595,7 +602,6 @@ function show(d) {
     $("cash").textContent = money(a.cash);
     $("invested").textContent = money(a.total - a.cash);
   }
-  tone($("profit"), d.profit || 0).textContent = signed(d.profit || 0);
 
   if (d.scorecard) {
     const s = d.scorecard, rows = [["Bot", s.bot], ...Object.entries(s.markets)];
