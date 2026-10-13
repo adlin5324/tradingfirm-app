@@ -11,9 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <!-- Space Grotesk with only number characters, so numbers use it and every letter falls back to Inter. -->
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&text=0123456789%24%25%2B-.%2C%3A%2F&display=swap" rel="stylesheet">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
-<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#000000" id="barColor">
 <script>
 // Theme palettes: label, schools, c1 fill, c2 deep fill, c3 lines/glow, line strength.
 const THEMES = {
@@ -28,7 +26,13 @@ function applyTheme(key) {
   ["--c1", "--c2", "--c3"].forEach((v, i) => root.setProperty(v, t[i + 2]));
   root.setProperty("--topo", t[5]);
 }
-try { applyTheme(localStorage.getItem("theme")); } catch { applyTheme(); }
+// Light or dark is the app's own setting; the window's title bar follows it.
+function applyMode(mode) {
+  const light = mode === "light";
+  document.documentElement.dataset.mode = light ? "light" : "dark";
+  document.getElementById("barColor").content = light ? "#ffffff" : "#000000";
+}
+try { applyTheme(localStorage.getItem("theme")); applyMode(localStorage.getItem("mode")); } catch { applyTheme(); applyMode(); }
 </script>
 <!-- Icons: Lucide (lucide.dev), ISC license -->
 <style>
@@ -347,23 +351,35 @@ body::after { opacity: var(--topo); transform-origin: 50% 100%; animation: drift
 #settingsBtn { display: inline-flex; align-items: center; }
 #settingsBtn .hi { margin-right: 4px; }
 .card.glow::before { background: linear-gradient(120deg, var(--c3), var(--c1)); }
-#themePick { width: 100%; margin: 4px 0 8px; }
-/* Light mode: follows the device setting. */
-@media (prefers-color-scheme: light) {
-  :root {
-    color-scheme: light;
-    --bg: #ffffff; --card: #ffffff; --text: #141012; --muted: #6b6468; --faint: #f4f2f3; --line: #e6e2e4;
-    --glass: rgba(255, 255, 255, .82); --glass-line: rgba(0, 0, 0, .08);
-    --accent: var(--c1); --accent-soft: color-mix(in srgb, var(--c1) 12%, white);
-    --good: #138a52; --good-soft: #e3f6ec; --bad: #c8372d; --bad-soft: #fdecea; --warn: #8a4b00; --warn-soft: #fff4e2;
-    --s1: var(--c1); --s2: #8d95a3; --dot: var(--c1);
-    --glow1: color-mix(in srgb, var(--c1) 18%, transparent); --glow2: color-mix(in srgb, var(--c1) 14%, transparent);
-    --shadow: 0 1px 2px rgba(0, 0, 0, .05), 0 8px 24px rgba(0, 0, 0, .05);
-  }
-  button.danger { background: var(--c1); border-color: var(--c1); color: #fff; }
-  .banner, .banner.halted { background: var(--accent-soft); color: var(--c1); border-color: color-mix(in srgb, var(--c1) 30%, white); }
-  .switch .dot { background: #c4bec1; }
+#themePick, #modePick { width: 100%; margin: 4px 0 8px; }
+/* Light mode (Settings → Appearance). */
+:root[data-mode="light"] {
+  color-scheme: light;
+  --bg: #ffffff; --card: #ffffff; --text: #141012; --muted: #6b6468; --faint: #f4f2f3; --line: #e6e2e4;
+  --glass: rgba(255, 255, 255, .82); --glass-line: rgba(0, 0, 0, .08);
+  --accent: var(--c1); --accent-soft: color-mix(in srgb, var(--c1) 12%, white);
+  --good: #138a52; --good-soft: #e3f6ec; --bad: #c8372d; --bad-soft: #fdecea; --warn: #8a4b00; --warn-soft: #fff4e2;
+  --s1: var(--c1); --s2: #8d95a3; --dot: var(--c1);
+  --glow1: color-mix(in srgb, var(--c1) 18%, transparent); --glow2: color-mix(in srgb, var(--c1) 14%, transparent);
+  --shadow: 0 1px 2px rgba(0, 0, 0, .05), 0 8px 24px rgba(0, 0, 0, .05);
 }
+:root[data-mode="light"] button.danger { background: var(--c1); border-color: var(--c1); color: #fff; }
+:root[data-mode="light"] .banner, :root[data-mode="light"] .banner.halted { background: var(--accent-soft); color: var(--c1); border-color: color-mix(in srgb, var(--c1) 30%, white); }
+:root[data-mode="light"] .switch .dot { background: #c4bec1; }
+/* Neon title: HowieLegacy glows in the main theme color, Investments in the second. Dim when halted. */
+.switch .hl, .switch em { transition: color .4s, text-shadow .4s; }
+.switch[aria-checked="true"] .hl { color: color-mix(in srgb, var(--c1) 55%, white);
+  text-shadow: 0 0 4px var(--c1), 0 0 12px var(--c1), 0 0 26px color-mix(in srgb, var(--c1) 70%, transparent); }
+.switch[aria-checked="true"] em { color: color-mix(in srgb, var(--c3) 70%, white);
+  text-shadow: 0 0 4px var(--c3), 0 0 12px var(--c3), 0 0 26px color-mix(in srgb, var(--c3) 60%, transparent); }
+.switch[aria-checked="false"] .hl, .switch[aria-checked="false"] em { color: var(--muted); text-shadow: none; }
+:root[data-mode="light"] .switch[aria-checked="true"] .hl { color: var(--c1);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--c1) 35%, transparent); }
+:root[data-mode="light"] .switch[aria-checked="true"] em { color: color-mix(in srgb, var(--c3) 65%, black);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--c3) 40%, transparent); }
+:root[data-mode="dark"] { color-scheme: dark; }
+#askInput { margin: 8px 0 4px; }
+#askErr:empty { display: none; }
 </style>
 </head>
 <body>
@@ -371,7 +387,7 @@ body::after { opacity: var(--topo); transform-origin: 50% 100%; animation: drift
   <header>
     <div class="brand">
       <h1><button class="switch" id="tradeSwitch" role="switch" aria-checked="false" title="Trading on or off: click to change">
-        <span class="name"><span class="dot" aria-hidden="true"></span>HowieLegacy <em>Investments</em></span><span class="state" id="chip">Loading</span></button></h1>
+        <span class="name"><span class="hl">HowieLegacy</span> <em>Investments</em></span><span class="state" id="chip">Loading</span></button></h1>
     </div>
     <div class="icons">
       <button class="ghost" id="settingsBtn" title="Settings" aria-label="Settings"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg><span class="word"> Settings</span></button>
@@ -382,6 +398,7 @@ body::after { opacity: var(--topo); transform-origin: 50% 100%; animation: drift
     <h2>Theme</h2>
     <label>Colors<select id="themePick"></select></label>
     <p class="muted small" id="themeSchools"></p>
+    <label>Appearance<select id="modePick"><option value="dark">Dark</option><option value="light">Light</option></select></label>
     <div style="margin-top:24px"></div>
     <label>Repository<input id="repo" placeholder="owner/repo" value="adlin5324/tradingfirm"></label>
     <label>Token<input id="token" type="password" placeholder="github_pat_…" autocomplete="off"></label>
@@ -492,6 +509,17 @@ body::after { opacity: var(--topo); transform-origin: 50% 100%; animation: drift
 
   <p class="muted small" id="updated"></p>
 </main>
+
+<dialog id="askBox">
+  <h2 id="askTitle"></h2>
+  <p class="muted small" id="askText"></p>
+  <input id="askInput" autocomplete="off">
+  <p class="small bad" id="askErr"></p>
+  <div class="row" style="margin-top:16px;justify-content:flex-end">
+    <button id="askNo">Cancel</button>
+    <button class="primary" id="askYes">OK</button>
+  </div>
+</dialog>
 
 <dialog id="sellBox">
   <h2>Emergency sell</h2>
@@ -736,14 +764,39 @@ async function refresh() {
   catch (e) { setStatus(e.message); }
 }
 
+const needed = v => v ? "" : "Add a short reason.";
 const ASK = {
-  halt: "Why are you halting? (required)",
-  resume: "Why are you resuming? (required)",
-  deposit: "Amount you added (use a minus sign for a withdrawal, like -50):",
+  halt: {title: "Halt trading?", text: "The bot stops buying and selling until you turn it back on. Reason:",
+         input: "Paused from the app", ok: "Halt", check: needed},
+  resume: {title: "Resume trading?", text: "The bot trades again at its next scheduled run. Reason:",
+           input: "Resumed from the app", ok: "Resume", check: needed},
+  deposit: {title: "Record a deposit", text: "Amount you added. Use a minus sign for a withdrawal, like -50.",
+            input: "", ok: "Record", check: v => /^-?\$?[\d,]+(\.\d+)?$/.test(v) ? "" : "Enter a number, like 100 or -50."},
+  cancel: {title: "Cancel open orders?", text: "Cancels all of the bot's unfilled orders.", ok: "Cancel orders"},
 };
-const CONFIRM = {
-  cancel: "Cancel all of the bot's open orders?",
-};
+
+// In-app question box (instead of the browser's popups). Resolves to the typed text, true, or null if cancelled.
+function ask({title, text = "", input = null, ok = "OK", check}) {
+  return new Promise(done => {
+    $("askTitle").textContent = title;
+    $("askText").textContent = text;
+    $("askErr").textContent = "";
+    $("askInput").classList.toggle("hidden", input === null);
+    $("askInput").value = input ?? "";
+    $("askYes").textContent = ok;
+    const finish = v => { $("askBox").close(); done(v); };
+    $("askYes").onclick = () => {
+      const v = $("askInput").value.trim(), err = check && check(v);
+      if (err) { $("askErr").textContent = err; return; }
+      finish(input === null ? true : v);
+    };
+    $("askNo").onclick = () => finish(null);
+    $("askBox").oncancel = e => { e.preventDefault(); finish(null); };
+    $("askInput").onkeydown = e => { if (e.key === "Enter") $("askYes").click(); };
+    $("askBox").showModal();
+    if (input !== null) $("askInput").select();
+  });
+}
 
 let positions = [];
 const nyToday = () => new Date().toLocaleDateString("en-CA", {timeZone: "America/New_York"});
@@ -778,22 +831,22 @@ $("tradeSwitch").addEventListener("click", () => {
 });
 $("agentRun").addEventListener("click", runAgent);
 $("sellCancel").addEventListener("click", () => $("sellBox").close());
-$("sellGo").addEventListener("click", () => {
+$("sellGo").addEventListener("click", async () => {
   const picked = [...$("sellList").querySelectorAll("input:checked")].map(b => b.value);
   if (!picked.length) return;
-  if (!confirm("SELL with REAL money: " + picked.join(", ") + "?\n\nThis can't be undone once Webull fills it.")) return;
   $("sellBox").close();
+  if (await ask({title: "Sell with real money?", text: picked.join(", ") + ". This can't be undone once Webull fills it.",
+                 ok: "Sell"}) === null) return;
   dispatch("sell", picked.join(" "));
 });
 
 async function dispatch(cmd, preset = "") {
   let reason = preset;
   if (ASK[cmd]) {
-    reason = (prompt(ASK[cmd]) || "").trim();
-    if (!reason) return;
-    if (cmd === "deposit" && !/^-?\$?[\d,]+(\.\d+)?$/.test(reason)) { alert("Enter a number, like 100 or -50."); return; }
+    const answer = await ask(ASK[cmd]);
+    if (answer === null) return;
+    if (typeof answer === "string") reason = answer;
   }
-  if (CONFIRM[cmd] && !confirm(CONFIRM[cmd])) return;
   const buttons = document.querySelectorAll("[data-cmd], #sellBtn, #tradeSwitch");
   buttons.forEach(b => b.disabled = true);
   const started = Date.now() - 5000;
@@ -862,6 +915,8 @@ $("themePick").replaceChildren(...Object.entries(THEMES).map(([k, t]) => el("opt
 $("themePick").value = THEMES[store.get("theme")] ? store.get("theme") : "crimson";
 const showSchools = () => $("themeSchools").textContent = THEMES[$("themePick").value][1];
 showSchools();
+$("modePick").value = store.get("mode") === "light" ? "light" : "dark";
+$("modePick").addEventListener("change", () => { store.set("mode", $("modePick").value); applyMode($("modePick").value); });
 $("themePick").addEventListener("change", () => { store.set("theme", $("themePick").value); applyTheme($("themePick").value); showSchools(); });
 refresh();
 if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js");
