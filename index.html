@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trading Bot</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<meta name="theme-color" content="#2f6fdb">
+<style>
+:root {
+  --bg: #f4f5f7; --card: #ffffff; --text: #15171c; --muted: #6a7180; --faint: #eef0f3; --line: #e4e7ec;
+  --accent: #2f6fdb; --accent-soft: #e8f0fd; --good: #157a47; --good-soft: #e5f5ec;
+  --bad: #c0352e; --bad-soft: #fcebea; --warn: #8a4b00; --warn-soft: #fff3e0;
+  --s1: #2f6fdb; --s2: #9aa1ad; --s3: #c98a1a;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1115; --card: #181b21; --text: #eceef2; --muted: #98a0ad; --faint: #20242b; --line: #2a2f37;
+    --accent: #6d9eff; --accent-soft: #1d2a42; --good: #4cc38a; --good-soft: #15291f;
+    --bad: #ff6f66; --bad-soft: #3a1c1a; --warn: #ffc27a; --warn-soft: #382a14;
+    --s1: #6d9eff; --s2: #8a919c; --s3: #e0a53a;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text);
+  font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
+main { max-width: 1040px; margin: 0 auto; padding: 20px 16px 40px; }
+.num, td.num { font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.good { color: var(--good); } .bad { color: var(--bad); }
+.hidden { display: none !important; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+h1 { font-size: 19px; margin: 0; letter-spacing: -.01em; white-space: nowrap; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600;
+  padding: 3px 10px; border-radius: 99px; background: var(--good-soft); color: var(--good); white-space: nowrap; }
+.chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.chip.halted { background: var(--bad-soft); color: var(--bad); }
+.chip.idle { background: var(--faint); color: var(--muted); }
+.icons { display: flex; gap: 6px; }
+
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin-bottom: 16px; }
+.card h2 { font-size: 13px; margin: 0 0 14px; color: var(--muted); font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
+  display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.card h2 span { text-transform: none; letter-spacing: 0; font-weight: 400; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid2 > * { min-width: 0; }
+@media (max-width: 760px) { .grid2 { grid-template-columns: 1fr; } }
+
+.banner { border-radius: 12px; padding: 11px 14px; margin-bottom: 16px; font-weight: 600; background: var(--warn-soft); color: var(--warn); }
+.banner.halted { background: var(--bad-soft); color: var(--bad); }
+
+.hero { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 18px; }
+.big { font-size: 36px; font-weight: 700; letter-spacing: -.02em; line-height: 1.1; }
+.delta { font-size: 15px; font-weight: 600; margin-top: 4px; }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(110px, auto)); gap: 4px 28px; }
+.stat .label { font-size: 12px; color: var(--muted); }
+.stat .value { font-size: 17px; font-weight: 600; }
+@media (max-width: 520px) { .stats { grid-template-columns: repeat(2, 1fr); } .big { font-size: 30px; } }
+
+.bars { display: grid; gap: 10px; }
+.bar { display: grid; grid-template-columns: 92px 1fr 66px; align-items: center; gap: 10px; font-size: 14px; }
+.track { height: 10px; background: var(--faint); border-radius: 99px; position: relative; overflow: hidden; }
+.track .zero { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--line); }
+.track .fill { position: absolute; top: 0; bottom: 0; border-radius: 99px; }
+.bar .pct { text-align: right; font-weight: 600; }
+.chart { margin-top: 16px; }
+.chart svg { width: 100%; height: 150px; display: block; }
+.legend { display: flex; gap: 14px; font-size: 12px; color: var(--muted); margin-top: 6px; flex-wrap: wrap; }
+.legend i { display: inline-block; width: 10px; height: 3px; border-radius: 2px; margin-right: 5px; vertical-align: middle; }
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 9px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 0; }
+th { color: var(--muted); font-weight: 500; font-size: 12px; }
+th.num, td.num { text-align: right; }
+td.sym { font-weight: 650; }
+tfoot td { font-weight: 650; border-top: 1px solid var(--line); border-bottom: 0; }
+.tag { display: inline-block; font-size: 12px; padding: 1px 8px; border-radius: 99px; background: var(--faint); color: var(--muted); white-space: nowrap; }
+.tag.good { background: var(--good-soft); color: var(--good); }
+.tag.bad { background: var(--bad-soft); color: var(--bad); }
+.tag.blue { background: var(--accent-soft); color: var(--accent); }
+.empty { color: var(--muted); padding: 10px 0; font-size: 14px; }
+
+.groups { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 640px) { .groups { grid-template-columns: 1fr; } }
+.group .title { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+.btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+button { font: inherit; font-size: 14px; border: 1px solid var(--line); background: var(--card); color: var(--text);
+  border-radius: 10px; padding: 9px 12px; cursor: pointer; transition: border-color .15s, background .15s; }
+button:hover { border-color: var(--accent); }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button.danger { color: var(--bad); }
+button.ghost { border-color: transparent; background: transparent; color: var(--muted); padding: 7px 10px; }
+button.ghost:hover { background: var(--faint); color: var(--text); }
+button:disabled { opacity: .5; cursor: wait; }
+.status { display: flex; align-items: center; gap: 8px; min-height: 22px; margin-top: 14px; font-size: 14px; }
+.spin { width: 14px; height: 14px; flex: none; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.list { display: grid; }
+.item { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.item:last-child { border-bottom: 0; }
+.item .sub { font-size: 12px; color: var(--muted); }
+
+details summary { cursor: pointer; color: var(--muted); font-size: 13px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; list-style: none; }
+details summary::-webkit-details-marker { display: none; }
+details summary::after { content: " ▸"; }
+details[open] summary::after { content: " ▾"; }
+pre { white-space: pre-wrap; word-break: break-word; margin: 14px 0 0; font-size: 13px; line-height: 1.5; max-height: 460px; overflow: auto; }
+
+.setup label { display: block; font-size: 13px; color: var(--muted); }
+input { font: inherit; width: 100%; padding: 10px 11px; border: 1px solid var(--line); border-radius: 10px;
+  background: var(--bg); color: var(--text); margin: 5px 0 14px; }
+.setup ol { padding-left: 20px; margin: 0 0 16px; font-size: 14px; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="brand">
+      <h1>Trading Bot</h1>
+      <span class="chip idle" id="chip">Loading</span>
+    </div>
+    <div class="icons">
+      <button class="ghost" id="reload" title="Reload">↻ Reload</button>
+      <button class="ghost" id="settingsBtn" title="Settings">⚙ Settings</button>
+    </div>
+  </header>
+
+  <section class="card setup hidden" id="setup">
+    <h2>Connect to GitHub</h2>
+    <ol>
+      <li>Open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub → new fine-grained token</a>.</li>
+      <li>Repository access: only <b>tradingfirm</b>.</li>
+      <li>Permissions: <b>Actions: Read and write</b>, <b>Contents: Read-only</b>.</li>
+    </ol>
+    <label>Repository<input id="repo" placeholder="owner/repo" value="adlin5324/tradingfirm"></label>
+    <label>Token<input id="token" type="password" placeholder="github_pat_…" autocomplete="off"></label>
+    <div class="row">
+      <button class="primary" id="save">Save and connect</button>
+      <button id="forget">Forget token</button>
+    </div>
+    <p class="muted small">The token is stored only in this browser. Delete it on GitHub any time.</p>
+  </section>
+
+  <div class="banner hidden" id="banner"></div>
+
+  <section class="card">
+    <div class="hero">
+      <div>
+        <div class="muted small">Account value</div>
+        <div class="big num" id="total">–</div>
+        <div class="delta num" id="today">&nbsp;</div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="label">Cash</div><div class="value num" id="cash">–</div></div>
+        <div class="stat"><div class="label">Invested</div><div class="value num" id="invested">–</div></div>
+        <div class="stat"><div class="label">Closed-trade profit</div><div class="value num" id="profit">–</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Bot vs market <span class="small" id="since"></span></h2>
+    <div class="bars" id="bars"><div class="empty">Starts after the first live run.</div></div>
+    <div class="chart hidden" id="chart"></div>
+  </section>
+
+  <section class="card">
+    <h2>Positions <span class="small" id="posCount"></span></h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Stock</th><th class="num">Shares</th><th class="num">Price</th><th class="num">Value</th>
+        <th class="num">Gain</th><th>Bought by</th><th>Sellable</th></tr></thead>
+      <tbody id="positions"></tbody>
+      <tfoot id="posTotal"></tfoot>
+    </table></div>
+  </section>
+
+  <section class="card">
+    <h2>Controls</h2>
+    <div class="groups">
+      <div class="group">
+        <div class="title">Check (no trading)</div>
+        <div class="btns">
+          <button data-cmd="account">Refresh account</button>
+          <button data-cmd="picks">Preview picks</button>
+          <button data-cmd="scorecard">Update scorecard</button>
+          <button data-cmd="dry-run">Dry run</button>
+        </div>
+      </div>
+      <div class="group">
+        <div class="title">Manage</div>
+        <div class="btns">
+          <button data-cmd="deposit">Record deposit</button>
+          <button data-cmd="halt" class="danger" id="haltBtn">Halt trading</button>
+          <button data-cmd="resume" class="hidden" id="resumeBtn">Resume trading</button>
+          <button data-cmd="cancel" class="danger">Cancel orders</button>
+          <button data-cmd="run" class="primary">Run now</button>
+        </div>
+      </div>
+    </div>
+    <div class="status" id="status"></div>
+  </section>
+
+  <div class="grid2">
+    <section class="card">
+      <h2>Recent runs</h2>
+      <div class="list" id="runs"><div class="empty">No data yet</div></div>
+    </section>
+    <section class="card">
+      <h2>Recent orders</h2>
+      <div class="list" id="orders"><div class="empty">No data yet</div></div>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>Next run's picks <span class="small" id="picksWhen"></span></h2>
+    <div id="picksBody"><div class="empty">Press "Preview picks" to see what the next run would likely buy.</div></div>
+  </section>
+
+  <section class="card">
+    <details>
+      <summary>Latest report</summary>
+      <pre id="report" class="muted">No report yet</pre>
+    </details>
+  </section>
+
+  <p class="muted small" id="updated"></p>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const store = {
+  get: k => { try { return localStorage.getItem(k) || ""; } catch { return ""; } },
+  set: (k, v) => { try { localStorage.setItem(k, v); } catch {} },
+  del: k => { try { localStorage.removeItem(k); } catch {} },
+};
+const money = n => (n < 0 ? "-$" : "$") + Math.abs(n).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+const signed = n => (n >= 0 ? "+" : "-") + money(Math.abs(n));
+const pct = n => (n >= 0 ? "+" : "") + (n * 100).toFixed(2) + "%";
+const tone = (e, n) => { e.classList.toggle("good", n > 0); e.classList.toggle("bad", n < 0); return e; };
+const when = s => s ? new Date(s).toLocaleString(undefined, {month: "short", day: "numeric", hour: "numeric", minute: "2-digit"}) : "–";
+const shortDate = s => s ? new Date(s + "T12:00:00").toLocaleDateString(undefined, {month: "short", day: "numeric"}) : "–";
+const COLORS = {"Bot": "var(--s1)", "S&P 500": "var(--s2)", "Nasdaq 100": "var(--s3)"};
+
+function el(name, attrs = {}, ...kids) {
+  const e = document.createElement(name);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") e.className = v; else if (k === "text") e.textContent = v; else e.setAttribute(k, v);
+  }
+  kids.flat().forEach(k => e.append(k));
+  return e;
+}
+const td = (text, cls) => el("td", {class: cls || "", text});
+const tag = (text, cls) => el("span", {class: "tag " + (cls || ""), text});
+const empty = text => el("div", {class: "empty", text});
+
+async function api(path, opts = {}) {
+  const res = await fetch("https://api.github.com/repos/" + store.get("repo") + path, {
+    cache: "no-store", ...opts,
+    headers: {Authorization: "Bearer " + store.get("token"), "X-GitHub-Api-Version": "2022-11-28",
+              Accept: "application/vnd.github+json", ...(opts.headers || {})},
+  });
+  if (res.status === 401 || res.status === 403) throw new Error("GitHub refused the token (" + res.status + "). Check it in Settings.");
+  return res;
+}
+
+async function loadDashboard() {
+  const res = await api("/contents/dashboard.json?ref=dashboard", {headers: {Accept: "application/vnd.github.raw+json"}});
+  if (res.status === 404) { $("updated").textContent = "No dashboard yet. Press Refresh account."; return; }
+  if (!res.ok) throw new Error("Couldn't load the dashboard (" + res.status + ").");
+  show(await res.json());
+}
+
+function show(d) {
+  $("updated").textContent = "Data from " + when(d.updated) + (d.last_run ? " · last bot run " + when(d.last_run) : "");
+  const halted = !!d.halt;
+  $("chip").className = "chip" + (halted ? " halted" : "");
+  $("chip").textContent = halted ? "Halted" : "Active";
+  $("haltBtn").classList.toggle("hidden", halted);
+  $("resumeBtn").classList.toggle("hidden", !halted);
+  const banner = $("banner");
+  banner.className = "banner" + (halted ? " halted" : "") + (halted || d.buy_block ? "" : " hidden");
+  banner.textContent = halted ? "Trading is halted: " + d.halt.reason : d.buy_block ? "No buys today: " + d.buy_block.reason : "";
+
+  if (d.account) {
+    const a = d.account, start = a.total - a.today_pl;
+    $("total").textContent = money(a.total);
+    tone($("today"), a.today_pl).textContent = signed(a.today_pl) + (start > 0 ? " (" + pct(a.today_pl / start) + ")" : "") + " today";
+    $("cash").textContent = money(a.cash);
+    $("invested").textContent = money(a.total - a.cash);
+  }
+  tone($("profit"), d.profit || 0).textContent = signed(d.profit || 0);
+
+  if (d.scorecard) {
+    const s = d.scorecard, rows = [["Bot", s.bot], ...Object.entries(s.markets)];
+    const scale = Math.max(0.01, ...rows.map(([, v]) => Math.abs(v)));
+    $("bars").replaceChildren(...rows.map(([name, v]) => {
+      const w = Math.abs(v) / scale * 50;
+      const fill = el("div", {class: "fill", style: `left:${v >= 0 ? 50 : 50 - w}%;width:${w}%;background:${COLORS[name] || "var(--s2)"}`});
+      return el("div", {class: "bar"}, el("div", {text: name}), el("div", {class: "track"}, el("div", {class: "zero"}), fill),
+                tone(el("div", {class: "pct num", text: pct(v)}), v));
+    }));
+    $("since").textContent = "since " + shortDate(s.start) + " · started at " + money(s.start_value) +
+      (s.deposits ? " · deposits " + signed(s.deposits) : "");
+  }
+  drawChart(d.history || []);
+
+  const pos = d.positions || [];
+  $("posCount").textContent = pos.length ? pos.length + " held" : "";
+  $("positions").replaceChildren(...(pos.length ? pos.map(p => {
+    const cost = p.cost * p.shares, gp = cost ? p.gain / cost : 0;
+    const names = (p.strategy || "").split("+").filter(Boolean);
+    const who = p.strategy === "owner" ? tag("you") : tag(names.length + " strategies", "blue");
+    who.title = names.join(", ");
+    const gain = tone(td(signed(p.gain) + " (" + pct(gp) + ")", "num"), p.gain);
+    return el("tr", {}, td(p.symbol, "sym"), td(String(p.shares), "num"), td(money(p.price), "num"),
+              td(money(p.value), "num"), gain, el("td", {}, who), td(shortDate(p.free_to_sell), "muted small"));
+  }) : [el("tr", {}, el("td", {colspan: "7", class: "empty", text: "No positions"}))]));
+  const value = pos.reduce((a, p) => a + p.value, 0), gain = pos.reduce((a, p) => a + p.gain, 0);
+  $("posTotal").replaceChildren(...(pos.length ? [el("tr", {}, td("Total"), td(""), td(""), td(money(value), "num"),
+    tone(td(signed(gain), "num"), gain), td(""), td(""))] : []));
+
+  const orders = d.orders || [];
+  $("orders").replaceChildren(...(orders.length ? orders.slice(0, 8).map(o => {
+    const state = (o.state || "").toLowerCase().replace("_", " ");
+    return el("div", {class: "item"},
+      el("div", {}, el("div", {text: o.side + " " + o.shares + " " + o.symbol + " @ " + money(o.price || 0)}),
+                    el("div", {class: "sub", text: shortDate(o.date)})),
+      tag(state, state === "filled" ? "good" : /reject|cancel|never/.test(state) ? "bad" : ""));
+  }) : [empty("No orders yet")]));
+
+  if (d.picks) {
+    const p = d.picks, ready = p.stocks.filter(s => s.votes >= p.need), close = p.stocks.filter(s => s.votes < p.need);
+    $("picksWhen").textContent = "for " + shortDate(p.day) + " · needs " + p.need + " of 10 votes";
+    const body = [el("p", {class: "small", text: p.orders.length
+      ? "Likely orders: " + p.orders.map(o => o.side.toLowerCase() + " " + o.shares + " " + o.symbol).join(", ")
+      : "No orders likely: all slots are full or nothing qualifies."})];
+    if (ready.length) {
+      body.push(el("div", {class: "table-wrap"}, el("table", {},
+        el("thead", {}, el("tr", {}, el("th", {text: "Stock"}), el("th", {class: "num", text: "Votes"}),
+                                     el("th", {class: "num", text: "Price"}), el("th", {text: "Strategies"}))),
+        el("tbody", {}, ready.slice(0, 12).map(s => el("tr", {}, td(s.symbol, "sym"), td(String(s.votes), "num"),
+          td(money(s.price), "num"), td(s.strategies.join(", "), "muted small")))))));
+    }
+    if (close.length) body.push(el("p", {class: "muted small", text: "One vote short: " + close.map(s => s.symbol).join(", ")}));
+    $("picksBody").replaceChildren(...body);
+  }
+  if (d.report) { $("report").textContent = d.report; $("report").classList.remove("muted"); }
+}
+
+function drawChart(history) {
+  const box = $("chart");
+  if (history.length < 2) { box.classList.add("hidden"); return; }
+  box.classList.remove("hidden");
+  const val = (h, n) => n === "Bot" ? h.bot : h[n];
+  const names = ["Bot", "S&P 500", "Nasdaq 100"].filter(n => history.some(h => val(h, n) != null));
+  const all = history.flatMap(h => names.map(n => val(h, n)).filter(v => v != null)).concat(0);
+  const lo = Math.min(...all), hi = Math.max(...all), span = (hi - lo) || 0.01;
+  const W = 600, H = 150, pad = 6, ns = "http://www.w3.org/2000/svg";
+  const x = i => pad + i * (W - 2 * pad) / (history.length - 1);
+  const y = v => pad + (hi - v) * (H - 2 * pad) / span;
+  const svgEl = (name, attrs) => { const e = document.createElementNS(ns, name); Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v)); return e; };
+  const svg = svgEl("svg", {viewBox: `0 0 ${W} ${H}`, preserveAspectRatio: "none", role: "img", "aria-label": "Growth since start"});
+  svg.append(svgEl("line", {x1: 0, x2: W, y1: y(0), y2: y(0), stroke: "var(--line)", "stroke-dasharray": "4 4", "vector-effect": "non-scaling-stroke"}));
+  names.slice().reverse().forEach(n => {
+    const pts = history.map((h, i) => val(h, n) == null ? null : x(i).toFixed(1) + "," + y(val(h, n)).toFixed(1)).filter(Boolean);
+    svg.append(svgEl("polyline", {points: pts.join(" "), fill: "none", stroke: COLORS[n], "stroke-width": n === "Bot" ? 2.5 : 1.5,
+      "vector-effect": "non-scaling-stroke", "stroke-linejoin": "round"}));
+  });
+  const legend = el("div", {class: "legend"}, names.map(n => el("span", {}, el("i", {style: "background:" + COLORS[n]}), n)),
+    el("span", {text: shortDate(history[0].date) + " – " + shortDate(history[history.length - 1].date)}));
+  box.replaceChildren(svg, legend);
+}
+
+async function loadRuns() {
+  const res = await api("/actions/workflows/bot.yml/runs?per_page=8");
+  if (!res.ok) return [];
+  const runs = (await res.json()).workflow_runs || [];
+  $("runs").replaceChildren(...(runs.length ? runs.map(r => {
+    const state = (r.status === "completed" ? r.conclusion : r.status) || "";
+    const link = el("a", {href: r.html_url, target: "_blank", rel: "noopener", text: r.display_title.replace("Trading bot: ", "")});
+    return el("div", {class: "item"}, el("div", {}, link, el("div", {class: "sub", text: when(r.created_at)})),
+      tag(state.replace("_", " "), state === "success" ? "good" : state === "failure" ? "bad" : "blue"));
+  }) : [empty("No runs yet")]));
+  return runs;
+}
+
+function setStatus(text, busy) {
+  $("status").replaceChildren(...(busy ? [el("span", {class: "spin"})] : []), el("span", {text}));
+}
+
+async function refresh() {
+  if (!store.get("token")) { $("setup").classList.remove("hidden"); $("chip").textContent = "Not connected"; return; }
+  try { await Promise.all([loadDashboard(), loadRuns()]); }
+  catch (e) { setStatus(e.message); }
+}
+
+const ASK = {
+  halt: "Why are you halting? (required)",
+  resume: "Why are you resuming? (required)",
+  deposit: "Amount you added (use a minus sign for a withdrawal, like -50):",
+};
+const CONFIRM = {
+  run: "Run the bot now with REAL money? It trades at most once a day, so this does nothing if it already traded today.",
+  cancel: "Cancel all of the bot's open orders?",
+};
+
+async function dispatch(cmd) {
+  let reason = "";
+  if (ASK[cmd]) {
+    reason = (prompt(ASK[cmd]) || "").trim();
+    if (!reason) return;
+    if (cmd === "deposit" && !/^-?\$?[\d,]+(\.\d+)?$/.test(reason)) { alert("Enter a number, like 100 or -50."); return; }
+  }
+  if (CONFIRM[cmd] && !confirm(CONFIRM[cmd])) return;
+  const buttons = document.querySelectorAll("[data-cmd]");
+  buttons.forEach(b => b.disabled = true);
+  const started = Date.now() - 5000;
+  try {
+    const res = await api("/actions/workflows/bot.yml/dispatches", {
+      method: "POST", body: JSON.stringify({ref: "main", inputs: {command: cmd, reason}}),
+      headers: {"Content-Type": "application/json"},
+    });
+    if (res.status !== 204) throw new Error("GitHub didn't start it (" + res.status + ").");
+    setStatus("Running \"" + cmd + "\" on GitHub. Usually about a minute…", true);
+    for (let i = 0; i < 60; i++) {
+      await new Promise(r => setTimeout(r, 8000));
+      const runs = await loadRuns();
+      const mine = runs.find(r => r.event === "workflow_dispatch" && Date.parse(r.created_at) >= started);
+      if (mine && mine.status === "completed") {
+        setStatus("\"" + cmd + "\" " + (mine.conclusion === "success" ? "finished." : "ended: " + mine.conclusion + ". Open it under Recent runs."));
+        await loadDashboard();
+        return;
+      }
+    }
+    setStatus("Still running. Press Reload in a bit.");
+  } catch (e) {
+    setStatus(e.message);
+  } finally {
+    buttons.forEach(b => b.disabled = false);
+  }
+}
+
+document.querySelectorAll("[data-cmd]").forEach(b => b.addEventListener("click", () => dispatch(b.dataset.cmd)));
+$("reload").addEventListener("click", refresh);
+$("settingsBtn").addEventListener("click", () => $("setup").classList.toggle("hidden"));
+$("save").addEventListener("click", () => {
+  store.set("repo", $("repo").value.trim());
+  store.set("token", $("token").value.trim());
+  $("token").value = "";
+  $("setup").classList.add("hidden");
+  refresh();
+});
+$("forget").addEventListener("click", () => { store.del("token"); setStatus("Token removed from this browser."); });
+$("repo").value = store.get("repo") || "adlin5324/tradingfirm";
+refresh();
+if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js");
+setInterval(() => { if (!document.hidden && !document.querySelector("[data-cmd]:disabled")) refresh(); }, 5 * 60 * 1000);
+</script>
+</body>
+</html>
