@@ -6,7 +6,11 @@
 <title>HowieLegacy Investments</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
-<meta name="theme-color" content="#2f6fdb">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@1&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#7c3aed">
+<!-- Icons: Lucide (lucide.dev), ISC license -->
 <style>
 :root {
   --bg: #f3f4f6; --card: #ffffff; --text: #111318; --muted: #687080; --faint: #f0f2f5; --line: #e6e8ec;
@@ -80,7 +84,8 @@ h1 { font-size: 18px; margin: 0; letter-spacing: -.01em; }
 
 .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .actions > button { flex: 1 1 auto; }
-.more { position: relative; flex: 0 0 auto; }
+.actions { position: relative; }
+.more { flex: 0 0 auto; }
 .more summary { list-style: none; cursor: pointer; font-size: 14px; border: 1px solid var(--line); border-radius: 10px;
   padding: 8px 16px; color: var(--text); background: var(--card); }
 .more summary::-webkit-details-marker { display: none; }
@@ -167,6 +172,80 @@ dialog h2 { margin-top: 0; font-size: 18px; }
 @media (max-width: 520px) {
   .icons .word { display: none; }
   .actions > [data-cmd="run"] { flex-basis: 100%; }
+  .actions > button:not(.primary) svg, .more summary svg, .tabs svg { display: none; }
+  .tabs button { padding: 8px 4px; }
+}
+
+/* ---- Look: glass cards on a soft violet/cyan glow with grain ---- */
+:root {
+  --bg: #f5f3ff; --glass: rgba(255, 255, 255, .72); --glass-line: rgba(124, 58, 237, .14);
+  --accent: #7c3aed; --accent-soft: #f1eafe; --s1: #7c3aed; --s3: #0891b2;
+  --grad: linear-gradient(120deg, #7c3aed 0%, #6366f1 45%, #0891b2 100%);
+  --grad-fill: linear-gradient(120deg, #7c3aed 0%, #5b4ff0 50%, #0e7490 100%);
+  --glow1: rgba(139, 92, 246, .28); --glow2: rgba(34, 211, 238, .22); --beam: rgba(139, 92, 246, .10);
+  --shadow: 0 1px 2px rgba(40, 20, 90, .06), 0 8px 24px rgba(40, 20, 90, .06);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #09090f; --glass: rgba(22, 20, 34, .62); --glass-line: rgba(255, 255, 255, .08);
+    --accent: #a78bfa; --accent-soft: #241d3d; --s1: #a78bfa; --s3: #22d3ee;
+    --grad: linear-gradient(120deg, #c4b5fd 0%, #a78bfa 40%, #22d3ee 100%);
+    --glow1: rgba(124, 58, 237, .35); --glow2: rgba(8, 145, 178, .25); --beam: rgba(167, 139, 250, .12);
+    --shadow: 0 8px 32px rgba(0, 0, 0, .35);
+  }
+}
+body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: radial-gradient(900px 600px at 10% -10%, var(--glow1), transparent 60%),
+              radial-gradient(800px 600px at 100% 0%, var(--glow2), transparent 55%), var(--bg);
+  background-attachment: fixed; min-height: 100vh; }
+body::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 100; opacity: .07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+h1, h2, .big, .stat .value, .num { font-family: "Space Grotesk", Inter, sans-serif; }
+h1 { font-size: 20px; font-weight: 700; }
+h1 em { font-family: "Instrument Serif", Georgia, serif; font-style: italic; font-weight: 400; font-size: 1.15em;
+  background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.tagline { font-size: 12px; color: var(--muted); margin-top: 2px; flex-basis: 100%; }
+.card { position: relative; background: var(--glass); border: 1px solid var(--glass-line); box-shadow: var(--shadow);
+  -webkit-backdrop-filter: blur(16px) saturate(150%); backdrop-filter: blur(16px) saturate(150%); }
+.card::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0;
+  transition: opacity .3s; background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), var(--beam), transparent 70%); }
+.card:hover::after { opacity: 1; }
+.card.glow::before { content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; pointer-events: none;
+  background: var(--grad); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude; }
+.badge { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: var(--accent);
+  background: var(--accent-soft); border: 1px solid var(--glass-line); padding: 4px 12px; border-radius: 99px; margin-bottom: 8px; }
+.badge svg { width: 12px; height: 12px; }
+.big { font-size: 44px; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.stats { gap: 12px; }
+.stat { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 12px; background: var(--faint);
+  border: 1px solid var(--glass-line); min-width: 150px; }
+.stat .ico { width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center; flex: none;
+  background: var(--accent-soft); color: var(--accent); }
+.stat .ico svg { width: 18px; height: 18px; }
+@media (max-width: 520px) {
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; }
+  .stat { flex-direction: column; align-items: flex-start; gap: 8px; padding: 8px; min-width: 0; }
+  .stat .ico { width: 28px; height: 28px; border-radius: 8px; }
+  .stat .value { font-size: 15px; }
+  .big { font-size: 36px; }
+}
+button { transition: opacity .2s, border-color .2s, background .2s, transform .2s; }
+button:hover { opacity: .85; }
+button:active { transform: scale(.98); }
+button.primary { background: var(--grad-fill); border-color: transparent; box-shadow: 0 6px 20px var(--glow1); }
+button svg, .more summary svg, .tabs svg { width: 16px; height: 16px; vertical-align: -3px; margin-right: 4px; }
+.actions > button, .more summary { display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+.vs { background: var(--accent-soft); }
+.tabs { background: var(--glass); border: 1px solid var(--glass-line); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+.tabs button[aria-selected="true"] { background: var(--grad-fill); color: #fff; box-shadow: 0 4px 14px var(--glow1); }
+.menu { background: var(--card); }
+.card.bar { z-index: 10; }
+.js-anim .card { opacity: 0; transform: translateY(12px); transition: opacity .6s ease, transform .6s ease; }
+.js-anim .card.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .js-anim .card { opacity: 1; transform: none; transition: none; }
+  .card::after { display: none; }
 }
 </style>
 </head>
@@ -174,8 +253,9 @@ dialog h2 { margin-top: 0; font-size: 18px; }
 <main>
   <header>
     <div class="brand">
-      <h1>HowieLegacy Investments</h1>
+      <h1>HowieLegacy <em>Investments</em></h1>
       <span class="chip idle" id="chip">Loading</span>
+      <div class="tagline">Autonomous capital, quietly compounding.</div>
     </div>
     <div class="icons">
       <button class="ghost" id="reload" title="Reload" aria-label="Reload">↻<span class="word"> Reload</span></button>
@@ -201,17 +281,18 @@ dialog h2 { margin-top: 0; font-size: 18px; }
 
   <div class="banner hidden" id="banner"></div>
 
-  <section class="card">
+  <section class="card glow">
     <div class="hero">
       <div>
+        <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" /><path d="M20 3v4" /><path d="M22 5h-4" /><path d="M4 17v2" /><path d="M5 18H3" /></svg> Live from Webull</span>
         <div class="muted small">Account value</div>
         <div class="big num" id="total">–</div>
         <div class="delta num" id="today">&nbsp;</div>
       </div>
       <div class="stats">
-        <div class="stat"><div class="label">Cash</div><div class="value num" id="cash">–</div></div>
-        <div class="stat"><div class="label">Invested</div><div class="value num" id="invested">–</div></div>
-        <div class="stat"><div class="label">Closed-trade profit</div><div class="value num" id="profit">–</div></div>
+        <div class="stat"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1" /><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4" /></svg></span><div><div class="label">Cash</div><div class="value num" id="cash">–</div></div></div>
+        <div class="stat"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17" /><polyline points="16 7 22 7 22 13" /></svg></span><div><div class="label">Invested</div><div class="value num" id="invested">–</div></div></div>
+        <div class="stat"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" /><path d="M12 18V6" /></svg></span><div><div class="label">Closed-trade profit</div><div class="value num" id="profit">–</div></div></div>
       </div>
     </div>
     <div class="compare">
@@ -222,14 +303,14 @@ dialog h2 { margin-top: 0; font-size: 18px; }
     </div>
   </section>
 
-  <section class="card">
+  <section class="card bar">
     <div class="actions">
-      <button data-cmd="run" class="primary">Run now</button>
-      <button class="danger" id="sellBtn">Sell stocks…</button>
-      <button data-cmd="halt" class="danger" id="haltBtn">Halt trading</button>
-      <button data-cmd="resume" class="hidden" id="resumeBtn">Resume trading</button>
+      <button data-cmd="run" class="primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3" /></svg>Run now</button>
+      <button class="danger" id="sellBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" /><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" /><path d="m2 16 6 6" /><circle cx="16" cy="9" r="2.9" /><circle cx="6" cy="5" r="3" /></svg>Sell stocks…</button>
+      <button data-cmd="halt" class="danger" id="haltBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 15V9" /><path d="M14 15V9" /><path d="M2.586 16.726A2 2 0 0 1 2 15.312V8.688a2 2 0 0 1 .586-1.414l4.688-4.688A2 2 0 0 1 8.688 2h6.624a2 2 0 0 1 1.414.586l4.688 4.688A2 2 0 0 1 22 8.688v6.624a2 2 0 0 1-.586 1.414l-4.688 4.688a2 2 0 0 1-1.414.586H8.688a2 2 0 0 1-1.414-.586z" /></svg>Halt trading</button>
+      <button data-cmd="resume" class="hidden" id="resumeBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>Resume trading</button>
       <details class="more" id="more">
-        <summary>More ▾</summary>
+        <summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /><circle cx="5" cy="12" r="1" /></svg>More</summary>
         <div class="menu">
           <div class="label">Check (no trading)</div>
           <button data-cmd="account">Refresh account</button>
@@ -246,14 +327,14 @@ dialog h2 { margin-top: 0; font-size: 18px; }
   </section>
 
   <nav class="tabs" role="tablist">
-    <button role="tab" data-tab="positions">Positions</button>
-    <button role="tab" data-tab="activity">Activity</button>
-    <button role="tab" data-tab="ai">AI team</button>
-    <button role="tab" data-tab="picks">Picks</button>
+    <button role="tab" data-tab="positions"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /><rect width="20" height="14" x="2" y="6" rx="2" /></svg>Positions</button>
+    <button role="tab" data-tab="activity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" /></svg>Activity</button>
+    <button role="tab" data-tab="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></svg>AI team</button>
+    <button role="tab" data-tab="picks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg>Picks</button>
   </nav>
 
   <section class="card" data-panel="positions">
-    <h2>Positions <span class="small" id="posCount"></span></h2>
+    <h2>💼 Positions <span class="small" id="posCount"></span></h2>
     <div class="table-wrap"><table>
       <thead><tr><th>Stock</th><th class="num opt">Shares</th><th class="num opt">Price</th><th class="num">Value</th>
         <th class="num">Gain</th><th class="opt">Bought by</th><th>AI</th><th class="opt">Sellable</th></tr></thead>
@@ -265,24 +346,24 @@ dialog h2 { margin-top: 0; font-size: 18px; }
   <div data-panel="activity">
     <div class="grid2">
       <section class="card">
-        <h2>Recent orders</h2>
+        <h2>🧾 Recent orders</h2>
         <div class="list" id="orders"><div class="empty">No data yet</div></div>
       </section>
       <section class="card">
-        <h2>Recent runs</h2>
+        <h2>⚙️ Recent runs</h2>
         <div class="list" id="runs"><div class="empty">No data yet</div></div>
       </section>
     </div>
     <section class="card">
       <details class="fold">
-        <summary>Latest report</summary>
+        <summary>📄 Latest report</summary>
         <pre id="report" class="muted">No report yet</pre>
       </details>
     </section>
   </div>
 
   <section class="card" data-panel="ai">
-    <h2>AI team <span class="small">reports and pull requests waiting for you</span></h2>
+    <h2>🤖 AI team <span class="small">reports and pull requests waiting for you</span></h2>
     <div class="list" id="team"><div class="empty">No reports yet</div></div>
     <div id="shadow" class="small"></div>
     <div class="row" style="margin-top:16px">
@@ -296,7 +377,7 @@ dialog h2 { margin-top: 0; font-size: 18px; }
   </section>
 
   <section class="card" data-panel="picks">
-    <h2>Next run's picks <span class="small" id="picksWhen"></span></h2>
+    <h2>🎯 Next run's picks <span class="small" id="picksWhen"></span></h2>
     <div id="picksBody"><div class="empty">Open More → Preview picks to see what the next run would likely buy.</div></div>
   </section>
 
@@ -639,6 +720,21 @@ function showTab(name) {
 }
 document.querySelectorAll("[data-tab]").forEach(t => t.addEventListener("click", () => showTab(t.dataset.tab)));
 showTab(store.get("tab"));
+// Looks: fade-in on scroll, and a soft glow that follows the cursor over cards.
+if ("IntersectionObserver" in window) {
+  document.documentElement.classList.add("js-anim");
+  const seen = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add("in"); seen.unobserve(e.target); }
+  }), {threshold: 0.05});
+  document.querySelectorAll(".card").forEach(c => seen.observe(c));
+}
+document.addEventListener("pointermove", e => {
+  const card = e.target.closest && e.target.closest(".card");
+  if (!card) return;
+  const r = card.getBoundingClientRect();
+  card.style.setProperty("--mx", e.clientX - r.left + "px");
+  card.style.setProperty("--my", e.clientY - r.top + "px");
+});
 document.querySelectorAll(".menu button").forEach(b => b.addEventListener("click", () => $("more").open = false));
 document.addEventListener("click", e => { if (!$("more").contains(e.target)) $("more").open = false; });
 $("settingsBtn").addEventListener("click", () => $("setup").classList.toggle("hidden"));
