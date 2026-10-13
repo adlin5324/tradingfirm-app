@@ -16,9 +16,9 @@
 // Theme palettes: label, schools, c1 fill, c2 deep fill, c3 lines/glow, line strength.
 const THEMES = {
   crimson:  ["Crimson / Gray", "Indiana, Boston University, Carnegie Mellon, WashU", "#A6192E", "#520c17", "#b8b2ad", .22],
-  violet:   ["Violet / White", "NYU", "#57068C", "#2e0349", "#8a3fd1", .5],
+  violet:   ["Violet / Gray", "NYU", "#57068C", "#2e0349", "#b5b0b8", .22],
   navygray: ["Navy / Gray", "Rice", "#00205B", "#001233", "#C1C6C8", .18],
-  orange:   ["Burnt Orange / White", "UT Austin", "#BF5700", "#5e2b00", "#BF5700", .5],
+  orange:   ["Burnt Orange / Gray", "UT Austin", "#BF5700", "#5e2b00", "#b8b2ad", .22],
   navygold: ["Navy / Gold", "Notre Dame, UC Berkeley, UC Irvine, UC San Diego, UC Santa Barbara, UC Santa Cruz", "#002676", "#001540", "#FDB515", .28],
 };
 function applyTheme(key) {
@@ -30,7 +30,7 @@ function applyTheme(key) {
 function applyMode(mode) {
   const light = mode === "light";
   document.documentElement.dataset.mode = light ? "light" : "dark";
-  document.getElementById("barColor").content = light ? "#e9e6e2" : "#000000";
+  document.getElementById("barColor").content = light ? "#d6d2cd" : "#000000";
 }
 try { applyTheme(localStorage.getItem("theme")); applyMode(localStorage.getItem("mode")); } catch { applyTheme(); applyMode(); }
 </script>
@@ -355,16 +355,16 @@ body::after { opacity: var(--topo); transform-origin: 50% 100%; animation: drift
 /* Light mode (Settings → Appearance). */
 :root[data-mode="light"] {
   color-scheme: light;
-  --bg: #e9e6e2; --card: #f3f1ee; --text: #1c1719; --muted: #655e61; --faint: #e4e0dc; --line: #d8d3ce;
-  --glass: rgba(243, 241, 238, .86); --glass-line: rgba(0, 0, 0, .07);
-  --accent: var(--c1); --accent-soft: color-mix(in srgb, var(--c1) 14%, #f3f1ee);
+  --bg: #d6d2cd; --card: #e2ded9; --text: #1c1719; --muted: #5c5558; --faint: #d1ccc6; --line: #c4beb8;
+  --glass: rgba(226, 222, 217, .86); --glass-line: rgba(0, 0, 0, .07);
+  --accent: var(--c1); --accent-soft: color-mix(in srgb, var(--c1) 14%, #e2ded9);
   --good: #138a52; --good-soft: #e3f6ec; --bad: #c8372d; --bad-soft: #fdecea; --warn: #8a4b00; --warn-soft: #fff4e2;
   --s1: var(--c1); --s2: #8d95a3; --dot: var(--c1);
   --glow1: color-mix(in srgb, var(--c1) 18%, transparent); --glow2: color-mix(in srgb, var(--c1) 14%, transparent);
   --shadow: 0 1px 2px rgba(0, 0, 0, .05), 0 8px 24px rgba(0, 0, 0, .05);
 }
 :root[data-mode="light"] button.danger { background: var(--c1); border-color: var(--c1); color: #fff; }
-:root[data-mode="light"] .banner, :root[data-mode="light"] .banner.halted { background: var(--accent-soft); color: var(--c1); border-color: color-mix(in srgb, var(--c1) 30%, #f3f1ee); }
+:root[data-mode="light"] .banner, :root[data-mode="light"] .banner.halted { background: var(--accent-soft); color: var(--c1); border-color: color-mix(in srgb, var(--c1) 30%, #e2ded9); }
 :root[data-mode="light"] .switch .dot { background: #c4bec1; }
 /* Neon title: HowieLegacy glows in the main theme color, Investments in the second. Dim when halted. */
 .switch .hl, .switch em { transition: color .4s, text-shadow .4s; }
