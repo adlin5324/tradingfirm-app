@@ -9,8 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@1&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<meta name="theme-color" content="#f5f3ff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0a0a10" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#000000">
+<meta name="color-scheme" content="dark">
 <!-- Icons: Lucide (lucide.dev), ISC license -->
 <style>
 :root {
@@ -257,6 +257,27 @@ button svg, .more summary svg, .tabs svg { width: 16px; height: 16px; vertical-a
   .js-anim .card { opacity: 1; transform: none; transition: none; }
   .card::after { display: none; }
 }
+
+/* ---- Theme: black base, crimson accents, faint topographic lines (always dark) ---- */
+:root {
+  color-scheme: dark;
+  --bg: #000000; --card: #0d0a0b; --text: #f3eef0; --muted: #a39a9e; --faint: #181314; --line: #2a2124;
+  --glass: rgba(14, 10, 11, .78); --glass-line: rgba(255, 255, 255, .07);
+  --accent: #ff4d6a; --accent-soft: #2a0c13; --good: #4cc38a; --good-soft: #10261b;
+  --bad: #ff7a66; --bad-soft: #33150f; --warn: #ffc27a; --warn-soft: #33270f;
+  --s1: #ff4d6a; --s2: #8a8286; --s3: #e0a53a;
+  --grad: linear-gradient(120deg, #ffb3bf 0%, #ff4d6a 45%, #dc143c 100%);
+  --grad-fill: linear-gradient(120deg, #e11d48 0%, #b3112f 55%, #7f0a22 100%);
+  --glow1: rgba(220, 20, 60, .30); --glow2: rgba(127, 10, 34, .25); --beam: rgba(220, 20, 60, .10);
+  --shadow: 0 8px 32px rgba(0, 0, 0, .5);
+}
+body { background: radial-gradient(1000px 700px at 85% 110%, var(--glow2), transparent 60%),
+                    radial-gradient(800px 600px at 0% 75%, rgba(220, 20, 60, .10), transparent 60%), var(--bg);
+  background-attachment: fixed; }
+body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: .22;
+  background: url("topo.svg") center / max(1600px, 100vw, 100vh) auto no-repeat;
+  -webkit-mask-image: linear-gradient(transparent 0, transparent 90px, #000 320px);
+  mask-image: linear-gradient(transparent 0, transparent 90px, #000 320px); }
 </style>
 </head>
 <body>
