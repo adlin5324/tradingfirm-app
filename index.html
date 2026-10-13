@@ -292,15 +292,15 @@ button:hover, .more[open] summary { border-color: #6B0A1D; }
 button.danger { color: var(--text); background: #410612; border-color: #6B0A1D; }
 .menu button.danger { background: transparent; color: var(--bad); }
 .card.glow::before { padding: 1.5px; }
-.ctl { display: flex; align-items: center; gap: 8px; }
-.switch { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; border-radius: 99px;
-  background: var(--faint); font-size: 13px; font-weight: 600; }
-.switch .track { width: 36px; height: 20px; border-radius: 99px; background: #2a2124; position: relative; transition: background .2s; }
-.switch .knob { position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #8a8286;
-  transition: transform .2s, background .2s; }
-.switch[aria-checked="true"] .track { background: var(--grad-fill); box-shadow: 0 0 0 1px #6B0A1D; }
-.switch[aria-checked="true"] .knob { transform: translateX(16px); background: #fff; }
-.switch[aria-checked="false"] #chip { color: var(--muted); }
+.switch { display: inline-flex; align-items: center; gap: 12px; padding: 8px 16px 8px 12px; border-radius: 99px;
+  background: var(--glass); border: 1px solid var(--glass-line); font: inherit; color: var(--text); }
+.switch .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; background: #5d5559; transition: background .3s, box-shadow .3s; }
+.switch[aria-checked="true"] .dot { background: #6B0A1D;
+  box-shadow: 0 0 0 2px #410612, 0 0 10px 3px rgba(107, 10, 29, .9), 0 0 22px 6px rgba(107, 10, 29, .5);
+  animation: pulse 2.4s ease-in-out infinite; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 2px #410612, 0 0 14px 5px rgba(107, 10, 29, 1), 0 0 30px 10px rgba(107, 10, 29, .55); } }
+@media (prefers-reduced-motion: reduce) { .switch .dot { animation: none !important; } }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 body::after { opacity: .55; }
 .banner.halted, .banner { background: #410612; color: var(--text); border: 1px solid #6B0A1D; }
 </style>
@@ -309,11 +309,8 @@ body::after { opacity: .55; }
 <main>
   <header>
     <div class="brand">
-      <h1>HowieLegacy <em>Investments</em></h1>
-      <div class="ctl">
-        <button class="switch" id="tradeSwitch" role="switch" aria-checked="false" aria-label="Trading on or off"
-          title="Turn trading on or off"><span class="track"><span class="knob"></span></span><span id="chip">Loading</span></button>
-      </div>
+      <h1><button class="switch" id="tradeSwitch" role="switch" aria-checked="false" title="Trading on or off: click to change">
+        <span class="dot" aria-hidden="true"></span>HowieLegacy <em>Investments</em><span class="sr" id="chip">Loading</span></button></h1>
       <div class="tagline">Autonomous capital, quietly compounding.</div>
     </div>
     <div class="icons">
@@ -502,6 +499,7 @@ function show(d) {
   $("tradeSwitch").setAttribute("aria-checked", String(!halted));
   $("tradeSwitch").dataset.ready = "1";
   $("chip").textContent = halted ? "Halted" : "Active";
+  $("tradeSwitch").title = halted ? "Trading is halted. Click to resume." : "Trading is on. Click to halt.";
   const banner = $("banner");
   banner.className = "banner" + (halted ? " halted" : "") + (halted || d.buy_block ? "" : " hidden");
   banner.textContent = halted ? "Trading is halted: " + d.halt.reason : d.buy_block ? "No buys today: " + d.buy_block.reason : "";
