@@ -8,7 +8,9 @@
 <link rel="icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<!-- Space Grotesk with only number characters, so numbers use it and every letter falls back to Inter. -->
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&text=0123456789%24%25%2B-.%2C%3A%2F&display=swap" rel="stylesheet">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
 <!-- Icons: Lucide (lucide.dev), ISC license -->
@@ -194,14 +196,13 @@ dialog h2 { margin-top: 0; font-size: 18px; }
     --shadow: 0 8px 32px rgba(0, 0, 0, .35);
   }
 }
-body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+body { font-family: "Space Grotesk", Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   background: linear-gradient(var(--bg) 0, transparent 180px),
               radial-gradient(900px 600px at 10% -10%, var(--glow1), transparent 60%),
               radial-gradient(800px 600px at 100% 0%, var(--glow2), transparent 55%), var(--bg);
   background-attachment: fixed; min-height: 100vh; }
 body::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 100; opacity: .07; mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
-h1, h2, .big, .stat .value, .num { font-family: "Space Grotesk", Inter, sans-serif; }
 h1 { font-size: 20px; font-weight: 700; }
 h1 em { font-family: "Instrument Serif", Georgia, serif; font-style: italic; font-weight: 400; font-size: 1.15em;
   background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
