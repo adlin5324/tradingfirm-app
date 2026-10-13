@@ -13,6 +13,26 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&text=0123456789%24%25%2B-.%2C%3A%2F&display=swap" rel="stylesheet">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
+<script>
+// Theme palettes: label, schools, c1 fill, c2 deep fill, c3 lines/glow, line strength.
+const THEMES = {
+  burgundy: ["Burgundy / Black", "HowieLegacy default", "#6B0A1D", "#410612", "#6B0A1D", .55],
+  cardinal: ["Cardinal / Gold", "USC, Boston College", "#990000", "#4d0000", "#FFCC00", .28],
+  crimson:  ["Crimson / Cream", "Indiana", "#990000", "#4a0000", "#EEEDEB", .16],
+  scarlet:  ["Scarlet / Gray", "Boston University, Carnegie Mellon, WashU", "#CC0000", "#5c0000", "#9a9a9a", .25],
+  violet:   ["Violet / White", "NYU", "#57068C", "#2e0349", "#8a3fd1", .5],
+  navygray: ["Navy / Gray", "Rice", "#00205B", "#001233", "#C1C6C8", .18],
+  orange:   ["Burnt Orange / White", "UT Austin", "#BF5700", "#5e2b00", "#BF5700", .5],
+  navygold: ["Navy / Gold", "Notre Dame, UC Berkeley, UC San Diego, UC Santa Barbara, UC Santa Cruz", "#002676", "#001540", "#FDB515", .28],
+  bluegold: ["Blue / Gold", "UC Irvine", "#0064A4", "#00335a", "#FFD200", .28],
+};
+function applyTheme(key) {
+  const t = THEMES[key] || THEMES.burgundy, root = document.documentElement.style;
+  ["--c1", "--c2", "--c3"].forEach((v, i) => root.setProperty(v, t[i + 2]));
+  root.setProperty("--topo", t[5]);
+}
+try { applyTheme(localStorage.getItem("theme")); } catch { applyTheme(); }
+</script>
 <!-- Icons: Lucide (lucide.dev), ISC license -->
 <style>
 :root {
@@ -274,31 +294,37 @@ body { background: radial-gradient(1000px 700px at 85% 110%, var(--glow2), trans
                     radial-gradient(800px 600px at 0% 75%, rgba(220, 20, 60, .10), transparent 60%), var(--bg);
   background-attachment: fixed; }
 body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: .22;
-  background: url("topo.svg") center / max(1600px, 100vw, 100vh) auto no-repeat;
-  -webkit-mask-image: linear-gradient(transparent 0, transparent 90px, #000 320px);
-  mask-image: linear-gradient(transparent 0, transparent 90px, #000 320px); }
+  background: var(--c3);
+  -webkit-mask: url("topo.svg") center / max(1600px, 100vw, 100vh) auto no-repeat,
+                linear-gradient(transparent 0, transparent 90px, #000 320px);
+  -webkit-mask-composite: source-in;
+  mask: url("topo.svg") center / max(1600px, 100vw, 100vh) auto no-repeat intersect,
+        linear-gradient(transparent 0, transparent 90px, #000 320px); }
 
-/* ---- Reds limited to #6B0A1D..#410612: used for fills, borders and lines; text on them is white ---- */
+/* ---- Theme colors are fills, borders and lines; text on them is white ---- */
 :root {
-  --accent: #f3eef0; --accent-soft: #410612;
+  /* Theme colors (Settings → Theme swaps these): c1 fill, c2 deep fill, c3 lines and glow. */
+  --c1: #6B0A1D; --c2: #410612; --c3: #6B0A1D; --topo: .55;
+  --accent: #f3eef0; --accent-soft: var(--c2);
   --s1: #f3eef0;
-  --grad: linear-gradient(120deg, #6B0A1D 0%, #410612 100%);
-  --grad-fill: linear-gradient(120deg, #6B0A1D 0%, #410612 100%);
-  --glow1: rgba(107, 10, 29, .45); --glow2: rgba(65, 6, 18, .55); --beam: rgba(107, 10, 29, .22);
+  --grad: linear-gradient(120deg, var(--c1) 0%, var(--c2) 100%);
+  --grad-fill: linear-gradient(120deg, var(--c1) 0%, var(--c2) 100%);
+  --glow1: color-mix(in srgb, var(--c1) 45%, transparent); --glow2: color-mix(in srgb, var(--c2) 55%, transparent);
+  --beam: color-mix(in srgb, var(--c3) 22%, transparent);
 }
 .big, h1 em { background: none; color: var(--text); }
-a { text-decoration: underline; text-decoration-color: #6B0A1D; text-underline-offset: 3px; }
-button:hover, .more[open] summary { border-color: #6B0A1D; }
-button.danger { color: var(--text); background: #410612; border-color: #6B0A1D; }
+a { text-decoration: underline; text-decoration-color: var(--c3); text-underline-offset: 3px; }
+button:hover, .more[open] summary { border-color: var(--c3); }
+button.danger { color: var(--text); background: var(--c2); border-color: var(--c1); }
 .menu button.danger { background: transparent; color: var(--bad); }
 .card.glow::before { padding: 1.5px; }
 .switch { display: inline-flex; align-items: center; gap: 12px; padding: 8px 16px 8px 12px; border-radius: 99px;
   background: var(--glass); border: 1px solid var(--glass-line); font: inherit; color: var(--text); }
 .switch .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; background: #5d5559; transition: background .3s, box-shadow .3s; }
-.switch[aria-checked="true"] .dot { background: #6B0A1D;
-  box-shadow: 0 0 0 2px #410612, 0 0 10px 3px rgba(107, 10, 29, .9), 0 0 22px 6px rgba(107, 10, 29, .5);
+.switch[aria-checked="true"] .dot { background: var(--c3);
+  box-shadow: 0 0 0 2px var(--c2), 0 0 10px 3px color-mix(in srgb, var(--c3) 90%, transparent), 0 0 22px 6px color-mix(in srgb, var(--c3) 50%, transparent);
   animation: pulse 2.4s ease-in-out infinite; }
-@keyframes pulse { 50% { box-shadow: 0 0 0 2px #410612, 0 0 14px 5px rgba(107, 10, 29, 1), 0 0 30px 10px rgba(107, 10, 29, .55); } }
+@keyframes pulse { 50% { box-shadow: 0 0 0 2px var(--c2), 0 0 14px 5px var(--c3), 0 0 30px 10px color-mix(in srgb, var(--c3) 55%, transparent); } }
 @media (prefers-reduced-motion: reduce) { .switch .dot { animation: none !important; } }
 .brand { flex: 1; }
 .brand h1 { flex: 1; font-family: "Instrument Serif", Georgia, serif; font-weight: 400; font-size: 26px; letter-spacing: 0; }
@@ -310,18 +336,20 @@ button.danger { color: var(--text); background: #410612; border-color: #6B0A1D; 
 .switch[aria-checked="true"] .state { color: var(--text); }
 @media (max-width: 520px) { .brand h1 { font-size: 21px; } .switch { padding: 8px 14px 8px 12px; } .switch .state { display: none; } }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-body::after { opacity: .55; transform-origin: 50% 100%; animation: drift 40s ease-in-out infinite alternate; }
+body::after { opacity: var(--topo); transform-origin: 50% 100%; animation: drift 40s ease-in-out infinite alternate; }
 /* Slow drift of the contour lines. Grows from the bottom so the top stays black. */
 @keyframes drift {
   from { transform: scale(1.06) translate(0, 0) rotate(0deg); }
   to   { transform: scale(1.12) translate(-2%, 1%) rotate(1.5deg); }
 }
 @media (prefers-reduced-motion: reduce) { body::after { animation: none; } }
-.banner.halted, .banner { background: #410612; color: var(--text); border: 1px solid #6B0A1D; }
+.banner.halted, .banner { background: var(--c2); color: var(--text); border: 1px solid var(--c1); }
 .card h2 .ttl { color: var(--text); font-weight: 650; display: inline-flex; align-items: center; }
 .hi { width: 16px; height: 16px; vertical-align: -2px; margin-right: 8px; color: var(--text); }
 #settingsBtn { display: inline-flex; align-items: center; }
 #settingsBtn .hi { margin-right: 4px; }
+.card.glow::before { background: linear-gradient(120deg, var(--c3), var(--c1)); }
+#themePick { width: 100%; margin: 4px 0 8px; }
 </style>
 </head>
 <body>
@@ -337,7 +365,10 @@ body::after { opacity: .55; transform-origin: 50% 100%; animation: drift 40s eas
   </header>
 
   <section class="card setup hidden" id="setup">
-    <h2>Connect to GitHub</h2>
+    <h2>Theme</h2>
+    <label>Colors<select id="themePick"></select></label>
+    <p class="muted small" id="themeSchools"></p>
+    <h2 style="margin-top:24px">Connect to GitHub</h2>
     <ol>
       <li>Open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub → new fine-grained token</a>.</li>
       <li>Repository access: only <b>tradingfirm</b>.</li>
@@ -819,6 +850,11 @@ $("save").addEventListener("click", () => {
 });
 $("forget").addEventListener("click", () => { store.del("token"); setStatus("Token removed from this browser."); });
 $("repo").value = store.get("repo") || "adlin5324/tradingfirm";
+$("themePick").replaceChildren(...Object.entries(THEMES).map(([k, t]) => el("option", {value: k, text: t[0]})));
+$("themePick").value = THEMES[store.get("theme")] ? store.get("theme") : "burgundy";
+const showSchools = () => $("themeSchools").textContent = THEMES[$("themePick").value][1];
+showSchools();
+$("themePick").addEventListener("change", () => { store.set("theme", $("themePick").value); applyTheme($("themePick").value); showSchools(); });
 refresh();
 if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js");
 // The live job updates the data about every 10 minutes during market hours.
