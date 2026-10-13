@@ -120,6 +120,9 @@ input { font: inherit; width: 100%; padding: 10px 11px; border: 1px solid var(--
   background: var(--bg); color: var(--text); margin: 5px 0 14px; }
 .setup ol { padding-left: 20px; margin: 0 0 16px; font-size: 14px; }
 .row { display: flex; gap: 8px; flex-wrap: wrap; }
+select { font: inherit; font-size: 14px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--text); }
+#team summary { text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 14px; color: var(--text); }
+.report { white-space: pre-wrap; word-break: break-word; font-size: 13px; line-height: 1.5; margin: 8px 0 4px; max-height: 360px; overflow: auto; }
 
 dialog { border: 1px solid var(--line); border-radius: 14px; background: var(--card); color: var(--text);
   padding: 20px; width: min(440px, calc(100vw - 32px)); }
@@ -187,7 +190,7 @@ dialog h2 { margin-top: 0; }
     <h2>Positions <span class="small" id="posCount"></span></h2>
     <div class="table-wrap"><table>
       <thead><tr><th>Stock</th><th class="num">Shares</th><th class="num">Price</th><th class="num">Value</th>
-        <th class="num">Gain</th><th>Bought by</th><th>Sellable</th></tr></thead>
+        <th class="num">Gain</th><th>Bought by</th><th>AI grade</th><th>Sellable</th></tr></thead>
       <tbody id="positions"></tbody>
       <tfoot id="posTotal"></tfoot>
     </table></div>
@@ -230,6 +233,20 @@ dialog h2 { margin-top: 0; }
       <div class="list" id="orders"><div class="empty">No data yet</div></div>
     </section>
   </div>
+
+  <section class="card">
+    <h2>AI team <span class="small">reports, waiting pull requests and what it would have skipped</span></h2>
+    <div class="list" id="team"><div class="empty">No reports yet</div></div>
+    <div id="shadow"></div>
+    <div class="row" style="margin-top:14px">
+      <select id="agentPick" aria-label="Agent">
+        <option value="scout">News scout</option><option value="risk">Risk officer</option>
+        <option value="analyst">Equity analyst</option><option value="auditor">Auditor</option>
+        <option value="chief">Chief of staff</option>
+      </select>
+      <button id="agentRun">Run agent</button>
+    </div>
+  </section>
 
   <section class="card">
     <h2>Next run's picks <span class="small" id="picksWhen"></span></h2>
@@ -337,6 +354,7 @@ function show(d) {
   drawChart(d.history || []);
 
   const pos = positions = d.positions || [];
+  const grades = (d.team && d.team.grades) || {};
   $("posCount").textContent = pos.length ? pos.length + " held" : "";
   $("positions").replaceChildren(...(pos.length ? pos.map(p => {
     const cost = p.cost * p.shares, gp = cost ? p.gain / cost : 0;
@@ -345,11 +363,12 @@ function show(d) {
     who.title = names.join(", ");
     const gain = tone(td(signed(p.gain) + " (" + pct(gp) + ")", "num"), p.gain);
     return el("tr", {}, td(p.symbol, "sym"), td(String(p.shares), "num"), td(money(p.price), "num"),
-              td(money(p.value), "num"), gain, el("td", {}, who), td(shortDate(p.free_to_sell), "muted small"));
-  }) : [el("tr", {}, el("td", {colspan: "7", class: "empty", text: "No positions"}))]));
+              td(money(p.value), "num"), gain, el("td", {}, who), el("td", {}, gradeTag(grades[p.symbol])),
+              td(shortDate(p.free_to_sell), "muted small"));
+  }) : [el("tr", {}, el("td", {colspan: "8", class: "empty", text: "No positions"}))]));
   const value = pos.reduce((a, p) => a + p.value, 0), gain = pos.reduce((a, p) => a + p.gain, 0);
   $("posTotal").replaceChildren(...(pos.length ? [el("tr", {}, td("Total"), td(""), td(""), td(money(value), "num"),
-    tone(td(signed(gain), "num"), gain), td(""), td(""))] : []));
+    tone(td(signed(gain), "num"), gain), td(""), td(""), td(""))] : []));
 
   const orders = d.orders || [];
   $("orders").replaceChildren(...(orders.length ? orders.slice(0, 8).map(o => {
@@ -376,7 +395,45 @@ function show(d) {
     if (close.length) body.push(el("p", {class: "muted small", text: "One vote short: " + close.map(s => s.symbol).join(", ")}));
     $("picksBody").replaceChildren(...body);
   }
+  showTeam(d.team, d.shadow || []);
   if (d.report) { $("report").textContent = d.report; $("report").classList.remove("muted"); }
+}
+
+const AGENTS = {scout: "News scout", risk: "Risk officer", analyst: "Equity analyst", auditor: "Auditor",
+                chief: "Chief of staff", mechanic: "Mechanic", quant: "Quant researcher"};
+
+function gradeTag(g) {
+  if (!g) return el("span", {class: "muted small", text: "–"});
+  const t = tag(g.grade, /[AB]/.test(g.grade) ? "good" : /[DF]/.test(g.grade) ? "bad" : "");
+  t.title = g.why || "";
+  return t;
+}
+
+function showTeam(team, shadow) {
+  if (!team) return;
+  const items = team.reports.map(r => {
+    const head = el("summary", {}, el("b", {text: AGENTS[r.role] || r.role}), " · " + r.title + " ",
+      ...(r.urgent ? [tag("urgent", "bad")] : []));
+    return el("details", {class: "item", style: "display:block"}, head,
+      el("div", {class: "report", text: r.body}), el("a", {href: r.url, target: "_blank", rel: "noopener", text: "Open on GitHub"}));
+  });
+  const prs = team.prs.map(p => el("div", {class: "item"},
+    el("a", {href: p.url, target: "_blank", rel: "noopener", text: "#" + p.number + " " + p.title}), tag("needs you", "blue")));
+  $("team").replaceChildren(...(items.length || prs.length ? [...prs, ...items] : [empty("No reports yet")]));
+  $("shadow").replaceChildren(...(shadow.length ? [el("p", {class: "muted small", text:
+    "Would have skipped (shadow mode, bought anyway): " + shadow.slice(-8).reverse()
+      .map(s => s.symbol + " on " + shortDate(s.date) + " (" + s.why + ")").join("; ")})] : []));
+}
+
+async function runAgent() {
+  const role = $("agentPick").value;
+  try {
+    const res = await api("/actions/workflows/agents.yml/dispatches", {
+      method: "POST", body: JSON.stringify({ref: "main", inputs: {role}}), headers: {"Content-Type": "application/json"},
+    });
+    if (res.status !== 204) throw new Error("GitHub didn't start it (" + res.status + ").");
+    setStatus(AGENTS[role] + " started. Its report shows here in a few minutes, after the next data update.");
+  } catch (e) { setStatus(e.message); }
 }
 
 function drawChart(history) {
@@ -463,6 +520,7 @@ function openSell() {
 }
 
 $("sellBtn").addEventListener("click", openSell);
+$("agentRun").addEventListener("click", runAgent);
 $("sellCancel").addEventListener("click", () => $("sellBox").close());
 $("sellGo").addEventListener("click", () => {
   const picked = [...$("sellList").querySelectorAll("input:checked")].map(b => b.value);
