@@ -184,6 +184,7 @@ dialog h2 { margin-top: 0; }
     <h2>Bot vs market <span class="small" id="since"></span></h2>
     <div class="bars" id="bars"><div class="empty">Starts after the first live run.</div></div>
     <div class="chart hidden" id="chart"></div>
+    <p class="small" id="fillCost"></p>
   </section>
 
   <section class="card">
@@ -351,6 +352,8 @@ function show(d) {
     $("since").textContent = "since " + shortDate(s.start) + " · started at " + money(s.start_value) +
       (s.deposits ? " · deposits " + signed(s.deposits) : "");
   }
+  const fc = d.fill_cost;
+  $("fillCost").textContent = fc ? `Fill cost vs mid price: ${pct(fc.avg)} a trade, ${money(fc.dollars)} total over ${fc.fills} fill(s)` : "";
   drawChart(d.history || []);
 
   const pos = positions = d.positions || [];
