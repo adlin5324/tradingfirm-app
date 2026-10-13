@@ -30,7 +30,7 @@ function applyTheme(key) {
 function applyMode(mode) {
   const light = mode === "light";
   document.documentElement.dataset.mode = light ? "light" : "dark";
-  document.getElementById("barColor").content = light ? "#ffffff" : "#000000";
+  document.getElementById("barColor").content = light ? "#e9e6e2" : "#000000";
 }
 try { applyTheme(localStorage.getItem("theme")); applyMode(localStorage.getItem("mode")); } catch { applyTheme(); applyMode(); }
 </script>
@@ -355,16 +355,16 @@ body::after { opacity: var(--topo); transform-origin: 50% 100%; animation: drift
 /* Light mode (Settings → Appearance). */
 :root[data-mode="light"] {
   color-scheme: light;
-  --bg: #ffffff; --card: #ffffff; --text: #141012; --muted: #6b6468; --faint: #f4f2f3; --line: #e6e2e4;
-  --glass: rgba(255, 255, 255, .82); --glass-line: rgba(0, 0, 0, .08);
-  --accent: var(--c1); --accent-soft: color-mix(in srgb, var(--c1) 12%, white);
+  --bg: #e9e6e2; --card: #f3f1ee; --text: #1c1719; --muted: #655e61; --faint: #e4e0dc; --line: #d8d3ce;
+  --glass: rgba(243, 241, 238, .86); --glass-line: rgba(0, 0, 0, .07);
+  --accent: var(--c1); --accent-soft: color-mix(in srgb, var(--c1) 14%, #f3f1ee);
   --good: #138a52; --good-soft: #e3f6ec; --bad: #c8372d; --bad-soft: #fdecea; --warn: #8a4b00; --warn-soft: #fff4e2;
   --s1: var(--c1); --s2: #8d95a3; --dot: var(--c1);
   --glow1: color-mix(in srgb, var(--c1) 18%, transparent); --glow2: color-mix(in srgb, var(--c1) 14%, transparent);
   --shadow: 0 1px 2px rgba(0, 0, 0, .05), 0 8px 24px rgba(0, 0, 0, .05);
 }
 :root[data-mode="light"] button.danger { background: var(--c1); border-color: var(--c1); color: #fff; }
-:root[data-mode="light"] .banner, :root[data-mode="light"] .banner.halted { background: var(--accent-soft); color: var(--c1); border-color: color-mix(in srgb, var(--c1) 30%, white); }
+:root[data-mode="light"] .banner, :root[data-mode="light"] .banner.halted { background: var(--accent-soft); color: var(--c1); border-color: color-mix(in srgb, var(--c1) 30%, #f3f1ee); }
 :root[data-mode="light"] .switch .dot { background: #c4bec1; }
 /* Neon title: HowieLegacy glows in the main theme color, Investments in the second. Dim when halted. */
 .switch .hl, .switch em { transition: color .4s, text-shadow .4s; }
