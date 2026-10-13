@@ -329,14 +329,14 @@ button.danger { color: var(--text); background: var(--c2); border-color: var(--c
 @keyframes pulse { 50% { box-shadow: 0 0 0 2px var(--c2), 0 0 14px 5px var(--dot), 0 0 30px 10px color-mix(in srgb, var(--dot) 55%, transparent); } }
 @media (prefers-reduced-motion: reduce) { .switch .dot { animation: none !important; } }
 .brand { flex: 1; }
-.brand h1 { flex: 1; font-family: "Instrument Serif", Georgia, serif; font-weight: 400; font-size: 26px; letter-spacing: 0; }
+.topbar h1 { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; font-size: 26px; letter-spacing: 0; }
 .switch { width: 100%; justify-content: space-between; padding: 8px 20px 8px 16px; }
 .switch .name { display: inline-flex; align-items: baseline; gap: 8px; }
 .switch .dot { align-self: center; margin-right: 4px; }
 .switch em { font-size: 1em; }
 .switch .state { font-family: Inter, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .switch[aria-checked="true"] .state { color: var(--text); }
-@media (max-width: 520px) { .brand h1 { font-size: 21px; } .switch { padding: 8px 14px 8px 12px; } .switch .state { display: none; } }
+@media (max-width: 520px) { .topbar h1 { font-size: 21px; } .switch { padding: 8px 14px 8px 12px; } .switch .state { display: none; } }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 body::after { opacity: var(--topo); transform-origin: 50% 100%; animation: drift 40s ease-in-out infinite alternate; }
 /* Slow drift of the contour lines. Grows from the bottom so the top stays black. */
@@ -401,19 +401,53 @@ body::after { opacity: var(--topo); transform-origin: 50% 100%; animation: drift
   .stats { display: flex; width: 100%; }
   .stats .stat { flex: 1; flex-direction: row; align-items: center; padding: 0 12px; }
 }
+/* Top bar: title (tap to halt/resume), ask box, settings, all in one pill. */
+header { margin-bottom: 16px; }
+.topbar { display: flex; align-items: center; gap: 12px; width: 100%; padding: 6px 6px 6px 18px; border-radius: 99px;
+  background: var(--glass); border: 1px solid var(--glass-line); box-shadow: var(--shadow);
+  -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+.topbar h1 { flex: none; }
+.topbar .switch { width: auto; padding: 4px 0; background: none; border: 0; box-shadow: none; }
+.topbar .switch:hover { opacity: 1; }
+.askbar { flex: 1; display: flex; align-items: center; gap: 4px; min-width: 0; padding: 4px 4px 4px 16px;
+  border-radius: 99px; background: var(--faint); border: 1px solid var(--glass-line); }
+.askbar input { flex: 1; min-width: 0; margin: 0; padding: 6px 0; border: 0; background: none; font-size: 14px; outline: none; }
+.askbar button { width: 32px; height: 32px; padding: 0; border-radius: 50%; display: grid; place-items: center; flex: none;
+  background: var(--grad-fill); border: 0; color: #fff; }
+.askbar button svg, #chatClose svg { width: 16px; height: 16px; }
+.askbar:focus-within { border-color: var(--c3); }
+#settingsBtn { width: 40px; height: 40px; padding: 0; border-radius: 50%; justify-content: center; flex: none; }
+#settingsBtn .hi { margin: 0; width: 18px; height: 18px; }
+#chat .ttl svg { display: none; }
+#chatClose { padding: 4px; }
+.qa { display: block; }
+.qa .q { font-weight: 600; margin-bottom: 4px; }
+.qa .who { margin: 4px 0; }
+@media (max-width: 640px) {
+  .topbar { flex-wrap: wrap; border-radius: 22px; padding: 8px 8px 8px 16px; gap: 8px; }
+  .topbar h1 { flex: 1; }
+  .askbar { order: 3; flex-basis: 100%; }
+}
 </style>
 </head>
 <body>
 <main>
   <header>
-    <div class="brand">
+    <div class="topbar">
       <h1><button class="switch" id="tradeSwitch" role="switch" aria-checked="false" title="Trading on or off: click to change">
-        <span class="name"><span class="hl">HowieLegacy</span> <em>Investments</em></span><span class="state" id="chip">Loading</span></button></h1>
-    </div>
-    <div class="icons">
-      <button class="ghost" id="settingsBtn" title="Settings" aria-label="Settings"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg><span class="word"> Settings</span></button>
+        <span class="name"><span class="hl">HowieLegacy</span> <em>Investments</em></span><span class="sr" id="chip">Loading</span></button></h1>
+      <form class="askbar" id="askForm" autocomplete="off">
+        <input id="askQ" maxlength="1000" placeholder="Ask your AI team…" aria-label="Ask your AI team a question">
+        <button type="submit" id="askSend" aria-label="Send"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7" /><path d="M12 19V5" /></svg></button>
+      </form>
+      <button class="ghost" id="settingsBtn" title="Settings" aria-label="Settings"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg></button>
     </div>
   </header>
+
+  <section class="card hidden" id="chat">
+    <h2><span class="ttl">AI team answers</span><button class="ghost" id="chatClose" aria-label="Close"><svg class="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></h2>
+    <div class="list" id="chatList"></div>
+  </section>
 
   <section class="card setup hidden" id="setup">
     <h2>Theme</h2>
@@ -434,7 +468,7 @@ body::after { opacity: var(--topo); transform-origin: 50% 100%; animation: drift
   <section class="card glow">
     <div class="hero">
       <div class="acct">
-        <div class="acct-head"><span class="muted small">Account value</span>
+        <div class="acct-head"><span class="muted small">Account Value</span>
           <span class="badge" title="Connected to Webull"><span class="wb" aria-hidden="true"></span>Connected</span></div>
         <div class="acct-row"><div class="big num" id="total">–</div><div class="delta num" id="today">&nbsp;</div></div>
       </div>
@@ -775,6 +809,49 @@ async function loadRuns() {
 function setStatus(text, busy) {
   $("status").replaceChildren(...(busy ? [el("span", {class: "spin"})] : []), el("span", {text}));
 }
+
+// AI team chat: the question runs ask.yml on GitHub; the answer lands in answers.json on the `answers` branch.
+async function loadAnswers() {
+  const res = await api("/contents/answers.json?ref=answers", {headers: {Accept: "application/vnd.github.raw+json"}});
+  return res.ok ? await res.json() : [];
+}
+function showChat(list, pending) {
+  const items = list.slice(-5).reverse().map(a => el("div", {class: "item qa"},
+    el("div", {class: "q", text: a.question}),
+    el("div", {class: "who"}, tag(AGENTS[a.role] || a.role, "blue"), el("span", {class: "muted small", text: "  " + when(a.at)})),
+    md(a.answer)));
+  if (pending) items.unshift(el("div", {class: "item qa"}, el("div", {class: "q", text: pending}),
+    el("div", {class: "status"}, el("span", {class: "spin"}), el("span", {text: "The team is thinking. Usually 1 to 3 minutes."}))));
+  $("chatList").replaceChildren(...(items.length ? items : [empty("No questions yet.")]));
+  $("chat").classList.remove("hidden");
+}
+$("askForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const question = $("askQ").value.trim();
+  if (!question || $("askSend").disabled) return;
+  const id = "q-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  $("askSend").disabled = true;
+  try {
+    const res = await api("/actions/workflows/ask.yml/dispatches", {
+      method: "POST", body: JSON.stringify({ref: "main", inputs: {question, id}}), headers: {"Content-Type": "application/json"},
+    });
+    if (res.status !== 204) throw new Error("GitHub didn't start it (" + res.status + ").");
+    $("askQ").value = "";
+    showChat(await loadAnswers(), question);
+    for (let i = 0; i < 60; i++) {
+      await new Promise(r => setTimeout(r, 10000));
+      const list = await loadAnswers();
+      if (list.some(a => a.id === id)) { showChat(list); return; }
+    }
+    setStatus("The team is taking long. The answer will show here once it's ready.");
+  } catch (err) { setStatus(err.message); }
+  finally { $("askSend").disabled = false; }
+});
+$("askQ").addEventListener("focus", async () => {
+  if (!$("chat").classList.contains("hidden")) return;
+  try { const list = await loadAnswers(); if (list.length) showChat(list); } catch {}
+});
+$("chatClose").addEventListener("click", () => $("chat").classList.add("hidden"));
 
 async function refresh() {
   if (!store.get("token")) { $("setup").classList.remove("hidden"); $("chip").textContent = "Not connected"; return; }
