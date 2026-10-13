@@ -172,7 +172,6 @@ dialog h2 { margin-top: 0; font-size: 18px; }
 .pick.locked { opacity: .55; cursor: not-allowed; }
 @media (max-width: 520px) {
   .icons .word { display: none; }
-  .actions > [data-cmd="run"] { flex-basis: 100%; }
   .actions > button:not(.primary) svg, .more summary svg, .tabs svg { display: none; }
   .tabs button { padding: 8px 4px; }
 }
@@ -278,6 +277,33 @@ body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-event
   background: url("topo.svg") center / max(1600px, 100vw, 100vh) auto no-repeat;
   -webkit-mask-image: linear-gradient(transparent 0, transparent 90px, #000 320px);
   mask-image: linear-gradient(transparent 0, transparent 90px, #000 320px); }
+
+/* ---- Reds limited to #6B0A1D..#410612: used for fills, borders and lines; text on them is white ---- */
+:root {
+  --accent: #f3eef0; --accent-soft: #410612;
+  --s1: #f3eef0;
+  --grad: linear-gradient(120deg, #6B0A1D 0%, #410612 100%);
+  --grad-fill: linear-gradient(120deg, #6B0A1D 0%, #410612 100%);
+  --glow1: rgba(107, 10, 29, .45); --glow2: rgba(65, 6, 18, .55); --beam: rgba(107, 10, 29, .22);
+}
+.big, h1 em { background: none; color: var(--text); }
+a { text-decoration: underline; text-decoration-color: #6B0A1D; text-underline-offset: 3px; }
+button:hover, .more[open] summary { border-color: #6B0A1D; }
+button.danger { color: var(--text); background: #410612; border-color: #6B0A1D; }
+.menu button.danger { background: transparent; color: var(--bad); }
+.card.glow::before { padding: 1.5px; }
+.ctl { display: flex; align-items: center; gap: 8px; }
+.switch { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; border-radius: 99px;
+  background: var(--faint); font-size: 13px; font-weight: 600; }
+.switch .track { width: 36px; height: 20px; border-radius: 99px; background: #2a2124; position: relative; transition: background .2s; }
+.switch .knob { position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #8a8286;
+  transition: transform .2s, background .2s; }
+.switch[aria-checked="true"] .track { background: var(--grad-fill); box-shadow: 0 0 0 1px #6B0A1D; }
+.switch[aria-checked="true"] .knob { transform: translateX(16px); background: #fff; }
+.switch[aria-checked="false"] #chip { color: var(--muted); }
+button.run { padding: 4px 12px; border-radius: 99px; font-size: 13px; display: inline-flex; align-items: center; gap: 4px; }
+body::after { opacity: .55; }
+.banner.halted, .banner { background: #410612; color: var(--text); border: 1px solid #6B0A1D; }
 </style>
 </head>
 <body>
@@ -285,7 +311,11 @@ body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-event
   <header>
     <div class="brand">
       <h1>HowieLegacy <em>Investments</em></h1>
-      <span class="chip idle" id="chip">Loading</span>
+      <div class="ctl">
+        <button class="switch" id="tradeSwitch" role="switch" aria-checked="false" aria-label="Trading on or off"
+          title="Turn trading on or off"><span class="track"><span class="knob"></span></span><span id="chip">Loading</span></button>
+        <button data-cmd="run" class="primary run" id="runBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3" /></svg>Run now</button>
+      </div>
       <div class="tagline">Autonomous capital, quietly compounding.</div>
     </div>
     <div class="icons">
@@ -336,10 +366,7 @@ body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-event
 
   <section class="card bar">
     <div class="actions">
-      <button data-cmd="run" class="primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3" /></svg>Run now</button>
       <button class="danger" id="sellBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" /><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" /><path d="m2 16 6 6" /><circle cx="16" cy="9" r="2.9" /><circle cx="6" cy="5" r="3" /></svg>Sell stocks…</button>
-      <button data-cmd="halt" class="danger" id="haltBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 15V9" /><path d="M14 15V9" /><path d="M2.586 16.726A2 2 0 0 1 2 15.312V8.688a2 2 0 0 1 .586-1.414l4.688-4.688A2 2 0 0 1 8.688 2h6.624a2 2 0 0 1 1.414.586l4.688 4.688A2 2 0 0 1 22 8.688v6.624a2 2 0 0 1-.586 1.414l-4.688 4.688a2 2 0 0 1-1.414.586H8.688a2 2 0 0 1-1.414-.586z" /></svg>Halt trading</button>
-      <button data-cmd="resume" class="hidden" id="resumeBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>Resume trading</button>
       <details class="more" id="more">
         <summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /><circle cx="5" cy="12" r="1" /></svg>More</summary>
         <div class="menu">
@@ -474,10 +501,10 @@ async function loadDashboard() {
 function show(d) {
   $("updated").textContent = "Data from " + when(d.updated) + (d.last_run ? " · last bot run " + when(d.last_run) : "");
   const halted = !!d.halt;
-  $("chip").className = "chip" + (halted ? " halted" : "");
+  $("tradeSwitch").setAttribute("aria-checked", String(!halted));
+  $("tradeSwitch").dataset.ready = "1";
   $("chip").textContent = halted ? "Halted" : "Active";
-  $("haltBtn").classList.toggle("hidden", halted);
-  $("resumeBtn").classList.toggle("hidden", !halted);
+  $("runBtn").classList.toggle("hidden", halted);
   const banner = $("banner");
   banner.className = "banner" + (halted ? " halted" : "") + (halted || d.buy_block ? "" : " hidden");
   banner.textContent = halted ? "Trading is halted: " + d.halt.reason : d.buy_block ? "No buys today: " + d.buy_block.reason : "";
@@ -695,6 +722,10 @@ function openSell() {
 }
 
 $("sellBtn").addEventListener("click", openSell);
+$("tradeSwitch").addEventListener("click", () => {
+  if (!$("tradeSwitch").dataset.ready) return;  // state unknown until the dashboard loads
+  dispatch($("tradeSwitch").getAttribute("aria-checked") === "true" ? "halt" : "resume");
+});
 $("agentRun").addEventListener("click", runAgent);
 $("sellCancel").addEventListener("click", () => $("sellBox").close());
 $("sellGo").addEventListener("click", () => {
@@ -713,7 +744,7 @@ async function dispatch(cmd, preset = "") {
     if (cmd === "deposit" && !/^-?\$?[\d,]+(\.\d+)?$/.test(reason)) { alert("Enter a number, like 100 or -50."); return; }
   }
   if (CONFIRM[cmd] && !confirm(CONFIRM[cmd])) return;
-  const buttons = document.querySelectorAll("[data-cmd], #sellBtn");
+  const buttons = document.querySelectorAll("[data-cmd], #sellBtn, #tradeSwitch");
   buttons.forEach(b => b.disabled = true);
   const started = Date.now() - 5000;
   try {
