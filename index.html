@@ -9,7 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@1&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<meta name="theme-color" content="#7c3aed">
+<meta name="theme-color" content="#f5f3ff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#09090f" media="(prefers-color-scheme: dark)">
 <!-- Icons: Lucide (lucide.dev), ISC license -->
 <style>
 :root {
@@ -241,6 +242,12 @@ button svg, .more summary svg, .tabs svg { width: 16px; height: 16px; vertical-a
 .tabs button[aria-selected="true"] { background: var(--grad-fill); color: #fff; box-shadow: 0 4px 14px var(--glow1); }
 .menu { background: var(--card); }
 .card.bar { z-index: 10; }
+/* Installed app with the title bar hidden: keep the header clear of the window buttons, and let it drag the window. */
+@media (display-mode: window-controls-overlay) {
+  header { -webkit-app-region: drag; app-region: drag; min-height: env(titlebar-area-height, 32px);
+    padding-right: calc(100vw - env(titlebar-area-x, 0px) - env(titlebar-area-width, 100vw)); }
+  header button, header a { -webkit-app-region: no-drag; app-region: no-drag; }
+}
 .js-anim .card { opacity: 0; transform: translateY(12px); transition: opacity .6s ease, transform .6s ease; }
 .js-anim .card.in { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) {
