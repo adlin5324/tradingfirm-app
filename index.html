@@ -301,7 +301,6 @@ button.danger { color: var(--text); background: #410612; border-color: #6B0A1D; 
 .switch[aria-checked="true"] .track { background: var(--grad-fill); box-shadow: 0 0 0 1px #6B0A1D; }
 .switch[aria-checked="true"] .knob { transform: translateX(16px); background: #fff; }
 .switch[aria-checked="false"] #chip { color: var(--muted); }
-button.run { padding: 4px 12px; border-radius: 99px; font-size: 13px; display: inline-flex; align-items: center; gap: 4px; }
 body::after { opacity: .55; }
 .banner.halted, .banner { background: #410612; color: var(--text); border: 1px solid #6B0A1D; }
 </style>
@@ -314,7 +313,6 @@ body::after { opacity: .55; }
       <div class="ctl">
         <button class="switch" id="tradeSwitch" role="switch" aria-checked="false" aria-label="Trading on or off"
           title="Turn trading on or off"><span class="track"><span class="knob"></span></span><span id="chip">Loading</span></button>
-        <button data-cmd="run" class="primary run" id="runBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3" /></svg>Run now</button>
       </div>
       <div class="tagline">Autonomous capital, quietly compounding.</div>
     </div>
@@ -504,7 +502,6 @@ function show(d) {
   $("tradeSwitch").setAttribute("aria-checked", String(!halted));
   $("tradeSwitch").dataset.ready = "1";
   $("chip").textContent = halted ? "Halted" : "Active";
-  $("runBtn").classList.toggle("hidden", halted);
   const banner = $("banner");
   banner.className = "banner" + (halted ? " halted" : "") + (halted || d.buy_block ? "" : " hidden");
   banner.textContent = halted ? "Trading is halted: " + d.halt.reason : d.buy_block ? "No buys today: " + d.buy_block.reason : "";
@@ -691,7 +688,6 @@ const ASK = {
   deposit: "Amount you added (use a minus sign for a withdrawal, like -50):",
 };
 const CONFIRM = {
-  run: "Run the bot now with REAL money? It trades at most once a day, so this does nothing if it already traded today.",
   cancel: "Cancel all of the bot's open orders?",
 };
 
