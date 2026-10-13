@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@1&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <meta name="theme-color" content="#f5f3ff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#09090f" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#0a0a10" media="(prefers-color-scheme: dark)">
 <!-- Icons: Lucide (lucide.dev), ISC license -->
 <style>
 :root {
@@ -196,7 +196,8 @@ dialog h2 { margin-top: 0; font-size: 18px; }
   }
 }
 body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  background: radial-gradient(900px 600px at 10% -10%, var(--glow1), transparent 60%),
+  background: linear-gradient(var(--bg) 0, transparent 180px),
+              radial-gradient(900px 600px at 10% -10%, var(--glow1), transparent 60%),
               radial-gradient(800px 600px at 100% 0%, var(--glow2), transparent 55%), var(--bg);
   background-attachment: fixed; min-height: 100vh; }
 body::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 100; opacity: .07; mix-blend-mode: overlay;
@@ -242,6 +243,8 @@ button svg, .more summary svg, .tabs svg { width: 16px; height: 16px; vertical-a
 .tabs button[aria-selected="true"] { background: var(--grad-fill); color: #fff; box-shadow: 0 4px 14px var(--glow1); }
 .menu { background: var(--card); }
 .card.bar { z-index: 10; }
+/* Installed app: the page's top edge is the same color as the window's title bar, so they read as one. */
+@media (display-mode: standalone) { main { padding-top: 8px; } }
 /* Installed app with the title bar hidden: keep the header clear of the window buttons, and let it drag the window. */
 @media (display-mode: window-controls-overlay) {
   header { -webkit-app-region: drag; app-region: drag; min-height: env(titlebar-area-height, 32px);
