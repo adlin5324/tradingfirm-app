@@ -120,6 +120,15 @@ input { font: inherit; width: 100%; padding: 10px 11px; border: 1px solid var(--
   background: var(--bg); color: var(--text); margin: 5px 0 14px; }
 .setup ol { padding-left: 20px; margin: 0 0 16px; font-size: 14px; }
 .row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+dialog { border: 1px solid var(--line); border-radius: 14px; background: var(--card); color: var(--text);
+  padding: 20px; width: min(440px, calc(100vw - 32px)); }
+dialog::backdrop { background: rgba(0, 0, 0, .45); }
+dialog h2 { margin-top: 0; }
+.pick { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; cursor: pointer; }
+.pick input { width: 18px; height: 18px; margin: 0; flex: none; }
+.pick .grow { flex: 1; }
+.pick.locked { opacity: .55; cursor: not-allowed; }
 </style>
 </head>
 <body>
@@ -203,6 +212,7 @@ input { font: inherit; width: 100%; padding: 10px 11px; border: 1px solid var(--
           <button data-cmd="halt" class="danger" id="haltBtn">Halt trading</button>
           <button data-cmd="resume" class="hidden" id="resumeBtn">Resume trading</button>
           <button data-cmd="cancel" class="danger">Cancel orders</button>
+          <button class="danger" id="sellBtn">Sell stocks…</button>
           <button data-cmd="run" class="primary">Run now</button>
         </div>
       </div>
@@ -235,6 +245,18 @@ input { font: inherit; width: 100%; padding: 10px 11px; border: 1px solid var(--
 
   <p class="muted small" id="updated"></p>
 </main>
+
+<dialog id="sellBox">
+  <h2>Emergency sell</h2>
+  <p class="muted small">Sells all sellable shares of the stocks you tick, with a limit order just under the current price.
+    Stocks bought too recently are locked (good-faith rule). Takes about a minute.</p>
+  <label class="pick"><input type="checkbox" id="sellAll"><span class="grow"><b>Select all</b></span></label>
+  <div id="sellList"></div>
+  <div class="row" style="margin-top:16px;justify-content:flex-end">
+    <button id="sellCancel">Cancel</button>
+    <button class="primary" id="sellGo" disabled>Sell selected</button>
+  </div>
+</dialog>
 
 <script>
 const $ = id => document.getElementById(id);
@@ -314,7 +336,7 @@ function show(d) {
   }
   drawChart(d.history || []);
 
-  const pos = d.positions || [];
+  const pos = positions = d.positions || [];
   $("posCount").textContent = pos.length ? pos.length + " held" : "";
   $("positions").replaceChildren(...(pos.length ? pos.map(p => {
     const cost = p.cost * p.shares, gp = cost ? p.gain / cost : 0;
@@ -414,15 +436,51 @@ const CONFIRM = {
   cancel: "Cancel all of the bot's open orders?",
 };
 
-async function dispatch(cmd) {
-  let reason = "";
+let positions = [];
+const nyToday = () => new Date().toLocaleDateString("en-CA", {timeZone: "America/New_York"});
+
+function openSell() {
+  const today = nyToday(), boxes = () => [...$("sellList").querySelectorAll("input:not(:disabled)")];
+  $("sellList").replaceChildren(...(positions.length ? positions.map(p => {
+    const locked = p.free_to_sell && p.free_to_sell > today;
+    const box = el("input", {type: "checkbox", value: p.symbol});
+    box.disabled = locked;
+    return el("label", {class: "pick" + (locked ? " locked" : "")}, box,
+      el("span", {class: "grow"}, el("b", {text: p.symbol}), " · " + p.shares + (p.shares == 1 ? " share · " : " shares · ") + money(p.value)),
+      locked ? tag("locked until " + shortDate(p.free_to_sell)) : tone(el("span", {class: "num small", text: signed(p.gain)}), p.gain));
+  }) : [empty("No positions to sell")]));
+  const sync = () => {
+    const on = boxes().filter(b => b.checked).length;
+    $("sellGo").disabled = !on;
+    $("sellGo").textContent = on ? "Sell " + on + " selected" : "Sell selected";
+    $("sellAll").checked = on > 0 && on === boxes().length;
+  };
+  $("sellList").onchange = sync;
+  $("sellAll").onchange = () => { boxes().forEach(b => b.checked = $("sellAll").checked); sync(); };
+  $("sellAll").disabled = !boxes().length;
+  sync();
+  $("sellBox").showModal();
+}
+
+$("sellBtn").addEventListener("click", openSell);
+$("sellCancel").addEventListener("click", () => $("sellBox").close());
+$("sellGo").addEventListener("click", () => {
+  const picked = [...$("sellList").querySelectorAll("input:checked")].map(b => b.value);
+  if (!picked.length) return;
+  if (!confirm("SELL with REAL money: " + picked.join(", ") + "?\n\nThis can't be undone once Webull fills it.")) return;
+  $("sellBox").close();
+  dispatch("sell", picked.join(" "));
+});
+
+async function dispatch(cmd, preset = "") {
+  let reason = preset;
   if (ASK[cmd]) {
     reason = (prompt(ASK[cmd]) || "").trim();
     if (!reason) return;
     if (cmd === "deposit" && !/^-?\$?[\d,]+(\.\d+)?$/.test(reason)) { alert("Enter a number, like 100 or -50."); return; }
   }
   if (CONFIRM[cmd] && !confirm(CONFIRM[cmd])) return;
-  const buttons = document.querySelectorAll("[data-cmd]");
+  const buttons = document.querySelectorAll("[data-cmd], #sellBtn");
   buttons.forEach(b => b.disabled = true);
   const started = Date.now() - 5000;
   try {
