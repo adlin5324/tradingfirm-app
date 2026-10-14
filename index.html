@@ -477,12 +477,13 @@ header { margin-bottom: 16px; }
 .rt-table { position: absolute; border-radius: 50%;
   background: radial-gradient(ellipse at 45% 30%, rgba(255, 255, 255, .22), transparent 45%),
     repeating-linear-gradient(100deg, rgba(0, 0, 0, 0) 0 9px, rgba(0, 0, 0, .06) 9px 11px, rgba(0, 0, 0, 0) 11px 23px, rgba(255, 255, 255, .04) 23px 24px),
-    linear-gradient(170deg, #8a5a36, #6b4226 55%, #5a361e);
-  border: 1px solid #3f2614; box-shadow: 0 9px 0 #3f2614, 0 16px 24px rgba(0, 0, 0, .35), inset 0 0 30px rgba(0, 0, 0, .25); }
-.rt-paper { position: absolute; left: 0; top: 0; width: 22px; height: 28px; border-radius: 2px; background: #f7f4ec;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, .35); background-image: repeating-linear-gradient(#f7f4ec 0 6px, #c9c3b4 6px 7px); background-size: 14px 100%;
+    linear-gradient(170deg, color-mix(in srgb, var(--c1) 45%, var(--card)), color-mix(in srgb, var(--c2) 60%, var(--card)) 60%);
+  border: 1px solid color-mix(in srgb, var(--c2) 70%, black); z-index: 1;
+  box-shadow: 0 7px 0 color-mix(in srgb, var(--c2) 70%, black), 0 14px 22px rgba(0, 0, 0, .3), inset 0 0 30px rgba(0, 0, 0, .2); }
+.rt-paper { position: absolute; left: 0; top: 0; z-index: 2; width: 22px; height: 28px; border-radius: 2px; background: color-mix(in srgb, white 88%, var(--c3));
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .35); background-image: repeating-linear-gradient(transparent 0 6px, rgba(0, 0, 0, .18) 6px 7px); background-size: 14px 100%;
   background-position: 4px 5px; background-repeat: no-repeat; }
-.rt-paper.pen::after { content: ""; position: absolute; right: -9px; top: 4px; width: 3px; height: 22px; border-radius: 2px; background: #1f2937;
+.rt-paper.pen::after { content: ""; position: absolute; right: -9px; top: 4px; width: 3px; height: 22px; border-radius: 2px; background: var(--c3);
   transform: rotate(18deg); }
 .rt-chat { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
 .rt-log { max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 4px; font-size: 14px; scrollbar-width: thin; }
@@ -502,10 +503,13 @@ header { margin-bottom: 16px; }
 #archStage .job-quant .icon svg { transform-origin: 50% 90%; }
 #archStage .job-quant.flip-ok .icon svg { animation: flip-ok 1.3s ease-in-out forwards; }
 #archStage .job-quant.flip-fail .icon svg { animation: flip-fail 1.5s ease-in-out forwards; }
-@keyframes flip-ok { 0% { transform: none; } 15% { transform: translateY(4px) scaleY(.9); } 50% { transform: translateY(-46px) rotate(200deg); }
-  85% { transform: translateY(0) rotate(360deg); } 92% { transform: translateY(0) rotate(360deg) scaleY(.92); } 100% { transform: rotate(360deg); } }
-@keyframes flip-fail { 0% { transform: none; } 15% { transform: translateY(4px) scaleY(.9); } 50% { transform: translateY(-46px) rotate(210deg); }
-  78% { transform: translateY(0) rotate(340deg); } 88% { transform: translateY(0) rotate(395deg); } 100% { transform: translate(6px, 2px) rotate(450deg); } }
+/* Every step lists the same functions, so the browser really turns through 360 degrees instead of taking a shortcut. */
+@keyframes flip-ok { 0% { transform: translate(0, 0) rotate(0deg) scaleY(1); } 15% { transform: translate(0, 4px) rotate(0deg) scaleY(.9); }
+  50% { transform: translate(0, -46px) rotate(200deg) scaleY(1); } 85% { transform: translate(0, 0) rotate(360deg) scaleY(1); }
+  92% { transform: translate(0, 0) rotate(360deg) scaleY(.92); } 100% { transform: translate(0, 0) rotate(360deg) scaleY(1); } }
+@keyframes flip-fail { 0% { transform: translate(0, 0) rotate(0deg) scaleY(1); } 15% { transform: translate(0, 4px) rotate(0deg) scaleY(.9); }
+  50% { transform: translate(0, -46px) rotate(210deg) scaleY(1); } 78% { transform: translate(0, 0) rotate(340deg) scaleY(1); }
+  88% { transform: translate(0, 0) rotate(395deg) scaleY(1); } 100% { transform: translate(6px, 2px) rotate(450deg) scaleY(1); } }
 @keyframes job-crank { 0%, 100% { transform: rotate(0); } 40% { transform: rotate(-38deg); } 55% { transform: rotate(-38deg); } }
 
 @media (max-width: 640px) { #archStage { height: 280px; } #archStage .site { inset: 34px 54px 54px; } #archStage .seat .icon svg { width: 36px; height: 36px; } }
@@ -536,11 +540,14 @@ header { margin-bottom: 16px; }
 @keyframes mc-lift { 0% { transform: translateY(0); } 15% { transform: translate(.6px, 0); } 25% { transform: translate(-.6px, -1px); } 75% { opacity: 1; } 100% { transform: translateY(-24px); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .site *, #archStage .icon svg, #stage .icon { animation: none !important; } }
 /* Each counselor sits in a chair turned toward the table: seat cushion, arms, and the backrest on the far side. */
-.seat .chair { position: absolute; left: -4px; top: -4px; width: 48px; height: 48px; z-index: -1; transform: rotate(var(--rot, 0deg)); }
-.seat .chair::before { content: ""; position: absolute; inset: 8px 6px 4px; border-radius: 9px; background: #2b2b33;
-  box-shadow: inset 0 0 0 2px #3a3a45, 0 3px 6px rgba(0, 0, 0, .35); }
-.seat .chair::after { content: ""; position: absolute; left: 2px; right: 2px; top: -2px; height: 11px; border-radius: 8px 8px 4px 4px; background: #1f1f26;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, .4), -1px 18px 0 -3px #1f1f26, 1px 18px 0 -3px #1f1f26; }
+.rt-chair { position: absolute; left: 0; top: 0; width: 48px; height: 48px; }
+.rt-chair > i { position: absolute; inset: 0; transform: rotate(var(--rot, 0deg)); }
+:root[data-mode="light"] .rt-chair { filter: saturate(.35) brightness(1.35); }
+.rt-chair > i::before { content: ""; position: absolute; inset: 8px 6px 4px; border-radius: 9px; background: color-mix(in srgb, var(--c2) 55%, var(--card));
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--c3) 25%, transparent), 0 3px 6px rgba(0, 0, 0, .3); }
+.rt-chair > i::after { content: ""; position: absolute; left: 2px; right: 2px; top: -2px; height: 11px; border-radius: 8px 8px 4px 4px;
+  background: color-mix(in srgb, var(--c2) 80%, var(--card)); --arm: color-mix(in srgb, var(--c2) 80%, var(--card));
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .35), -1px 18px 0 -3px var(--arm), 1px 18px 0 -3px var(--arm); }
 .seat { position: absolute; left: 0; top: 0; width: 40px; height: 40px; will-change: transform, opacity; }
 .seat .icon { display: grid; place-items: center; width: 40px; height: 40px; color: color-mix(in srgb, var(--c1) 55%, white);
   filter: drop-shadow(0 0 3px var(--c1)) drop-shadow(0 0 10px var(--c1)); }
@@ -1226,7 +1233,7 @@ const ASSOC = ["scout", "analyst"];
 new ResizeObserver(([e]) => { const w = Math.min(800, 220 * e.contentRect.width / (e.contentRect.height || 1));
   $("crowdSvg").setAttribute("viewBox", `${400 - w / 2} 0 ${w} 220`); }).observe($("assocStage"));
 const seats = Array.from({length: 9}, (_, i) => ["risk", "auditor", "chief"][i % 3]).map((role, i) => {
-  const seat = el("div", {class: "seat still", title: AGENTS[role]}, el("div", {class: "chair"}), el("div", {class: "icon"}, seatIcon(role)));
+  const seat = el("div", {class: "seat still", title: AGENTS[role]}, el("div", {class: "icon"}, seatIcon(role)));
   seat.querySelector(".icon").style.animationDelay = (i * .25) + "s";
   $("stage").append(seat);
   return {role, seat};
@@ -1236,17 +1243,24 @@ const seats = Array.from({length: 9}, (_, i) => ["risk", "auditor", "chief"][i %
 // Seen from a little behind and above your empty seat at the bottom: the table is a flat oval centered in the
 // card, seats sit on its rim, and the near ones (lower) are drawn bigger than the far ones (higher).
 const GAP = 34;
+const chairs = seats.map(() => $("stage").appendChild(el("div", {class: "rt-chair"}, el("i"))));
 const papers = seats.map((_, i) => $("stage").appendChild(el("div", {class: "rt-paper" + (i % 3 === 1 ? " pen" : "")})));
 function placeSeats() {
   const stage = $("stage"), table = stage.querySelector(".rt-table"), W = stage.clientWidth, H = stage.clientHeight;
-  const small = W < 500 ? .8 : 1, rx = Math.min(W / 2 - 46 * small, 420), ry = Math.min(rx * .36, H / 2 - 44 * small);
-  const cx = W / 2, cy = H / 2 + 6;
+  // Seen from further back and lower down: a smaller, flatter table.
+  const small = W < 500 ? .72 : .85, rx = Math.min(W / 2 - 60 * small, 340), ry = Math.min(rx * .24, H / 2 - 50 * small);
+  const cx = W / 2, cy = H / 2 + 10;
   Object.assign(table.style, {left: cx - rx + "px", top: cy - ry + "px", width: 2 * rx + "px", height: 2 * ry + "px"});
   seats.forEach(({seat}, i) => {
     const deg = 90 + GAP + (i + .5) * (360 - 2 * GAP) / seats.length, a = deg * Math.PI / 180;
-    const near = (.82 + .22 * (Math.sin(a) + 1) / 2) * small, x = cx + (rx + 6) * Math.cos(a), y = cy + (ry + 6) * Math.sin(a);
+    // Far seats sit behind the table (it hides their chairs' fronts); near seats sit in front of it.
+    const far = Math.sin(a) < -.15, near = (.86 + .16 * (Math.sin(a) + 1) / 2) * small;
+    const x = cx + (rx + 4) * Math.cos(a), y = cy + (ry + 4) * Math.sin(a) - (far ? 10 : 0);
+    seat.style.zIndex = 3;
+    chairs[i].style.zIndex = far ? 0 : 2;
+    chairs[i].style.transform = `translate(${x - 24}px, ${y + (far ? 6 : 0) - 24}px) scale(${near.toFixed(3)})`;
+    chairs[i].style.setProperty("--rot", deg + 90 + "deg");
     seat.style.transform = `translate(${x - 20}px, ${y - 20}px) scale(${near.toFixed(3)})`;
-    seat.style.setProperty("--rot", deg + 90 + "deg");
     const px = cx + rx * .62 * Math.cos(a), py = cy + ry * .55 * Math.sin(a);
     papers[i].style.transform = `translate(${px - 11}px, ${py - 14}px) rotate(${deg + 90 + (i % 3 - 1) * 12}deg) scale(${(near * .9).toFixed(3)})`;
   });
