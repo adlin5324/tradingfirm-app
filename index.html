@@ -118,6 +118,7 @@ h1 { font-size: 18px; margin: 0; letter-spacing: -.01em; }
 .plot { position: relative; padding-right: 56px; }
 .axis span { position: absolute; right: 0; transform: translateY(-50%); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .axis span.bad { color: var(--bad); }
+.xaxis { display: flex; justify-content: space-between; margin: 4px 56px 0 0; font-size: 12px; color: var(--muted); }
 .legend { display: flex; gap: 16px; font-size: 12px; color: var(--muted); margin-top: 8px; flex-wrap: wrap; }
 .legend i { display: inline-block; width: 10px; height: 3px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
 #fillCost { margin: 12px 0 0; color: var(--muted); }
@@ -995,22 +996,27 @@ function drawChart(history, base) {
   const step = [0.5, 1, 2, 2.5, 5, 10, 20, 25, 50, 100, 250, 500, 1000].find(t => (max - min) / t <= 4) || 1000;
   const lo = Math.floor(min / step + 1e-9) * step, hi = Math.max(Math.ceil(max / step - 1e-9) * step, lo + step), span = hi - lo;
   const ticks = Array.from({length: Math.round(span / step) + 1}, (_, i) => lo + i * step);
-  const W = 600, H = 150, pad = 6;
-  const x = i => pad + i * (W - 2 * pad) / (history.length - 1);
+  // Time runs left to right from the start (the origin) to today, so the middle of the chart is the middle day.
+  const W = 600, H = 150, pad = 6, day = t => Date.parse(String(t).slice(0, 10) + "T12:00:00");
+  const t0 = day(history[0].date), t1 = Math.max(day(new Date().toLocaleDateString("en-CA")), day(history[history.length - 1].date), t0 + 864e5);
+  const x = i => (day(history[i].date) - t0) * W / (t1 - t0);
   const y = v => pad + (hi - v) * (H - 2 * pad) / span;
   const svg = svgEl("svg", {viewBox: `0 0 ${W} ${H}`, preserveAspectRatio: "none", role: "img", "aria-label": "Account value since start versus the markets"});
   if (min < base - 1e-9) svg.append(svgEl("rect", {x: 0, width: W, y: y(base), height: H - y(base), fill: "var(--bad)", opacity: 0.07}));
   ticks.forEach(t => svg.append(svgEl("line", {x1: 0, x2: W, y1: y(t), y2: y(t), stroke: "var(--line)", opacity: 0.5, "vector-effect": "non-scaling-stroke"})));
   svg.append(svgEl("line", {x1: 0, x2: W, y1: y(base), y2: y(base), stroke: "var(--line)", "stroke-dasharray": "4 4", "vector-effect": "non-scaling-stroke"}));
   const axis = el("div", {class: "axis"}, ticks.map(t => el("span", {class: t < base - 1e-9 && min < base - 1e-9 ? "bad" : "",
-    style: "top:" + (y(t) / H * 100).toFixed(2) + "%", text: "$" + t.toFixed(step < 1 ? 2 : 0)})));
+    style: "top:" + (y(t) / H * 100).toFixed(2) + "%", text: "$" + t.toFixed(step % 1 ? 2 : 0)})));
   // Ticks below the start are only red when some line actually dips below it.
   names.slice().reverse().forEach(n => {
     const pts = history.map((h, i) => val(h, n) == null ? null : x(i).toFixed(1) + "," + y(val(h, n)).toFixed(1)).filter(Boolean);
     svg.append(svgEl("polyline", {points: pts.join(" "), fill: "none", stroke: COLORS[n], "stroke-width": n === "HowieLegacy" ? 2.5 : 1.5,
       "vector-effect": "non-scaling-stroke", "stroke-linejoin": "round"}));
   });
-  box.replaceChildren(el("div", {class: "plot"}, svg, axis));
+  const date = t => new Date(t).toLocaleDateString(undefined, {month: "short", day: "numeric"});
+  box.replaceChildren(el("div", {class: "plot"}, svg, axis),
+    // The middle label is the median day; with under two days of history there isn't one yet.
+    el("div", {class: "xaxis"}, ...[t0, ...(t1 - t0 >= 2 * 864e5 ? [t0 + Math.round((t1 - t0) / 2 / 864e5) * 864e5] : []), t1].map(t => el("span", {text: date(t)}))));
 }
 
 async function loadRuns() {
