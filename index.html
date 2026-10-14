@@ -473,10 +473,17 @@ header { margin-bottom: 16px; }
 .topnav button.on { color: var(--text); background: var(--faint); }
 /* Round table: the AI team circles the table; your seat is the gap at the bottom. */
 .stage { position: relative; height: 260px; margin-top: 8px; overflow: hidden; }
+/* A polished wood table: grain, a soft highlight, and a darker edge showing its thickness. */
 .rt-table { position: absolute; border-radius: 50%;
-  background: radial-gradient(ellipse at 50% 35%, color-mix(in srgb, var(--c1) 30%, var(--card)), color-mix(in srgb, var(--c2) 45%, var(--card)) 75%);
-  border: 1px solid color-mix(in srgb, var(--c3) 45%, transparent);
-  box-shadow: inset 0 0 48px rgba(0, 0, 0, .35), 0 0 32px color-mix(in srgb, var(--c1) 25%, transparent); }
+  background: radial-gradient(ellipse at 45% 30%, rgba(255, 255, 255, .22), transparent 45%),
+    repeating-linear-gradient(100deg, rgba(0, 0, 0, 0) 0 9px, rgba(0, 0, 0, .06) 9px 11px, rgba(0, 0, 0, 0) 11px 23px, rgba(255, 255, 255, .04) 23px 24px),
+    linear-gradient(170deg, #8a5a36, #6b4226 55%, #5a361e);
+  border: 1px solid #3f2614; box-shadow: 0 9px 0 #3f2614, 0 16px 24px rgba(0, 0, 0, .35), inset 0 0 30px rgba(0, 0, 0, .25); }
+.rt-paper { position: absolute; left: 0; top: 0; width: 22px; height: 28px; border-radius: 2px; background: #f7f4ec;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .35); background-image: repeating-linear-gradient(#f7f4ec 0 6px, #c9c3b4 6px 7px); background-size: 14px 100%;
+  background-position: 4px 5px; background-repeat: no-repeat; }
+.rt-paper.pen::after { content: ""; position: absolute; right: -9px; top: 4px; width: 3px; height: 22px; border-radius: 2px; background: #1f2937;
+  transform: rotate(18deg); }
 .rt-chat { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
 .rt-log { max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 4px; font-size: 14px; scrollbar-width: thin; }
 .rt-a { align-self: flex-start; max-width: 95%; background: var(--card); border: 1px solid var(--line); padding: 8px 12px; border-radius: 14px 14px 14px 4px; }
@@ -522,11 +529,12 @@ header { margin-bottom: 16px; }
 @keyframes mc-flick { 50% { transform: scaleY(.6); } }
 @keyframes mc-lift { 0% { transform: translateY(0); } 15% { transform: translate(.6px, 0); } 25% { transform: translate(-.6px, -1px); } 75% { opacity: 1; } 100% { transform: translateY(-24px); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .site *, #archStage .icon svg, #stage .icon { animation: none !important; } }
-/* Each counselor sits in a chair turned toward the table; the backrest faces away from it. */
-.seat .chair { position: absolute; left: -5px; top: -5px; width: 50px; height: 50px; z-index: -1; border-radius: 14px 14px 10px 10px;
-  background: color-mix(in srgb, var(--c2) 45%, var(--card)); border: 1px solid color-mix(in srgb, var(--c3) 30%, transparent);
-  border-top: 7px solid color-mix(in srgb, var(--c2) 80%, var(--card)); transform: rotate(var(--rot, 0deg));
-  box-shadow: 0 4px 10px rgba(0, 0, 0, .25); }
+/* Each counselor sits in a chair turned toward the table: seat cushion, arms, and the backrest on the far side. */
+.seat .chair { position: absolute; left: -4px; top: -4px; width: 48px; height: 48px; z-index: -1; transform: rotate(var(--rot, 0deg)); }
+.seat .chair::before { content: ""; position: absolute; inset: 8px 6px 4px; border-radius: 9px; background: #2b2b33;
+  box-shadow: inset 0 0 0 2px #3a3a45, 0 3px 6px rgba(0, 0, 0, .35); }
+.seat .chair::after { content: ""; position: absolute; left: 2px; right: 2px; top: -2px; height: 11px; border-radius: 8px 8px 4px 4px; background: #1f1f26;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .4), -1px 18px 0 -3px #1f1f26, 1px 18px 0 -3px #1f1f26; }
 .seat { position: absolute; left: 0; top: 0; width: 40px; height: 40px; will-change: transform, opacity; }
 .seat .icon { display: grid; place-items: center; width: 40px; height: 40px; color: color-mix(in srgb, var(--c1) 55%, white);
   filter: drop-shadow(0 0 3px var(--c1)) drop-shadow(0 0 10px var(--c1)); }
@@ -537,16 +545,10 @@ header { margin-bottom: 16px; }
 .seat.thinking .icon { animation: rt-think 1.6s ease-in-out infinite; }
 .seat.spoke .icon { animation: rt-bob 2.4s ease-in-out infinite; }
 .seat.spoke .bang, .seat.news .bang { display: block; animation: rt-bang .8s ease-in-out infinite alternate; }
-#stage .seat .say { position: absolute; left: 50%; bottom: 46px; transform: translateX(-50%); display: none; gap: 3px; padding: 5px 7px;
-  border-radius: 10px; background: var(--card); border: 1px solid color-mix(in srgb, var(--c3) 45%, transparent); }
-#stage .seat .say i { width: 4px; height: 4px; border-radius: 50%; background: var(--c3); animation: say-dot 1s ease-in-out infinite; }
-#stage .seat .say i:nth-child(2) { animation-delay: .15s; } #stage .seat .say i:nth-child(3) { animation-delay: .3s; }
-#stage .seat.speak .say { display: flex; }
 #stage .seat.speak .icon { animation: meet-speak 1.4s ease-in-out infinite; }
 #stage .seat .icon { transition: transform .6s ease; transform: rotate(var(--look, 0deg)); }
 #stage .seat.nod .icon { animation: meet-nod 2.2s ease-in-out infinite; }
 #stage .seat.note .icon { animation: meet-note .5s ease-in-out 4; }
-@keyframes say-dot { 50% { transform: translateY(-3px); opacity: .5; } }
 @keyframes meet-speak { 0%, 100% { transform: rotate(var(--look, 0deg)) scale(1); } 30% { transform: rotate(calc(var(--look, 0deg) - 6deg)) scale(1.06); } 60% { transform: rotate(calc(var(--look, 0deg) + 5deg)) scale(1.04); } }
 @keyframes meet-nod { 0%, 60%, 100% { transform: rotate(var(--look, 0deg)) translateY(0); } 70% { transform: rotate(var(--look, 0deg)) translateY(3px); } 80% { transform: rotate(var(--look, 0deg)) translateY(0); } 90% { transform: rotate(var(--look, 0deg)) translateY(2px); } }
 @keyframes meet-note { 50% { transform: rotate(var(--look, 0deg)) translate(2px, 3px) rotate(4deg); } }
@@ -1211,8 +1213,7 @@ const ASSOC = ["scout", "analyst"];
 new ResizeObserver(([e]) => { const w = Math.min(800, 220 * e.contentRect.width / (e.contentRect.height || 1));
   $("crowdSvg").setAttribute("viewBox", `${400 - w / 2} 0 ${w} 220`); }).observe($("assocStage"));
 const seats = Array.from({length: 9}, (_, i) => ["risk", "auditor", "chief"][i % 3]).map((role, i) => {
-  const seat = el("div", {class: "seat still", title: AGENTS[role]}, el("div", {class: "chair"}), el("div", {class: "icon"}, seatIcon(role)),
-    el("span", {class: "say"}, el("i"), el("i"), el("i")));
+  const seat = el("div", {class: "seat still", title: AGENTS[role]}, el("div", {class: "chair"}), el("div", {class: "icon"}, seatIcon(role)));
   seat.querySelector(".icon").style.animationDelay = (i * .25) + "s";
   $("stage").append(seat);
   return {role, seat};
@@ -1222,6 +1223,7 @@ const seats = Array.from({length: 9}, (_, i) => ["risk", "auditor", "chief"][i %
 // Seen from a little behind and above your empty seat at the bottom: the table is a flat oval centered in the
 // card, seats sit on its rim, and the near ones (lower) are drawn bigger than the far ones (higher).
 const GAP = 34;
+const papers = seats.map((_, i) => $("stage").appendChild(el("div", {class: "rt-paper" + (i % 3 === 1 ? " pen" : "")})));
 function placeSeats() {
   const stage = $("stage"), table = stage.querySelector(".rt-table"), W = stage.clientWidth, H = stage.clientHeight;
   const small = W < 500 ? .8 : 1, rx = Math.min(W / 2 - 46 * small, 420), ry = Math.min(rx * .36, H / 2 - 44 * small);
@@ -1232,6 +1234,8 @@ function placeSeats() {
     const near = (.82 + .22 * (Math.sin(a) + 1) / 2) * small, x = cx + (rx + 6) * Math.cos(a), y = cy + (ry + 6) * Math.sin(a);
     seat.style.transform = `translate(${x - 20}px, ${y - 20}px) scale(${near.toFixed(3)})`;
     seat.style.setProperty("--rot", deg + 90 + "deg");
+    const px = cx + rx * .62 * Math.cos(a), py = cy + ry * .55 * Math.sin(a);
+    papers[i].style.transform = `translate(${px - 11}px, ${py - 14}px) rotate(${deg + 90 + (i % 3 - 1) * 12}deg) scale(${(near * .9).toFixed(3)})`;
   });
 }
 new ResizeObserver(placeSeats).observe($("stage"));
