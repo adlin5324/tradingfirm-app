@@ -532,9 +532,10 @@ header { margin-bottom: 16px; }
   75% { transform: translate(28px, 24px) rotate(8deg); } }
 .desk-spot { position: absolute; inset: 0; } .desk-spot.chief { transform: translateX(-17%); } .desk-spot.reviewer { transform: translateX(17%); }
 .desk-spot.chief .desk-glass { animation: office-stamp 2.4s ease-in infinite; }
-.desk-stamp { position: absolute; right: 10px; bottom: 10px; width: 26px; height: 26px; border-radius: 50%; border: 3px solid var(--c1);
+.desk-stamp { position: absolute; right: 12px; bottom: 6px; font-size: 30px; font-weight: 800; line-height: 1; color: var(--c1);
   opacity: 0; transform: rotate(-14deg); animation: office-stamped 2.4s linear infinite; }
-/* The crown lifts, slams down on the page and leaves its stamp, which fades before the next one. */
+.desk-stamp.o { color: color-mix(in srgb, var(--c1) 35%, var(--c3)); }
+/* The crown lifts, slams down on the page and stamps an X or an O, which fades before the next one. */
 @keyframes office-stamp { 0%, 100% { transform: translate(18px, -26px) rotate(-10deg); } 55% { transform: translate(18px, -40px) rotate(-16deg); }
   68% { transform: translate(18px, 8px) rotate(0) scale(1.05, .9); } 78% { transform: translate(18px, 2px) rotate(0); } }
 @keyframes office-stamped { 0%, 67% { opacity: 0; } 68%, 90% { opacity: .8; } 100% { opacity: 0; } }
@@ -681,7 +682,7 @@ header { margin-bottom: 16px; }
   <section class="card" data-view="office">
     <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 4h3a2 2 0 0 1 2 2v14" /><path d="M2 20h3" /><path d="M13 20h9" /><path d="M10 12v.01" /><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z" /></svg>Office</span></h2>
     <div class="desk" aria-hidden="true">
-      <div class="desk-spot chief"><div class="desk-doc"><i></i><i></i><i></i><i></i><i></i><b class="desk-stamp"></b></div><div class="desk-glass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z" /><path d="M5 21h14" /></svg></div></div>
+      <div class="desk-spot chief"><div class="desk-doc"><i></i><i></i><i></i><i></i><i></i><b class="desk-stamp" id="deskStamp">X</b></div><div class="desk-glass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z" /><path d="M5 21h14" /></svg></div></div>
       <div class="desk-spot reviewer">
         <div class="desk-doc"><i></i><i></i><i></i><i></i><i></i></div>
         <div class="desk-glass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /><path d="m8 11 2 2 4-4" /></svg></div>
@@ -1188,6 +1189,8 @@ const seatIcon = role => ARCH_ICONS[role] ? archIcon(role) : (box => (box.innerH
 // The pit is 800 wide; show a band as wide as the stage's shape needs, so icons keep their size and fill it.
 new ResizeObserver(([e]) => { const w = Math.min(800, 220 * e.contentRect.width / (e.contentRect.height || 1));
   $("crowdSvg").setAttribute("viewBox", `${400 - w / 2} 0 ${w} 220`); }).observe($("assocStage"));
+// The Chief stamps an X or an O at random, a new one each time its crown comes down.
+$("deskStamp").addEventListener("animationiteration", e => { const o = Math.random() < .5; e.target.textContent = o ? "O" : "X"; e.target.classList.toggle("o", o); });
 // Counselors: the Risk officer (X) and the Auditor (O) play tic-tac-toe. Each takes a
 // winning square if it has one, usually blocks the other's win, and otherwise picks a square at random.
 const players = {risk: "X", auditor: "O"}, seats = ["risk", "auditor"].map(role => {
@@ -1231,26 +1234,15 @@ setInterval(() => {
   turn = turn === "X" ? "O" : "X";
 }, 1100);
 
-// Each agent's latest news: reports, the next run's likely buys, the last trading run.
+// Each agent's latest news: reports and the last trading run.
 let news = {};
 const seenList = () => { try { return JSON.parse(store.get("seen") || "[]"); } catch { return []; } };
 function gatherNews(d) {
   const reports = (d.team && d.team.reports) || [], newest = role => reports.filter(r => r.role === role).sort((a, b) => a.created < b.created ? 1 : -1)[0];
   const report = (role, as = role) => { const r = newest(role); return r ? [{key: "r:" + r.url + r.created, at: r.created, title: r.title, role: as, url: r.url,
     body: () => [md(r.body)]}] : []; };
-  news = {scout: report("scout"), risk: report("risk"), analyst: report("analyst"), auditor: [...report("auditor"), ...report("breakdown", "auditor")], chief: report("chief")};
-  if (d.picks) {
-    const p = d.picks, price = Object.fromEntries(p.stocks.map(s => [s.symbol, s.price]));
-    const ready = p.stocks.filter(s => s.votes >= p.need), close = p.stocks.filter(s => s.votes < p.need);
-    const text = (p.orders.length ? "The next run will likely buy " + p.orders.map(o => o.shares + " " + o.symbol + (price[o.symbol] ? " (about " + money(price[o.symbol]) + ")" : "")).join(", ") + "."
-      : "No buys likely next run: every slot is full or nothing got enough votes.")
-      + (ready.length ? " Strongest: " + ready.slice(0, 6).map(s => s.symbol + " (" + s.votes + " of 10 votes)").join(", ") + "." : "")
-      + (close.length ? " One vote short: " + close.slice(0, 8).map(s => s.symbol).join(", ") + "." : "");
-    news.scout.push({key: "p:" + p.day + p.stocks.length + p.orders.length, at: p.day, title: "Likely buys for " + shortDate(p.day), role: "scout", picks: true,
-      body: () => [el("p", {text})]});
-  }
-  if ((d.shadow || []).length) news.analyst.push({key: "s:" + d.shadow.length + d.shadow[d.shadow.length - 1].date, at: d.shadow[d.shadow.length - 1].date,
-    title: "Buys I'd have skipped", role: "analyst", body: () => [el("p", {text: d.shadow.slice(-5).reverse().map(x => x.symbol + " on " + shortDate(x.date) + ": " + x.why).join(". ") + "."})]});
+  // The Scout and the Analyst (the Associates) report to the counselors and the Chief, not to you.
+  news = {risk: report("risk"), auditor: [...report("auditor"), ...report("breakdown", "auditor")], chief: report("chief")};
   if (d.report && d.last_run) news.auditor.push({key: "t:" + d.last_run, at: d.last_run, title: "The last trading run, " + when(d.last_run), role: "auditor",
     body: () => [el("pre", {text: d.report})]});
   archNews();
@@ -1261,8 +1253,7 @@ function actsFor(n) {
   if (n.acts) return n.acts();
   const acts = [];
   if (n.url) acts.push(link("Open on GitHub", n.url));
-  if (n.picks) acts.push(btn("Check again", () => dispatch("picks")));
-  else if (n.url) acts.push(btn("Get a fresh one", e => runAgent(n.role, e.target)));
+  if (n.url) acts.push(btn("Get a fresh one", e => runAgent(n.role, e.target)));
   return acts;
 }
 // Email style: a list of messages (sender, subject, first line, date); tap one to read it, back to return.
