@@ -473,9 +473,7 @@ header { margin-bottom: 16px; }
 .topnav button.on { color: var(--text); background: var(--faint); }
 /* Round table: the AI team circles the table; your seat is the gap at the bottom. */
 .stage { position: relative; height: 260px; margin-top: 8px; overflow: hidden; }
-/* Seen from a little behind and above your empty seat at the bottom: the table tilts away (keep TILT/DEPTH in
-   placeSeats in step with this transform). */
-.rt-table { position: absolute; inset: 14px 56px; border-radius: 50%; transform: perspective(700px) rotateX(52deg);
+.rt-table { position: absolute; border-radius: 50%;
   background: radial-gradient(ellipse at 50% 35%, color-mix(in srgb, var(--c1) 30%, var(--card)), color-mix(in srgb, var(--c2) 45%, var(--card)) 75%);
   border: 1px solid color-mix(in srgb, var(--c3) 45%, transparent);
   box-shadow: inset 0 0 48px rgba(0, 0, 0, .35), 0 0 32px color-mix(in srgb, var(--c1) 25%, transparent); }
@@ -545,7 +543,6 @@ header { margin-bottom: 16px; }
 @media (min-width: 861px) {
   .rt-split { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
   .rt-split .stage { height: 360px; }
-  .rt-split .rt-table { inset: 30px 60px; }
   .rt-split .site { inset: 56px 64px; }
   .rt-split .rt-chat { height: 360px; margin-top: 8px; }
   .rt-split .rt-log { flex: 1; min-height: 0; max-height: none; mask-image: linear-gradient(transparent, #000 24px); -webkit-mask-image: linear-gradient(transparent, #000 24px); }
@@ -553,7 +550,6 @@ header { margin-bottom: 16px; }
 }
 @media (max-width: 640px) {
   .stage { height: 200px; margin-left: -8px; margin-right: -8px; }
-  .rt-table { inset: 6px 44px; }
   .site { inset: 46px 44px 28px; }
   .rt-log { font-size: 13px; }
 }
@@ -1214,15 +1210,18 @@ const seats = Array.from({length: 9}, (_, i) => ["risk", "auditor", "chief"][i %
 });
 // Seats sit still around the table, evenly spaced, leaving the gap at the bottom where you sit.
 // The table is tilted in 3D, so each seat is projected the same way: far seats sit higher and smaller.
-const GAP = 30, TILT = 52 * Math.PI / 180, DEPTH = 700;
+// Seen from a little behind and above your empty seat at the bottom: the table is a flat oval centered in the
+// card, seats sit on its rim, and the near ones (lower) are drawn bigger than the far ones (higher).
+const GAP = 34;
 function placeSeats() {
-  const stage = $("stage"), table = stage.querySelector(".rt-table");
-  const cx = table.offsetLeft + table.offsetWidth / 2, cy = table.offsetTop + table.offsetHeight / 2;
-  const rx = table.offsetWidth / 2 + 12, ry = table.offsetHeight / 2 + 12;
+  const stage = $("stage"), table = stage.querySelector(".rt-table"), W = stage.clientWidth, H = stage.clientHeight;
+  const small = W < 500 ? .8 : 1, rx = Math.min(W / 2 - 46 * small, 420), ry = Math.min(rx * .36, H / 2 - 44 * small);
+  const cx = W / 2, cy = H / 2 + 6;
+  Object.assign(table.style, {left: cx - rx + "px", top: cy - ry + "px", width: 2 * rx + "px", height: 2 * ry + "px"});
   seats.forEach(({seat}, i) => {
     const deg = 90 + GAP + (i + .5) * (360 - 2 * GAP) / seats.length, a = deg * Math.PI / 180;
-    const y = ry * Math.sin(a), near = DEPTH / (DEPTH - y * Math.sin(TILT));
-    seat.style.transform = `translate(${cx + rx * Math.cos(a) * near - 20}px, ${cy + y * Math.cos(TILT) * near - 20}px) scale(${(near * (stage.clientWidth < 500 ? .78 : 1)).toFixed(3)})`;
+    const near = (.82 + .22 * (Math.sin(a) + 1) / 2) * small, x = cx + (rx + 6) * Math.cos(a), y = cy + (ry + 6) * Math.sin(a);
+    seat.style.transform = `translate(${x - 20}px, ${y - 20}px) scale(${near.toFixed(3)})`;
     seat.style.setProperty("--rot", deg + 90 + "deg");
   });
 }
