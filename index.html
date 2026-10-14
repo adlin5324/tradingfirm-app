@@ -512,12 +512,11 @@ header { margin-bottom: 16px; }
 .seat.thinking .icon { animation: rt-think 1.6s ease-in-out infinite; }
 #stage .seat.speak .icon { animation: meet-speak 1.4s ease-in-out infinite; }
 #stage .seat .icon { transition: transform .6s ease; transform: rotate(var(--look, 0deg)); }
-#stage .seat.nod .icon { animation: meet-nod 2.2s ease-in-out infinite; }
 @keyframes meet-speak { 0%, 100% { transform: rotate(var(--look, 0deg)) scale(1); } 30% { transform: rotate(calc(var(--look, 0deg) - 6deg)) scale(1.06); } 60% { transform: rotate(calc(var(--look, 0deg) + 5deg)) scale(1.04); } }
-@keyframes meet-nod { 0%, 60%, 100% { transform: rotate(var(--look, 0deg)) translateY(0); } 70% { transform: rotate(var(--look, 0deg)) translateY(3px); } 80% { transform: rotate(var(--look, 0deg)) translateY(0); } 90% { transform: rotate(var(--look, 0deg)) translateY(2px); } }
 
 .seat { cursor: pointer; outline: none; } .seat.still { cursor: default; } .seat:focus-visible .icon { outline: 2px solid var(--c3); border-radius: 50%; }
-/* Office: the Code reviewer goes over a document at your desk; your inbox of every agent's news sits below. */
+/* Office: at your desk the Chief of staff stamps its briefs (left) and the Code reviewer checks a document (right);
+   your inbox of every agent's news sits below. */
 .desk { position: relative; height: 150px; margin: 4px 0 12px; }
 .desk-top { position: absolute; left: 6%; right: 6%; bottom: 10px; height: 14px; border-radius: 6px;
   background: color-mix(in srgb, var(--c2) 70%, var(--card)); box-shadow: 0 6px 0 color-mix(in srgb, var(--c2) 70%, black), 0 12px 20px rgba(0, 0, 0, .25); }
@@ -531,7 +530,15 @@ header { margin-bottom: 16px; }
 .desk-glass svg { width: 100%; height: 100%; }
 @keyframes office-scan { 0%, 100% { transform: translate(-30px, -22px); } 25% { transform: translate(24px, -10px); } 50% { transform: translate(-22px, 10px); }
   75% { transform: translate(28px, 24px) rotate(8deg); } }
-@media (prefers-reduced-motion: reduce) { .desk-glass { animation: none; } }
+.desk-spot { position: absolute; inset: 0; } .desk-spot.chief { transform: translateX(-17%); } .desk-spot.reviewer { transform: translateX(17%); }
+.desk-spot.chief .desk-glass { animation: office-stamp 2.4s ease-in infinite; }
+.desk-stamp { position: absolute; right: 10px; bottom: 10px; width: 26px; height: 26px; border-radius: 50%; border: 3px solid var(--c1);
+  opacity: 0; transform: rotate(-14deg); animation: office-stamped 2.4s linear infinite; }
+/* The crown lifts, slams down on the page and leaves its stamp, which fades before the next one. */
+@keyframes office-stamp { 0%, 100% { transform: translate(18px, -26px) rotate(-10deg); } 55% { transform: translate(18px, -40px) rotate(-16deg); }
+  68% { transform: translate(18px, 8px) rotate(0) scale(1.05, .9); } 78% { transform: translate(18px, 2px) rotate(0); } }
+@keyframes office-stamped { 0%, 67% { opacity: 0; } 68%, 90% { opacity: .8; } 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .desk-glass, .desk-stamp { animation: none; } }
 .mail-folder { display: flex; justify-content: space-between; align-items: baseline; padding: 0 4px 8px; border-bottom: 1px solid var(--line); }
 .inbox .mail { display: flex; gap: 12px; width: 100%; text-align: left; padding: 12px 4px; border: 0; border-bottom: 1px solid var(--line);
   border-radius: 0; background: transparent; color: var(--muted); font: inherit; cursor: pointer; }
@@ -674,8 +681,11 @@ header { margin-bottom: 16px; }
   <section class="card" data-view="office">
     <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 4h3a2 2 0 0 1 2 2v14" /><path d="M2 20h3" /><path d="M13 20h9" /><path d="M10 12v.01" /><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z" /></svg>Office</span></h2>
     <div class="desk" aria-hidden="true">
-      <div class="desk-doc"><i></i><i></i><i></i><i></i><i></i></div>
-      <div class="desk-glass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /><path d="m8 11 2 2 4-4" /></svg></div>
+      <div class="desk-spot chief"><div class="desk-doc"><i></i><i></i><i></i><i></i><i></i><b class="desk-stamp"></b></div><div class="desk-glass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z" /><path d="M5 21h14" /></svg></div></div>
+      <div class="desk-spot reviewer">
+        <div class="desk-doc"><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="desk-glass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /><path d="m8 11 2 2 4-4" /></svg></div>
+      </div>
       <div class="desk-top"></div>
     </div>
     <div class="inbox" id="inbox"></div>
@@ -1178,9 +1188,9 @@ const seatIcon = role => ARCH_ICONS[role] ? archIcon(role) : (box => (box.innerH
 // The pit is 800 wide; show a band as wide as the stage's shape needs, so icons keep their size and fill it.
 new ResizeObserver(([e]) => { const w = Math.min(800, 220 * e.contentRect.width / (e.contentRect.height || 1));
   $("crowdSvg").setAttribute("viewBox", `${400 - w / 2} 0 ${w} 220`); }).observe($("assocStage"));
-// Counselors: the Risk officer (X) and the Auditor (O) play tic-tac-toe while the Chief of staff watches. Each takes a
+// Counselors: the Risk officer (X) and the Auditor (O) play tic-tac-toe. Each takes a
 // winning square if it has one, usually blocks the other's win, and otherwise picks a square at random.
-const players = {risk: "X", auditor: "O"}, seats = ["risk", "auditor", "chief"].map(role => {
+const players = {risk: "X", auditor: "O"}, seats = ["risk", "auditor"].map(role => {
   const seat = el("div", {class: "seat still", title: AGENTS[role]}, el("div", {class: "icon"}, seatIcon(role)));
   $("stage").append(seat);
   return {role, seat};
@@ -1191,11 +1201,11 @@ const strike = $("ttt").appendChild(el("i", {class: "strike"}));
 let grid = Array(9).fill(""), turn = "X", over = 0;
 function placeChess() {
   const stage = $("stage"), W = stage.clientWidth, H = stage.clientHeight, size = Math.min(H - 120, W * .3), board = $("ttt");
-  Object.assign(board.style, {width: size + "px", height: size + "px", left: (W - size) / 2 + "px", top: (H - size) / 2 + 22 + "px", fontSize: size / 4 + "px"});
-  // All three counselors drawn the same size, bigger than before.
+  Object.assign(board.style, {width: size + "px", height: size + "px", left: (W - size) / 2 + "px", top: (H - size) / 2 + "px", fontSize: size / 4 + "px"});
+  // Both counselors drawn the same size.
   const big = Math.min(2.2, Math.max(1.5, size / 70)), gap = 36 * big;
-  const spot = {risk: [(W - size) / 2 - gap, H / 2 + size * .15], auditor: [(W + size) / 2 + gap, H / 2 + size * .15], chief: [W / 2, (H - size) / 2 - 4]};
-  seats.forEach(({role, seat}) => { const [x, y] = spot[role]; seat.style.transform = `translate(${x - 20}px, ${y - 20 - (role === "chief" ? 6 * big : 0)}px) scale(${big.toFixed(2)})`; });
+  const spot = {risk: [(W - size) / 2 - gap, H / 2 + size * .15], auditor: [(W + size) / 2 + gap, H / 2 + size * .15]};
+  seats.forEach(({role, seat}) => { const [x, y] = spot[role]; seat.style.transform = `translate(${x - 20}px, ${y - 20}px) scale(${big.toFixed(2)})`; });
 }
 new ResizeObserver(placeChess).observe($("stage"));
 const winner = g => LINES.find(([a, b, c]) => g[a] && g[a] === g[b] && g[a] === g[c]);
@@ -1211,11 +1221,10 @@ setInterval(() => {
   const i = pickSquare(turn);
   grid[i] = turn; cells[i].replaceChildren(el("b", {text: turn})); cells[i].className = "cell " + turn.toLowerCase();
   const won = winner(grid);
-  // The mover reaches for the board, the other player thinks, the Chief nods when someone wins.
+  // The mover reaches for the board while the other player thinks.
   seats.forEach(({role, seat}) => {
     seat.classList.toggle("speak", players[role] === turn);
-    seat.classList.toggle("think", role !== "chief" && players[role] !== turn && !won);
-    seat.classList.toggle("nod", role === "chief" && !!won);
+    seat.classList.toggle("think", players[role] !== turn && !won);
   });
   if (won) { strike.className = "strike on l" + LINES.indexOf(won); over = 3; }
   else if (grid.every(Boolean)) over = 2;
@@ -1266,7 +1275,7 @@ const textOf = box => { const w = document.createTreeWalker(box, NodeFilter.SHOW
   for (let t; (t = w.nextNode());) out.push(t.data); return out.join(" ").replace(/\s+/g, " ").trim(); };
 function showOffice() {
   const seen = seenList(), all = Object.values(news).flat().filter(Boolean);
-  const rank = n => n.key.startsWith("pr:") ? 0 : n.role === "mechanic" ? 1 : 2;
+  const rank = n => n.role === "chief" ? 0 : n.key.startsWith("pr:") ? 1 : n.role === "mechanic" ? 2 : 3;
   all.sort((a, b) => rank(a) - rank(b) || String(b.at || "").localeCompare(String(a.at || "")));
   const fresh = all.filter(n => !seen.includes(n.key)).length;
   $("officeCount").textContent = fresh ? fresh : "";
