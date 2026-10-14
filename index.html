@@ -432,6 +432,9 @@ header { margin-bottom: 16px; }
   .topnav { overflow-x: auto; scrollbar-width: none; }
 }
 .topnav button.on { color: var(--text); background: var(--faint); }
+/* Labels in Title Case (headings, buttons, menus, tags); sentences and data stay as written. */
+button, select, option, label, summary, h2, #runs a, .tag, .menu .label, .acct-head, .stats, .legend { text-transform: capitalize; }
+h2 .small, .sym, .report, .md { text-transform: none; }
 </style>
 </head>
 <body>
@@ -491,7 +494,19 @@ header { margin-bottom: 16px; }
     </table></div>
   </section>
 
-  <section class="card bar" data-view="positions">
+
+
+
+  <section class="card" data-view="performance">
+    <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16" /><path d="m19 9-5 5-4-4-3 3" /></svg>Performance</span> <span class="small" id="since"></span></h2>
+    <div class="bars" id="bars"><span class="muted small">Starts after the first live run.</span></div>
+    <div class="chart hidden" id="chart"></div>
+    <div class="perf-note" id="perfNote"></div>
+    <p class="small" id="fillCost"></p>
+    <p class="muted small" id="updated"></p>
+  </section>
+
+  <section class="card bar" data-view="performance">
     <div class="actions">
       <button class="danger" id="sellBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" /><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" /><path d="m2 16 6 6" /><circle cx="16" cy="9" r="2.9" /><circle cx="6" cy="5" r="3" /></svg>Sell stocks…</button>
       <details class="more" id="more">
@@ -509,17 +524,6 @@ header { margin-bottom: 16px; }
       </details>
     </div>
     <div class="status"></div>
-  </section>
-
-
-
-  <section class="card" data-view="performance">
-    <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16" /><path d="m19 9-5 5-4-4-3 3" /></svg>Performance</span> <span class="small" id="since"></span></h2>
-    <div class="bars" id="bars"><span class="muted small">Starts after the first live run.</span></div>
-    <div class="chart hidden" id="chart"></div>
-    <div class="perf-note" id="perfNote"></div>
-    <p class="small" id="fillCost"></p>
-    <p class="muted small" id="updated"></p>
   </section>
 
   <section class="card" data-view="arch">
