@@ -544,7 +544,15 @@ header { margin-bottom: 16px; }
 .inbox .mail { display: flex; gap: 12px; width: 100%; text-align: left; padding: 12px 4px; border: 0; border-bottom: 1px solid var(--line);
   border-radius: 0; background: transparent; color: var(--muted); font: inherit; cursor: pointer; }
 .inbox .mail:hover { background: var(--faint); opacity: 1; }
-.inbox .mail.quiet { cursor: default; opacity: .65; } .inbox .mail.quiet:hover { background: transparent; opacity: .65; }
+.inbox .mail.quiet { opacity: .65; }
+.mail-count { align-self: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: var(--c1); color: #fff;
+  font-size: 12px; font-weight: 700; display: grid; place-items: center; flex: none; }
+.chat .mail-from { margin-bottom: 12px; }
+.bubble { max-width: 92%; margin: 0 0 12px; padding: 10px 14px; border-radius: 18px 18px 18px 4px; background: var(--faint);
+  border: 1px solid var(--line); }
+.bubble.quiet { color: var(--muted); }
+.bubble-title { display: block; margin-bottom: 4px; } .bubble .mail-body { padding: 0; }
+.bubble-time { font-size: 11px; color: var(--muted); margin-top: 6px; }
 .inbox .mail.unread { color: var(--text); box-shadow: inset 3px 0 0 var(--c1); }
 .mail-avatar { width: 36px; height: 36px; flex: none; border-radius: 50%; display: grid; place-items: center;
   background: color-mix(in srgb, var(--c1) 18%, transparent); color: var(--c1); }
@@ -555,7 +563,6 @@ header { margin-bottom: 16px; }
 .mail.unread .mail-sender, .mail.unread .mail-subj, .mail.unread .mail-date { font-weight: 700; color: var(--text); }
 .mail-subj { color: var(--text); } .mail-date { font-size: 12px; flex: none; } .mail-snip { font-size: 13px; }
 .mail-back { margin-bottom: 12px; }
-.inbox .mail-subject { margin: 0 0 12px; font-size: 20px; }
 .mail-from { display: flex; gap: 12px; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
 .mail-body { padding: 12px 0; } .mail-body pre { white-space: pre-wrap; font-size: 12px; max-height: 360px; overflow: auto; }
 .inbox .acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; font-size: 13px; }
@@ -1263,7 +1270,8 @@ function actsFor(n) {
   if (n.url) acts.push(btn("Get a fresh one", e => runAgent(n.role, e.target)));
   return acts;
 }
-// Email style: a list of messages (sender, subject, first line, date); tap one to read it, back to return.
+// Messaging style: one conversation per agent (newest message, time, unread count); tap one to read the whole
+// conversation as chat bubbles, oldest first. "← Inbox" goes back.
 let reading = null;
 const WRITES = {chief: "Your brief every Sunday, and right away if trading is halted.", reviewer: "Changes to the bot waiting for your approval.",
   mechanic: "Anything in the app or a trading run that fails.", quant: "The result of each Saturday's test."};
@@ -1275,41 +1283,41 @@ const textOf = box => { const w = document.createTreeWalker(box, NodeFilter.SHOW
   for (let t; (t = w.nextNode());) out.push(t.data); return out.join(" ").replace(/\s+/g, " ").trim(); };
 function showOffice() {
   const seen = seenList(), all = Object.values(news).flat().filter(Boolean);
-  const rank = n => n.role === "chief" ? 0 : n.key.startsWith("pr:") ? 1 : n.role === "mechanic" ? 2 : 3;
-  all.sort((a, b) => rank(a) - rank(b) || String(b.at || "").localeCompare(String(a.at || "")));
   const fresh = all.filter(n => !seen.includes(n.key)).length;
   $("officeCount").textContent = fresh ? fresh : "";
-  const open = all.find(n => n.key === reading);
-  if (open) {
-    const back = el("button", {class: "mail-back", text: "← Inbox"});
+  // Oldest first inside a conversation; changes waiting on you (no date) count as newest.
+  const thread = role => all.filter(n => n.role === role).sort((a, b) => String(a.at || "9").localeCompare(String(b.at || "9")));
+  if (reading) {
+    const msgs = thread(reading), back = el("button", {class: "mail-back", text: "← Inbox"});
     back.onclick = () => { reading = null; showOffice(); };
-    $("inbox").replaceChildren(el("div", {class: "mail-read"}, back,
-      el("h3", {class: "mail-subject", text: open.title}),
-      el("div", {class: "mail-from"}, el("span", {class: "mail-avatar"}, seatIcon(open.role)),
-        el("div", {}, el("b", {text: sender(open)}), el("div", {class: "sub", text: "to you" + (open.at ? " · " + when(open.at) : "")}))),
-      el("div", {class: "mail-body"}, ...open.body()), el("div", {class: "acts"}, ...actsFor(open))));
+    $("inbox").replaceChildren(el("div", {class: "chat"}, back,
+      el("div", {class: "mail-from"}, el("span", {class: "mail-avatar"}, seatIcon(reading)), el("b", {text: AGENTS[reading]})),
+      ...(msgs.length ? msgs.map(n => el("div", {class: "bubble"}, el("b", {class: "bubble-title", text: n.title}),
+        el("div", {class: "mail-body"}, ...n.body()), el("div", {class: "acts"}, ...actsFor(n)),
+        el("div", {class: "bubble-time", text: n.at ? when(n.at) : "Waiting on you"})))
+        : [el("div", {class: "bubble quiet", text: "No messages yet. Writes to you about: " + WRITES[reading]})])));
     return;
   }
+  const last = role => thread(role).slice(-1)[0];
+  const roles = Object.keys(WRITES).sort((a, b) => (a === "chief" ? -1 : b === "chief" ? 1 : 0)
+    || !last(a) - !last(b) || String((last(b) || {}).at || "9").localeCompare(String((last(a) || {}).at || "9")));
   $("inbox").replaceChildren(el("div", {class: "mail-folder"}, el("b", {text: "Inbox"}), el("span", {class: "sub", text: fresh ? fresh + " unread" : "All read"})),
-    ...(all.length ? all.map(n => {
-      const unread = !seen.includes(n.key), preview = textOf(el("div", {}, ...n.body()));
-      const row = el("button", {class: "mail" + (unread ? " unread" : ""), "aria-label": sender(n) + ": " + n.title},
-        el("span", {class: "mail-avatar"}, seatIcon(n.role)),
+    ...roles.map(role => {
+      const n = last(role), unread = thread(role).filter(m => !seen.includes(m.key)).length;
+      const row = el("button", {class: "mail" + (unread ? " unread" : "") + (n ? "" : " quiet"), "aria-label": AGENTS[role]},
+        el("span", {class: "mail-avatar"}, seatIcon(role)),
         el("span", {class: "mail-text"},
-          el("span", {class: "mail-top"}, el("span", {class: "mail-sender", text: sender(n)}), el("span", {class: "mail-date", text: mailDate(n.at)})),
-          el("span", {class: "mail-subj", text: n.title}), el("span", {class: "mail-snip", text: preview})));
+          el("span", {class: "mail-top"}, el("span", {class: "mail-sender", text: AGENTS[role]}), el("span", {class: "mail-date", text: n ? mailDate(n.at) : ""})),
+          el("span", {class: "mail-subj", text: n ? n.title : "No messages yet"}),
+          el("span", {class: "mail-snip", text: n ? textOf(el("div", {}, ...n.body())) : WRITES[role]})),
+        ...(unread ? [el("span", {class: "mail-count", text: String(unread)})] : []));
       row.onclick = () => {
-        reading = n.key;
-        if (unread) store.set("seen", JSON.stringify([...seenList(), n.key].slice(-200)));
+        reading = role;
+        store.set("seen", JSON.stringify([...new Set([...seenList(), ...thread(role).map(m => m.key)])].slice(-200)));
         showOffice();
       };
       return row;
-    }) : []),
-    // Everyone who writes to you is listed, even with nothing to say yet.
-    ...Object.entries(WRITES).filter(([role]) => !all.some(n => n.role === role)).map(([role, what]) =>
-      el("div", {class: "mail quiet"}, el("span", {class: "mail-avatar"}, seatIcon(role)), el("span", {class: "mail-text"},
-        el("span", {class: "mail-top"}, el("span", {class: "mail-sender", text: AGENTS[role]})),
-        el("span", {class: "mail-subj", text: "No messages yet"}), el("span", {class: "mail-snip", text: what})))));
+    }));
 }
 // The trading floor: the ticker shows your holdings; each desk says whether its associate has news.
 
