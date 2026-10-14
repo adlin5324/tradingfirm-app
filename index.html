@@ -495,12 +495,18 @@ header { margin-bottom: 16px; }
    screen counts down and launches a rocket; the console lights blink. The architects walk laps around it. */
 .site { position: absolute; inset: 40px 56px; }
 #archStage { height: 400px; } #archStage .site { inset: 48px 120px 70px; }
-/* What they'd really do: the Mechanic cranks a wrench, the Quant swirls a flask. */
+/* What they'd really do: the Mechanic cranks a wrench, the Quant flips its flask. */
 #archStage .seat .icon svg { width: 48px; height: 48px; }
 #archStage .job-mechanic .icon svg { transform-origin: 75% 25%; animation: job-crank 1.2s ease-in-out infinite; }
-#archStage .job-quant .icon svg { transform-origin: 50% 15%; animation: job-swirl 1.6s ease-in-out infinite; }
+/* The Quant flips its flask like a water bottle: sometimes it lands, sometimes it topples. */
+#archStage .job-quant .icon svg { transform-origin: 50% 90%; }
+#archStage .job-quant.flip-ok .icon svg { animation: flip-ok 1.3s ease-in-out forwards; }
+#archStage .job-quant.flip-fail .icon svg { animation: flip-fail 1.5s ease-in-out forwards; }
+@keyframes flip-ok { 0% { transform: none; } 15% { transform: translateY(4px) scaleY(.9); } 50% { transform: translateY(-46px) rotate(200deg); }
+  85% { transform: translateY(0) rotate(360deg); } 92% { transform: translateY(0) rotate(360deg) scaleY(.92); } 100% { transform: rotate(360deg); } }
+@keyframes flip-fail { 0% { transform: none; } 15% { transform: translateY(4px) scaleY(.9); } 50% { transform: translateY(-46px) rotate(210deg); }
+  78% { transform: translateY(0) rotate(340deg); } 88% { transform: translateY(0) rotate(395deg); } 100% { transform: translate(6px, 2px) rotate(450deg); } }
 @keyframes job-crank { 0%, 100% { transform: rotate(0); } 40% { transform: rotate(-38deg); } 55% { transform: rotate(-38deg); } }
-@keyframes job-swirl { 0%, 100% { transform: rotate(-14deg); } 50% { transform: rotate(14deg); } }
 
 @media (max-width: 640px) { #archStage { height: 280px; } #archStage .site { inset: 34px 54px 54px; } #archStage .seat .icon svg { width: 36px; height: 36px; } }
 .site svg { width: 100%; height: 100%; overflow: visible; }
@@ -949,6 +955,13 @@ function placeArch() {
   });
 }
 new ResizeObserver(placeArch).observe($("archStage"));
+// Bottle flips: one every 3 seconds, landing about half the time.
+setInterval(() => {
+  const q = archSeats.find(s => s.role === "quant").seat;
+  if (!q.offsetParent || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  q.classList.remove("flip-ok", "flip-fail"); void q.offsetWidth;
+  q.classList.add(Math.random() < .5 ? "flip-ok" : "flip-fail");
+}, 3000);
 function reportProblem(source, error, url, from) {
   const list = problemList(), last = list[list.length - 1];
   if (last && last.source === source && last.error === error) list.pop();
