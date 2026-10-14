@@ -164,6 +164,7 @@ button.ghost:hover { background: var(--faint); color: var(--text); }
 button:disabled { opacity: .5; cursor: wait; }
 .status { display: flex; align-items: center; gap: 8px; font-size: 14px; margin-top: 12px; }
 .status:empty { display: none; }
+.btn-spin { display: inline-block; margin-left: 8px; vertical-align: -2px; }
 .spin { width: 14px; height: 14px; flex: none; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -1002,6 +1003,9 @@ async function dispatch(cmd, preset = "") {
   }
   const buttons = document.querySelectorAll("[data-cmd], #sellBtn, #tradeSwitch");
   buttons.forEach(b => b.disabled = true);
+  // A spinner right of the pressed button while its run is going.
+  const pressed = cmd === "sell" ? $("sellBtn") : cmd === "halt" || cmd === "resume" ? $("tradeSwitch") : document.querySelector(`[data-cmd="${cmd}"]`);
+  const spinner = el("span", {class: "spin btn-spin"});
   const started = Date.now() - 5000;
   try {
     const res = await api("/actions/workflows/bot.yml/dispatches", {
@@ -1009,7 +1013,8 @@ async function dispatch(cmd, preset = "") {
       headers: {"Content-Type": "application/json"},
     });
     if (res.status !== 204) throw new Error("GitHub didn't start it (" + res.status + ").");
-    setStatus("Running \"" + cmd + "\" on GitHub. Usually about a minute…", true);
+    setStatus("");
+    pressed.append(spinner);
     for (let i = 0; i < 60; i++) {
       await new Promise(r => setTimeout(r, 8000));
       const runs = await loadRuns();
@@ -1020,11 +1025,11 @@ async function dispatch(cmd, preset = "") {
         return;
       }
     }
-    setStatus("Still running. It updates here when it finishes.");
   } catch (e) {
     setStatus(e.message);
   } finally {
     buttons.forEach(b => b.disabled = false);
+    spinner.remove();
   }
 }
 
