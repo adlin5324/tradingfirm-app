@@ -106,6 +106,8 @@ h1 { font-size: 18px; margin: 0; letter-spacing: -.01em; }
 #fillCost { margin: 12px 0 0; color: var(--muted); }
 #fillCost:empty { display: none; }
 #updated { margin: 12px 0 0; }
+.perf-note { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); }
+.perf-note p { margin: 6px 0 0; }
 
 .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .actions > button { flex: 1 1 auto; }
@@ -496,43 +498,21 @@ header { margin-bottom: 16px; }
         </div>
       </details>
     </div>
-    <div class="status" id="status"></div>
+    <div class="status"></div>
   </section>
 
-  <nav class="tabs" role="tablist" data-view="positions">
-    <button role="tab" data-tab="activity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" /></svg>Activity</button>
-    <button role="tab" data-tab="picks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg>Picks</button>
-  </nav>
 
 
-  <section class="card" data-panel="performance">
+  <section class="card" data-view="performance">
     <h2>Performance <span class="small" id="since"></span></h2>
     <div class="bars" id="bars"><span class="muted small">Starts after the first live run.</span></div>
     <div class="chart hidden" id="chart"></div>
+    <div class="perf-note" id="perfNote"></div>
     <p class="small" id="fillCost"></p>
     <p class="muted small" id="updated"></p>
   </section>
 
-  <div data-panel="activity">
-    <div class="grid2">
-      <section class="card">
-        <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z" /><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" /><path d="M12 17.5v-11" /></svg>Recent orders</span></h2>
-        <div class="list" id="orders"><div class="empty">No data yet</div></div>
-      </section>
-      <section class="card">
-        <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg>Recent runs</span></h2>
-        <div class="list" id="runs"><div class="empty">No data yet</div></div>
-      </section>
-    </div>
-    <section class="card">
-      <details class="fold">
-        <summary><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /></svg>Latest report</summary>
-        <pre id="report" class="muted">No report yet</pre>
-      </details>
-    </section>
-  </div>
-
-  <section class="card" data-panel="ai">
+  <section class="card" data-view="ai">
     <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></svg>AI team</span> <span class="small">reports and pull requests waiting for you</span></h2>
     <div class="list" id="team"><div class="empty">No reports yet</div></div>
     <div id="shadow" class="small"></div>
@@ -544,11 +524,29 @@ header { margin-bottom: 16px; }
       </select>
       <button id="agentRun">Run agent</button>
     </div>
+    <div class="status"></div>
   </section>
 
-  <section class="card" data-panel="picks">
+  <section class="card" data-view="ai">
     <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg>Next run's picks</span> <span class="small" id="picksWhen"></span></h2>
     <div id="picksBody"><div class="empty">Open More → Preview picks to see what the next run would likely buy.</div></div>
+  </section>
+
+  <div class="grid2" data-view="ai">
+    <section class="card">
+      <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z" /><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" /><path d="M12 17.5v-11" /></svg>Recent orders</span></h2>
+      <div class="list" id="orders"><div class="empty">No data yet</div></div>
+    </section>
+    <section class="card">
+      <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg>Recent runs</span></h2>
+      <div class="list" id="runs"><div class="empty">No data yet</div></div>
+    </section>
+  </div>
+  <section class="card" data-view="ai">
+    <details class="fold">
+      <summary><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /></svg>Latest report</summary>
+      <pre id="report" class="muted">No report yet</pre>
+    </details>
   </section>
 
 </main>
@@ -588,7 +586,7 @@ const signed = n => (n >= 0 ? "+" : "-") + money(Math.abs(n));
 const pct = n => (n >= 0 ? "+" : "") + (n * 100).toFixed(2) + "%";
 const tone = (e, n) => { e.classList.toggle("good", n > 0); e.classList.toggle("bad", n < 0); return e; };
 const when = s => s ? new Date(s).toLocaleString(undefined, {month: "short", day: "numeric", hour: "numeric", minute: "2-digit"}) : "–";
-const shortDate = s => s ? new Date(s + "T12:00:00").toLocaleDateString(undefined, {month: "short", day: "numeric"}) : "–";
+const shortDate = s => s ? new Date(String(s).slice(0, 10) + "T12:00:00").toLocaleDateString(undefined, {month: "short", day: "numeric"}) : "–";
 const COLORS = {"Bot": "var(--s1)", "S&P 500": "var(--s2)", "Nasdaq 100": "var(--s3)"};
 
 function el(name, attrs = {}, ...kids) {
@@ -648,7 +646,8 @@ function show(d) {
   }
   const fc = d.fill_cost;
   $("fillCost").textContent = fc ? `Fill cost vs mid price: ${pct(fc.avg)} a trade, ${money(fc.dollars)} total over ${fc.fills} fill(s)` : "";
-  drawChart(d.history || []);
+  drawChart(growthLine(d));
+  perfNote(d.team);
 
   const pos = positions = d.positions || [];
   const grades = (d.team && d.team.grades) || {};
@@ -759,6 +758,24 @@ async function runAgent() {
   } catch (e) { setStatus(e.message); }
 }
 
+// The chart runs from the start (everything at 0%) to today's live numbers.
+function growthLine(d) {
+  const s = d.scorecard, pts = (d.history || []).slice();
+  if (!s) return pts;
+  if (!pts.length || pts[0].date > s.start) pts.unshift({date: s.start, bot: 0, ...Object.fromEntries(Object.keys(s.markets).map(n => [n, 0]))});
+  const now = {date: new Date(d.updated).toLocaleDateString("en-CA"), bot: s.bot, ...s.markets}, last = pts[pts.length - 1];
+  if (["bot", ...Object.keys(s.markets)].some(k => last[k] !== now[k])) pts.push(now);
+  return pts;
+}
+
+// The Chief of staff's "How the bot did" section from the latest weekly brief.
+function perfNote(team) {
+  const brief = team && team.reports.find(r => r.role === "chief");
+  const part = brief && (brief.body.split(/^## /m).find(p => /^How the bot did/i.test(p)) || "").replace(/^.*\n/, "").trim();
+  $("perfNote").replaceChildren(...(part ? [el("div", {class: "small muted", text: "Chief of staff · " + shortDate(brief.created)}), md(part)]
+    : [el("p", {class: "muted small", text: "The Chief of staff writes a short summary here every Sunday. AI Team → Run agent → Chief of staff to get one now."})]));
+}
+
 function drawChart(history) {
   const box = $("chart");
   if (history.length < 2) { box.classList.add("hidden"); return; }
@@ -797,7 +814,7 @@ async function loadRuns() {
 }
 
 function setStatus(text, busy) {
-  $("status").replaceChildren(...(busy ? [el("span", {class: "spin"})] : []), el("span", {text}));
+  document.querySelectorAll(".status").forEach(e => e.replaceChildren(...(busy ? [el("span", {class: "spin"})] : []), el("span", {text})));
 }
 
 async function refresh() {
@@ -918,18 +935,13 @@ async function dispatch(cmd, preset = "") {
 }
 
 document.querySelectorAll("[data-cmd]").forEach(b => b.addEventListener("click", () => dispatch(b.dataset.cmd)));
-// Top bar picks the page: Positions (with Activity / Picks tabs), Performance or AI Team.
+// Top bar picks the page: Positions, Performance or AI Team.
 let view = ["positions", "performance", "ai"].includes(store.get("view")) ? store.get("view") : "positions";
-let tab = ["activity", "picks"].includes(store.get("tab")) ? store.get("tab") : "activity";
 function showView() {
-  const panel = view === "positions" ? tab : view;
-  document.querySelectorAll("[data-tab]").forEach(t => t.setAttribute("aria-selected", t.dataset.tab === tab));
-  document.querySelectorAll("[data-panel]").forEach(p => p.classList.toggle("hidden", p.dataset.panel !== panel));
   document.querySelectorAll("[data-view]").forEach(e => e.classList.toggle("hidden", e.dataset.view !== view));
   document.querySelectorAll("[data-go]").forEach(b => b.classList.toggle("on", b.dataset.go === view));
-  store.set("view", view); store.set("tab", tab);
+  store.set("view", view);
 }
-document.querySelectorAll("[data-tab]").forEach(t => t.addEventListener("click", () => { tab = t.dataset.tab; showView(); }));
 document.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => { view = b.dataset.go; showView(); }));
 showView();
 // Looks: fade-in on scroll, and a soft glow that follows the cursor over cards.
