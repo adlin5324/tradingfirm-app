@@ -146,7 +146,8 @@ td .sub { display: block; font-size: 12px; font-weight: 400; color: var(--muted)
 .pos th, .pos td { text-align: center; }
 .pos tr { height: 60px; }
 .pos th, .pos td { padding-top: 0; padding-bottom: 0; vertical-align: middle; }
-.pos td .tag { white-space: normal; line-height: 1.2; }
+.pos th, .pos td { padding-left: 4px; padding-right: 4px; }
+.pos td .tag { white-space: nowrap; }
 .tag { display: inline-block; font-size: 12px; padding: 1px 8px; border-radius: 99px; background: var(--faint); color: var(--muted); white-space: nowrap; }
 .tag.good { background: var(--good-soft); color: var(--good); }
 .tag.bad { background: var(--bad-soft); color: var(--bad); }
@@ -536,12 +537,12 @@ header { margin-bottom: 16px; }
   <section class="card pos" id="positionsCard" data-view="positions">
     <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /><rect width="20" height="14" x="2" y="6" rx="2" /></svg>Positions</span> <span class="small" id="posCount"></span></h2>
     <div class="table-wrap"><table>
-      <thead><tr><th>Stock</th><th class="num opt">Shares</th><th class="num opt">Bought @</th><th class="num">Value</th>
-        <th class="num">Gain/Loss</th><th class="opt">Picked By</th><th>Rating</th><th class="opt">Settled By</th></tr></thead>
+      <thead><tr><th style="width:10%">Stock</th><th class="num opt" style="width:9%">Shares</th><th class="num opt" style="width:13%">Bought @</th><th class="num" style="width:13%">Value</th>
+        <th class="num" style="width:13%">Gain/Loss</th><th class="opt" style="width:18%">Picked By</th><th style="width:10%">Rating</th><th class="opt" style="width:14%">Settled By</th></tr></thead>
       <tbody id="positions"></tbody>
       <tfoot id="posTotal"></tfoot>
     </table></div>
-    <div class="row" style="margin-top:16px"><button class="danger" id="sellBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" /><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" /><path d="m2 16 6 6" /><circle cx="16" cy="9" r="2.9" /><circle cx="6" cy="5" r="3" /></svg>Sell stocks…</button><button data-cmd="account">Refresh account</button></div>
+    <div class="row" style="margin-top:16px"><button class="danger" id="sellBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" /><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" /><path d="m2 16 6 6" /><circle cx="16" cy="9" r="2.9" /><circle cx="6" cy="5" r="3" /></svg>Sell stocks…</button><button data-cmd="account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /><path d="M8 16H3v5" /></svg>Refresh account</button></div>
     <div class="status"></div>
   </section>
 
