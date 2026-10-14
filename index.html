@@ -64,19 +64,12 @@ a:hover { text-decoration: underline; }
 
 header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
 h1 { font-size: 18px; margin: 0; letter-spacing: -.01em; }
-.chip { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600;
-  padding: 4px 12px; border-radius: 99px; background: var(--good-soft); color: var(--good); white-space: nowrap; }
-.chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-.chip.halted { background: var(--bad-soft); color: var(--bad); }
-.icons { display: flex; gap: 2px; }
 
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin-bottom: 16px;
   box-shadow: var(--shadow); }
 .card h2 { font-size: 15px; margin: 0 0 12px; font-weight: 650;
   display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
 .card h2 span { font-weight: 400; color: var(--muted); }
-/* A card split into parts (Counselors): each part gets a line and a smaller heading. */
-.part { border-top: 1px solid var(--line); margin-top: 20px; padding-top: 16px; }
 .card h3 { font-size: 14px; margin: 0 0 12px; font-weight: 650;
   display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
 .card h3 span { font-weight: 400; color: var(--muted); }
@@ -101,15 +94,13 @@ h1 { font-size: 18px; margin: 0; letter-spacing: -.01em; }
 .vs .worth { font-size: 16px; }
 .vs .who { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
 .vs small { font-size: 12px; opacity: .85; }
-@media (max-width: 640px) { .bars:has(.vs) { grid-template-columns: 1fr; } .bars .vs { flex-direction: row; gap: 10px; border-radius: 99px; } .vs .who { margin-right: auto; } }
+@media (max-width: 640px) { .bars:has(.vs) { grid-template-columns: 1fr; } .bars .vs { flex-direction: row; flex-wrap: wrap; gap: 4px 10px; border-radius: 99px; min-width: 0; } .vs .who { margin-right: auto; } }
 .chart { margin-top: 12px; }
 .chart svg { width: 100%; height: 160px; display: block; }
 .plot { position: relative; padding-right: 56px; }
 .axis span { position: absolute; right: 0; transform: translateY(-50%); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .axis span.bad { color: var(--bad); }
 .xaxis { display: flex; justify-content: space-between; margin: 4px 56px 0 0; font-size: 12px; color: var(--muted); }
-.legend { display: flex; gap: 16px; font-size: 12px; color: var(--muted); margin-top: 8px; flex-wrap: wrap; }
-.legend i { display: inline-block; width: 10px; height: 3px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
 #fillCost { margin: 12px 0 0; color: var(--muted); }
 #fillCost:empty { display: none; }
 #updated { margin: 12px 0 0; }
@@ -170,8 +161,6 @@ button:disabled { opacity: .5; cursor: wait; }
 .spin { width: 14px; height: 14px; flex: none; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.list { display: grid; }
-.list > * { min-width: 0; }
 
 details summary { cursor: pointer; }
 pre { white-space: pre-wrap; word-break: break-word; margin: 12px 0 0; font-size: 13px; line-height: 1.5; max-height: 460px; overflow: auto; }
@@ -257,7 +246,6 @@ button:active { transform: scale(.98); }
 button.primary { background: var(--grad-fill); border-color: transparent; box-shadow: 0 6px 20px var(--glow1); }
 button svg { width: 16px; height: 16px; vertical-align: -3px; margin-right: 4px; }
 .vs { background: var(--accent-soft); }
-.card.bar { z-index: 10; }
 /* Installed app: the page's top edge is the same color as the window's title bar, so they read as one. */
 @media (display-mode: standalone) { main { padding-top: 8px; } }
 /* Installed app with the title bar hidden: keep the header clear of the window buttons, and let it drag the window. */
@@ -321,9 +309,8 @@ button.danger { color: var(--text); background: var(--c2); border-color: var(--c
 .switch { width: 100%; justify-content: space-between; padding: 8px 20px 8px 16px; }
 .switch .name { display: inline-flex; align-items: baseline; gap: 8px; }
 .switch em { font-size: 1em; }
-.switch .state { font-family: Inter, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .switch[aria-checked="true"] .state { color: var(--text); }
-@media (max-width: 520px) { .topbar h1 { font-size: 21px; } .switch { padding: 8px 14px 8px 12px; } .switch .state { display: none; } }
+@media (max-width: 520px) { .topbar h1 { font-size: 21px; } .switch { padding: 8px 14px 8px 12px; } }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 body::after { opacity: var(--topo); transform-origin: 50% 100%; animation: drift 40s ease-in-out infinite alternate; }
 /* Slow drift of the contour lines. Grows from the bottom so the top stays black. */
@@ -511,7 +498,7 @@ header { margin-bottom: 16px; }
 .seat { cursor: pointer; outline: none; } .seat.still { cursor: default; } .seat:focus-visible .icon { outline: 2px solid var(--c3); border-radius: 50%; }
 /* Office: at your desk the Chief of staff stamps its briefs (left) and the Code reviewer checks a document (right);
    your inbox of every agent's news sits below. */
-.desk { position: relative; height: 150px; margin: 4px 0 12px; }
+.desk { position: relative; height: 150px; margin: 4px 0 12px; overflow: hidden; }
 .desk-top { position: absolute; left: 6%; right: 6%; bottom: 10px; height: 14px; border-radius: 6px;
   background: color-mix(in srgb, var(--c2) 70%, var(--card)); box-shadow: 0 6px 0 color-mix(in srgb, var(--c2) 70%, black), 0 12px 20px rgba(0, 0, 0, .25); }
 .desk-doc { position: absolute; left: 50%; bottom: 24px; width: 86px; height: 108px; margin-left: -43px; padding: 14px 12px; border-radius: 4px;
@@ -1024,9 +1011,9 @@ async function loadRuns() {
   return (await res.json()).workflow_runs || [];
 }
 
-// Status lines belong to one card (or one part of a card): the one holding the button that was pressed.
+// Status lines belong to the card holding the button that was pressed.
 function setStatus(text, from) {
-  const box = from && from.closest(".part, .card") && from.closest(".part, .card").querySelector(".status");
+  const box = from && from.closest(".card") && from.closest(".card").querySelector(".status");
   if (box) box.replaceChildren(...(text ? [el("span", {text})] : []));
 }
 
@@ -1112,13 +1099,14 @@ $("summaryBtn").addEventListener("click", async () => {
     for (let i = 0; i < 90; i++) {
       await new Promise(r => setTimeout(r, 10000));
       const runs = (await (await api("/actions/workflows/agents.yml/runs?per_page=5")).json()).workflow_runs || [];
-      const mine = runs.find(r => Date.parse(r.created_at) >= started);
+      const mine = runs.find(r => r.event === "workflow_dispatch" && Date.parse(r.created_at) >= started);
       if (!mine || mine.status !== "completed") continue;
       if (mine.conclusion !== "success") { reportProblem("Refresh Summary", await failedAt(mine), mine.html_url, btn); return; }
       const [brief] = await (await api("/issues?labels=agent,chief&state=open&per_page=1")).json();
-      if (brief) perfNote({reports: [{role: "chief", body: brief.body || "", created: brief.created_at}]});
+      if (brief) perfNote({reports: [{role: "chief", body: (brief.body || "").replace(/<!-- agent-data [\s\S]*? -->/g, ""), created: brief.created_at}]});
       return;
     }
+    setStatus("Still running. Check GitHub.", btn);
   } catch (e) { reportProblem("Refresh Summary", e.message, "", btn); }
   finally { btn.disabled = false; spinner.remove(); }
 });
@@ -1177,6 +1165,7 @@ async function dispatch(cmd, preset = "") {
         return;
       }
     }
+    setStatus("Still running. Check GitHub.", pressed);
   } catch (e) {
     reportProblem(label, e.message, "", pressed);
   } finally {
@@ -1321,7 +1310,7 @@ function showOffice() {
 
 // Labels in Title Case ("Chief of Staff"); sentences, reports and data stay as written.
 const SMALL = new Set(["a", "an", "the", "and", "or", "of", "for", "to", "in", "on", "at", "by", "vs"]);
-const LABELS = "button, option, label, summary, h2, h3, .tag, .acct-head, .stats, .legend";
+const LABELS = "button, option, label, summary, h2, h3, .tag, .acct-head, .stats";
 function titleCase(text, first) {
   return text.split(/(\s+)/).map(w => {
     if (!/\S/.test(w)) return w;
@@ -1375,7 +1364,8 @@ document.addEventListener("pointermove", e => {
 $("settingsBtn").addEventListener("click", () => $("setup").classList.toggle("hidden"));
 $("save").addEventListener("click", () => {
   store.set("repo", $("repo").value.trim());
-  store.set("token", $("token").value.trim());
+  const token = $("token").value.trim();
+  if (token) store.set("token", token);
   $("token").value = "";
   $("setup").classList.add("hidden");
   refresh();
