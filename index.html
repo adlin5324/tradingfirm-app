@@ -496,9 +496,14 @@ header { margin-bottom: 16px; }
    screen counts down and launches a rocket; the console lights blink. The architects walk laps around it. */
 .site { position: absolute; inset: 40px 56px; }
 #archStage { height: 400px; } #archStage .site { inset: 48px 120px 70px; }
-/* What they'd really do: the Mechanic cranks a wrench, the Quant flips its flask. */
+/* What they'd really do: the Mechanic does wrench tricks, the Quant flips its flask. */
 #archStage .seat .icon svg { width: 48px; height: 48px; }
-#archStage .job-mechanic .icon svg { transform-origin: 75% 25%; animation: job-crank 1.2s ease-in-out infinite; }
+/* The Mechanic twirls its wrench like a gunslinger, tosses it, catches it and strikes, throwing sparks. */
+#archStage .job-mechanic .icon svg { transform-origin: 50% 50%; animation: wrench-trick 3.6s ease-in-out infinite; }
+#archStage .job-mechanic .spark { position: absolute; left: 40px; top: 30px; width: 6px; height: 6px; border-radius: 50%; background: var(--c3);
+  box-shadow: 0 0 6px var(--c1); opacity: 0; animation: spark 3.6s ease-out infinite; }
+#archStage .job-mechanic .spark:nth-child(3) { --sx: 26px; --sy: -26px; } #archStage .job-mechanic .spark:nth-child(4) { --sx: 34px; --sy: 4px; }
+#archStage .job-mechanic .spark:nth-child(5) { --sx: 18px; --sy: 26px; } #archStage .job-mechanic .spark:nth-child(6) { --sx: -6px; --sy: -32px; }
 /* The Quant flips its flask like a water bottle: sometimes it lands, sometimes it topples. */
 #archStage .job-quant .icon svg { transform-origin: 50% 90%; }
 #archStage .job-quant.flip-ok .icon svg { animation: flip-ok 1.3s ease-in-out forwards; }
@@ -510,7 +515,13 @@ header { margin-bottom: 16px; }
 @keyframes flip-fail { 0% { transform: translate(0, 0) rotate(0deg) scaleY(1); } 15% { transform: translate(0, 4px) rotate(0deg) scaleY(.9); }
   50% { transform: translate(0, -46px) rotate(210deg) scaleY(1); } 78% { transform: translate(0, 0) rotate(340deg) scaleY(1); }
   88% { transform: translate(0, 0) rotate(395deg) scaleY(1); } 100% { transform: translate(6px, 2px) rotate(450deg) scaleY(1); } }
-@keyframes job-crank { 0%, 100% { transform: rotate(0); } 40% { transform: rotate(-38deg); } 55% { transform: rotate(-38deg); } }
+@keyframes wrench-trick {
+  0% { transform: translate(0, 0) rotate(0deg); } 30% { transform: translate(0, 0) rotate(720deg); }
+  38% { transform: translate(0, 6px) rotate(720deg); } 58% { transform: translate(0, -54px) rotate(1260deg); }
+  72% { transform: translate(0, 0) rotate(1440deg); } 80% { transform: translate(-6px, 0) rotate(1410deg); }
+  84% { transform: translate(8px, 2px) rotate(1475deg); } 100% { transform: translate(0, 0) rotate(1440deg); } }
+@keyframes spark { 0%, 83% { opacity: 0; transform: translate(0, 0) scale(1); } 85% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--sx, 10px), var(--sy, 0)) scale(.4); } }
 
 @media (max-width: 640px) { #archStage { height: 280px; } #archStage .site { inset: 34px 54px 54px; } #archStage .seat .icon svg { width: 36px; height: 36px; } }
 .site svg { width: 100%; height: 100%; overflow: visible; }
@@ -913,7 +924,8 @@ const ARCH_ICONS = {mechanic: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 
 const ARCH_RUNS = {quant: "quant.yml", reviewer: "reviewer.yml"};
 const archIcon = role => { const box = el("span"); box.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ARCH_ICONS[role] + "</svg>"; return box.firstChild; };
 const archSeats = ["mechanic", "quant"].map(role => {
-  const seat = el("div", {class: "seat still job-" + role, title: AGENTS[role]}, el("div", {class: "icon"}, archIcon(role)));
+  const seat = el("div", {class: "seat still job-" + role, title: AGENTS[role]}, el("div", {class: "icon"}, archIcon(role)),
+    ...(role === "mechanic" ? [0, 1, 2, 3].map(() => el("span", {class: "spark"})) : []));
   $("archStage").append(seat);
   return {role, seat};
 });
