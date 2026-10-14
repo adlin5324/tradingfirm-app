@@ -99,6 +99,12 @@ h1 { font-size: 18px; margin: 0; letter-spacing: -.01em; }
 .vs { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 99px; background: var(--faint); font-size: 13px; }
 .vs i { width: 8px; height: 8px; border-radius: 50%; }
 .vs b { font-weight: 650; }
+.bars:has(.vs) { display: grid; grid-template-columns: repeat(3, 1fr); }
+.bars .vs { flex-direction: column; justify-content: center; gap: 2px; padding: 8px 10px; border-radius: 14px; }
+.vs .amt { display: inline-flex; align-items: baseline; gap: 6px; white-space: nowrap; }
+.vs .who { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.vs small { font-size: 12px; opacity: .85; }
+@media (max-width: 640px) { .bars:has(.vs) { grid-template-columns: 1fr; } .bars .vs { flex-direction: row; justify-content: space-between; border-radius: 99px; } }
 .chart { margin-top: 12px; }
 .chart svg { width: 100%; height: 160px; display: block; }
 .plot { position: relative; padding-right: 56px; }
@@ -109,12 +115,6 @@ h1 { font-size: 18px; margin: 0; letter-spacing: -.01em; }
 #fillCost { margin: 12px 0 0; color: var(--muted); }
 #fillCost:empty { display: none; }
 #updated { margin: 12px 0 0; }
-.perf-stats { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 16px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-.perf-stats:empty { display: none; }
-.perf-stats div { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; height: 64px; text-align: center; }
-.perf-stats span { font-size: 12px; color: var(--muted); }
-.perf-stats b { font-size: 15px; font-weight: 600; }
-@media (max-width: 640px) { .perf-stats { grid-template-columns: repeat(2, 1fr); } }
 .perf-note { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); }
 .perf-note p { margin: 6px 0 0; }
 .perf-note .md, .perf-note .li { font-size: 14px; }
@@ -492,6 +492,9 @@ header { margin-bottom: 16px; }
   .rt-log { font-size: 13px; }
 }
 @media (prefers-reduced-motion: reduce) { .seat .icon, .seat .bang { animation: none !important; } }
+/* Market lines: teal and pink, colors no theme uses. */
+:root { --spx: #2dd4bf; --ndx: #f472b6; }
+:root[data-mode="light"] { --spx: #0d9488; --ndx: #db2777; }
 </style>
 </head>
 <body>
@@ -556,12 +559,11 @@ header { margin-bottom: 16px; }
   <section class="card" data-view="performance">
     <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16" /><path d="m19 9-5 5-4-4-3 3" /></svg>Performance</span> <span class="small" id="since"></span></h2>
     <div class="bars" id="bars"><span class="muted small">Starts after the first live run.</span></div>
-    <div class="perf-stats" id="perfStats"></div>
     <div class="chart hidden" id="chart"></div>
     <div class="perf-note" id="perfNote"></div>
     <p class="small" id="fillCost"></p>
     <p class="muted small" id="updated"></p>
-    <div class="row" style="margin-top:16px"><button class="danger" id="summaryBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" /><path d="M20 3v4" /><path d="M22 5h-4" /><path d="M4 17v2" /><path d="M5 18H3" /></svg>Refresh summary</button><button class="danger" data-cmd="deposit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="12" x="2" y="6" rx="2" /><circle cx="12" cy="12" r="2" /><path d="M6 12h.01M18 12h.01" /></svg>Record deposit</button></div>
+    <div class="row" style="margin-top:16px"><button class="danger" id="summaryBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" /><path d="M20 3v4" /><path d="M22 5h-4" /><path d="M4 17v2" /><path d="M5 18H3" /></svg>Refresh summary</button><button data-cmd="deposit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="12" x="2" y="6" rx="2" /><circle cx="12" cy="12" r="2" /><path d="M6 12h.01M18 12h.01" /></svg>Record deposit</button></div>
     <div class="status"></div>
   </section>
 
@@ -672,7 +674,7 @@ const pct = n => (n >= 0 ? "+" : "") + (n * 100).toFixed(2) + "%";
 const tone = (e, n) => { e.classList.toggle("good", n > 0); e.classList.toggle("bad", n < 0); return e; };
 const when = s => s ? new Date(s).toLocaleString(undefined, {month: "short", day: "numeric", hour: "numeric", minute: "2-digit"}) : "–";
 const shortDate = s => s ? new Date(String(s).slice(0, 10) + "T12:00:00").toLocaleDateString(undefined, {month: "short", day: "numeric"}) : "–";
-const COLORS = {"Bot": "var(--s1)", "S&P 500": "var(--s2)", "Nasdaq 100": "var(--s3)"};
+const COLORS = {"Bot": "var(--s1)", "S&P 500": "var(--spx)", "Nasdaq 100": "var(--ndx)"};
 
 function el(name, attrs = {}, ...kids) {
   const e = document.createElement(name);
@@ -724,19 +726,16 @@ function show(d) {
 
   if (d.scorecard) {
     const s = d.scorecard, rows = [["Bot", s.bot], ...Object.entries(s.markets)];
+    // What the start amount made in each: the bot, or the same money in the S&P 500 or Nasdaq 100.
     $("bars").replaceChildren(...rows.map(([name, v]) => el("span", {class: "vs"},
-      el("i", {style: "background:" + (COLORS[name] || "var(--s2)")}), name, tone(el("b", {class: "num", text: pct(v)}), v))));
-    const gain = d.account ? d.account.total - s.start_value - (s.deposits || 0) : null;
-    const stat = (label, value, n) => el("div", {}, el("span", {text: label}), tone(el("b", {class: "num", text: value}), n));
-    $("perfStats").replaceChildren(stat("Started With", money(s.start_value)),
-      ...(gain == null ? [] : [stat("Gain/Loss", signed(gain) + " (" + pct(s.bot) + ")", gain)]),
-      ...Object.entries(s.markets).map(([name, v]) => stat("Vs " + name, pct(s.bot - v), s.bot - v)));
+      el("span", {class: "who"}, el("i", {style: "background:" + (COLORS[name] || "var(--s2)")}), name),
+      el("span", {class: "amt"}, tone(el("b", {class: "num", text: signed(s.start_value * v)}), v), tone(el("small", {class: "num", text: pct(v)}), v)))));
     $("since").textContent = "since " + shortDate(s.start) +
       (s.deposits ? " · deposits " + signed(s.deposits) : "");
   }
   const fc = d.fill_cost;
   $("fillCost").textContent = fc ? `Fill cost vs mid price: ${pct(fc.avg)} a trade, ${money(fc.dollars)} total over ${fc.fills} fill(s)` : "";
-  drawChart(growthLine(d));
+  drawChart(growthLine(d), d.scorecard && d.scorecard.start_value);
   perfNote(d.team);
 
   const pos = positions = d.positions || [];
@@ -892,28 +891,30 @@ function perfNote(team) {
     : [el("p", {class: "muted small", text: "The Chief of Staff writes a short summary here every Sunday. Press Refresh Summary to get one now."})]));
 }
 
-function drawChart(history) {
+// Dollars over time: the bot's account next to the same start amount put in the S&P 500 or the Nasdaq 100.
+function drawChart(history, base) {
   const box = $("chart");
-  if (history.length < 2) { box.classList.add("hidden"); return; }
+  if (history.length < 2 || !base) { box.classList.add("hidden"); return; }
   box.classList.remove("hidden");
-  const val = (h, n) => n === "Bot" ? h.bot : h[n];
+  const val = (h, n) => { const g = n === "Bot" ? h.bot : h[n]; return g == null ? null : base * (1 + g); };
   const names = ["Bot", "S&P 500", "Nasdaq 100"].filter(n => history.some(h => val(h, n) != null));
-  const all = history.flatMap(h => names.map(n => val(h, n)).filter(v => v != null)).concat(0);
-  // Round the scale to clean steps (0.25%, 0.50%, 1.00%, ...) so the labels on the right read easily.
+  const all = history.flatMap(h => names.map(n => val(h, n)).filter(v => v != null)).concat(base);
+  // Round the scale to clean dollar steps ($1, $2, $5, ...) so the labels on the right read easily.
   const min = Math.min(...all), max = Math.max(...all);
-  const step = [0.0025, 0.005, 0.01, 0.02, 0.025, 0.05, 0.1, 0.2, 0.25, 0.5, 1].find(t => (max - min) / t <= 4) || 1;
+  const step = [0.5, 1, 2, 2.5, 5, 10, 20, 25, 50, 100, 250, 500, 1000].find(t => (max - min) / t <= 4) || 1000;
   const lo = Math.floor(min / step + 1e-9) * step, hi = Math.max(Math.ceil(max / step - 1e-9) * step, lo + step), span = hi - lo;
   const ticks = Array.from({length: Math.round(span / step) + 1}, (_, i) => lo + i * step);
   const W = 600, H = 150, pad = 6, ns = "http://www.w3.org/2000/svg";
   const x = i => pad + i * (W - 2 * pad) / (history.length - 1);
   const y = v => pad + (hi - v) * (H - 2 * pad) / span;
   const svgEl = (name, attrs) => { const e = document.createElementNS(ns, name); Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v)); return e; };
-  const svg = svgEl("svg", {viewBox: `0 0 ${W} ${H}`, preserveAspectRatio: "none", role: "img", "aria-label": "Growth since start"});
-  if (lo < 0) svg.append(svgEl("rect", {x: 0, width: W, y: y(0), height: H - y(0), fill: "var(--bad)", opacity: 0.07}));
-  ticks.forEach(t => svg.append(svgEl("line", {x1: 0, x2: W, y1: y(t), y2: y(t), stroke: "var(--line)",
-    ...(Math.abs(t) < 1e-9 ? {"stroke-dasharray": "4 4"} : {opacity: 0.5}), "vector-effect": "non-scaling-stroke"})));
-  const axis = el("div", {class: "axis"}, ticks.map(t => el("span", {class: t < -1e-9 ? "bad" : "",
-    style: "top:" + (y(t) / H * 100).toFixed(2) + "%", text: (t < -1e-9 ? "−" : "") + Math.abs(t * 100).toFixed(2) + "%"})));
+  const svg = svgEl("svg", {viewBox: `0 0 ${W} ${H}`, preserveAspectRatio: "none", role: "img", "aria-label": "Account value since start versus the markets"});
+  if (min < base - 1e-9) svg.append(svgEl("rect", {x: 0, width: W, y: y(base), height: H - y(base), fill: "var(--bad)", opacity: 0.07}));
+  ticks.forEach(t => svg.append(svgEl("line", {x1: 0, x2: W, y1: y(t), y2: y(t), stroke: "var(--line)", opacity: 0.5, "vector-effect": "non-scaling-stroke"})));
+  svg.append(svgEl("line", {x1: 0, x2: W, y1: y(base), y2: y(base), stroke: "var(--line)", "stroke-dasharray": "4 4", "vector-effect": "non-scaling-stroke"}));
+  const axis = el("div", {class: "axis"}, ticks.map(t => el("span", {class: t < base - 1e-9 && min < base - 1e-9 ? "bad" : "",
+    style: "top:" + (y(t) / H * 100).toFixed(2) + "%", text: "$" + t.toFixed(step < 1 ? 2 : 0)})));
+  // Ticks below the start are only red when some line actually dips below it.
   names.slice().reverse().forEach(n => {
     const pts = history.map((h, i) => val(h, n) == null ? null : x(i).toFixed(1) + "," + y(val(h, n)).toFixed(1)).filter(Boolean);
     svg.append(svgEl("polyline", {points: pts.join(" "), fill: "none", stroke: COLORS[n], "stroke-width": n === "Bot" ? 2.5 : 1.5,
