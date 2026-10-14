@@ -400,12 +400,15 @@ header { margin-bottom: 16px; }
 }
 .topnav button.on { color: var(--text); background: var(--faint); }
 /* The Firm is one card; each floor gets a line above it and a heading naming its floor. */
+/* All three floors are the same height; each scene fills what its floor's heading and desk leave. */
+.floor { box-sizing: content-box; height: 600px; display: flex; flex-direction: column; }
+.floor > .stage { flex: 1; height: auto; min-height: 0; }
+@media (max-width: 640px) { .floor { height: 440px; } }
 .floor + .floor { border-top: 1px solid var(--line); margin-top: 20px; padding-top: 16px; }
 .floor h3 { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
 .floor h3 .lvl { font-size: 12px; font-weight: 400; color: var(--muted); }
 /* Each team's scene: Associates, Counselors (tic-tac-toe) and Architects (mission control). */
 .stage { position: relative; height: 260px; margin-top: 8px; overflow: hidden; }
-#stage { height: 320px; } @media (max-width: 640px) { #stage { height: 230px; } }
 /* Tic-tac-toe in the theme's colors: a 3x3 grid, glowing X and O, and a line through the winning row. */
 .ttt { position: absolute; display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); line-height: 1; font-weight: 800; }
 .ttt .cell { display: grid; place-items: center; border: 0 solid color-mix(in srgb, var(--c3) 55%, transparent); }
@@ -434,7 +437,7 @@ header { margin-bottom: 16px; }
 /* Architects: mission control. Side screens plot a chart, sweep a radar, type code and pulse bars; the main
    screen counts down and launches a rocket; the console lights blink. The architects walk laps around it. */
 .site { position: absolute; inset: 40px 56px; }
-#archStage { height: 400px; } #archStage .site { inset: 48px 120px 70px; }
+#archStage .site { inset: 48px 120px 70px; }
 /* What they'd really do: the Mechanic does wrench tricks, the Quant flips its flask. */
 #archStage .seat .icon svg { width: 48px; height: 48px; }
 /* The Mechanic twirls its wrench like a gunslinger, tosses it, catches it and strikes, throwing sparks. */
@@ -462,7 +465,7 @@ header { margin-bottom: 16px; }
 @keyframes spark { 0%, 83% { opacity: 0; transform: translate(0, 0) scale(1); } 85% { opacity: 1; }
   100% { opacity: 0; transform: translate(var(--sx, 10px), var(--sy, 0)) scale(.4); } }
 
-@media (max-width: 640px) { #archStage { height: 280px; } #archStage .site { inset: 34px 54px 54px; } #archStage .seat .icon svg { width: 36px; height: 36px; } }
+@media (max-width: 640px) { #archStage .site { inset: 34px 54px 54px; } #archStage .seat .icon svg { width: 36px; height: 36px; } }
 .site svg { width: 100%; height: 100%; overflow: visible; }
 .site .mc-scr { fill: color-mix(in srgb, var(--c2) 55%, var(--card)); stroke: color-mix(in srgb, var(--c3) 55%, transparent); stroke-width: 1; }
 .site .mc-main { stroke-width: 1.4; filter: drop-shadow(0 0 6px color-mix(in srgb, var(--c1) 50%, transparent)); }
