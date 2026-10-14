@@ -142,6 +142,9 @@ td.sym { font-weight: 650; }
 tfoot td { font-weight: 650; border-top: 1px solid var(--line); border-bottom: 0; }
 td .sub { display: block; font-size: 12px; font-weight: 400; color: var(--muted); }
 @media (max-width: 640px) { .opt { display: none; } th, td { padding: 12px 4px; } }
+.pos table { table-layout: fixed; }
+.pos th, .pos td { text-align: center; }
+.pos th:first-child, .pos td:first-child { text-align: left; }
 .tag { display: inline-block; font-size: 12px; padding: 1px 8px; border-radius: 99px; background: var(--faint); color: var(--muted); white-space: nowrap; }
 .tag.good { background: var(--good-soft); color: var(--good); }
 .tag.bad { background: var(--bad-soft); color: var(--bad); }
@@ -432,9 +435,6 @@ header { margin-bottom: 16px; }
   .topnav { overflow-x: auto; scrollbar-width: none; }
 }
 .topnav button.on { color: var(--text); background: var(--faint); }
-/* Labels in Title Case (headings, buttons, menus, tags); sentences and data stay as written. */
-button, select, option, label, summary, h2, #runs a, .tag, .menu .label, .acct-head, .stats, .legend { text-transform: capitalize; }
-h2 .small, .sym, .report, .md { text-transform: none; }
 </style>
 </head>
 <body>
@@ -484,7 +484,7 @@ h2 .small, .sym, .report, .md { text-transform: none; }
     </div>
   </section>
 
-  <section class="card" id="positionsCard" data-view="positions">
+  <section class="card pos" id="positionsCard" data-view="positions">
     <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /><rect width="20" height="14" x="2" y="6" rx="2" /></svg>Positions</span> <span class="small" id="posCount"></span></h2>
     <div class="table-wrap"><table>
       <thead><tr><th>Stock</th><th class="num opt">Shares</th><th class="num opt">Price</th><th class="num">Value</th>
@@ -985,6 +985,34 @@ async function dispatch(cmd, preset = "") {
 }
 
 document.querySelectorAll("[data-cmd]").forEach(b => b.addEventListener("click", () => dispatch(b.dataset.cmd)));
+// Labels in Title Case ("Chief of Staff"); sentences, reports and data stay as written.
+const SMALL = new Set(["a", "an", "the", "and", "or", "of", "for", "to", "in", "on", "at", "by", "vs"]);
+const LABELS = "button, option, label, summary, h2, #runs a, .tag, .menu .label, .acct-head, .stats, .legend";
+function titleCase(text, first) {
+  return text.split(/(\s+)/).map(w => {
+    if (!/\S/.test(w)) return w;
+    const out = SMALL.has(w.toLowerCase()) && !first ? w : w.replace(/^([^A-Za-z]*)([a-z])/, (m, p, c) => p + c.toUpperCase());
+    first = false;
+    return out;
+  }).join("");
+}
+function titleLabels() {
+  document.querySelectorAll(LABELS).forEach(root => {
+    const walk = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    let first = true;
+    for (let n; (n = walk.nextNode());) {
+      if (n.parentElement.closest(".small, .sym, .report, .md")) continue;
+      const t = titleCase(n.data, first);
+      if (t !== n.data) n.data = t;
+      if (/\S/.test(n.data)) first = false;
+    }
+  });
+}
+let titling = 0;
+new MutationObserver(() => { cancelAnimationFrame(titling); titling = requestAnimationFrame(titleLabels); })
+  .observe(document.body, {childList: true, subtree: true, characterData: true});
+titleLabels();
+
 // Top bar picks the page: Positions, Performance, AI Team or Architects.
 let view = ["positions", "performance", "ai", "arch"].includes(store.get("view")) ? store.get("view") : "positions";
 function showView() {
