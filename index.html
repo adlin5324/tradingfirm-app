@@ -495,10 +495,9 @@ header { margin-bottom: 16px; }
       <tbody id="positions"></tbody>
       <tfoot id="posTotal"></tfoot>
     </table></div>
+    <div class="row" style="margin-top:16px"><button class="danger" id="sellBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" /><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" /><path d="m2 16 6 6" /><circle cx="16" cy="9" r="2.9" /><circle cx="6" cy="5" r="3" /></svg>Sell stocks…</button><button data-cmd="account">Refresh account</button></div>
+    <div class="status"></div>
   </section>
-
-
-
 
   <section class="card" data-view="performance">
     <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16" /><path d="m19 9-5 5-4-4-3 3" /></svg>Performance</span> <span class="small" id="since"></span></h2>
@@ -507,27 +506,10 @@ header { margin-bottom: 16px; }
     <div class="perf-note" id="perfNote"></div>
     <p class="small" id="fillCost"></p>
     <p class="muted small" id="updated"></p>
-  </section>
-
-  <section class="card bar" data-view="performance">
-    <div class="actions">
-      <button class="danger" id="sellBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" /><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" /><path d="m2 16 6 6" /><circle cx="16" cy="9" r="2.9" /><circle cx="6" cy="5" r="3" /></svg>Sell stocks…</button>
-      <details class="more" id="more">
-        <summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /><circle cx="5" cy="12" r="1" /></svg>More</summary>
-        <div class="menu">
-          <div class="label">Check (no trading)</div>
-          <button data-cmd="account">Refresh account</button>
-          <button data-cmd="picks">Preview picks</button>
-          <button data-cmd="scorecard">Update scorecard</button>
-          <button data-cmd="dry-run">Dry run</button>
-          <div class="sep"></div>
-          <button data-cmd="deposit">Record deposit</button>
-          <button data-cmd="cancel" class="danger">Cancel open orders</button>
-        </div>
-      </details>
-    </div>
+    <div class="row" style="margin-top:16px"><button data-cmd="scorecard">Update scorecard</button><button data-cmd="deposit">Record deposit</button></div>
     <div class="status"></div>
   </section>
+
 
   <section class="card" data-view="arch">
     <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12.99 6.74 1.93 3.44" /><path d="M19.136 12a10 10 0 0 1-14.271 0" /><path d="m21 21-2.16-3.84" /><path d="m3 21 8.02-14.26" /><circle cx="12" cy="5" r="2" /></svg>Architects</span> <span class="small">fix and improve the bot · nothing changes until you approve</span></h2>
@@ -559,17 +541,20 @@ header { margin-bottom: 16px; }
 
   <section class="card" data-view="ai">
     <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg>Next run's picks</span> <span class="small" id="picksWhen"></span></h2>
-    <div id="picksBody"><div class="empty">Open More → Preview picks to see what the next run would likely buy.</div></div>
+    <div id="picksBody"><div class="empty">Press Preview Picks to see what the next run would likely buy.</div></div>
+    <div class="row" style="margin-top:16px"><button data-cmd="picks">Preview picks</button></div>
   </section>
 
   <div class="grid2" data-view="ai">
     <section class="card">
       <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z" /><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" /><path d="M12 17.5v-11" /></svg>Recent orders</span></h2>
       <div class="list" id="orders"><div class="empty">No data yet</div></div>
+    <div class="row" style="margin-top:16px"><button data-cmd="cancel" class="danger">Cancel open orders</button></div>
     </section>
     <section class="card">
       <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg>Recent runs</span></h2>
       <div class="list" id="runs"><div class="empty">No data yet</div></div>
+    <div class="row" style="margin-top:16px"><button data-cmd="dry-run">Dry run</button></div>
     </section>
   </div>
   <section class="card" data-view="ai">
@@ -1040,8 +1025,6 @@ document.addEventListener("pointermove", e => {
   card.style.setProperty("--mx", e.clientX - r.left + "px");
   card.style.setProperty("--my", e.clientY - r.top + "px");
 });
-document.querySelectorAll(".menu button").forEach(b => b.addEventListener("click", () => $("more").open = false));
-document.addEventListener("click", e => { if (!$("more").contains(e.target)) $("more").open = false; });
 $("settingsBtn").addEventListener("click", () => $("setup").classList.toggle("hidden"));
 $("save").addEventListener("click", () => {
   store.set("repo", $("repo").value.trim());
