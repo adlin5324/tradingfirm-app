@@ -451,16 +451,16 @@ header { margin-bottom: 16px; }
 }
 .topnav button.on { color: var(--text); background: var(--faint); }
 /* Round table: the AI team circles the table; your seat is the gap at the bottom. */
-.stage { position: relative; height: 520px; margin-top: 8px; overflow: hidden; }
-.rt-table { position: absolute; inset: 44px; border-radius: 50%;
+.stage { position: relative; height: 260px; margin-top: 8px; overflow: hidden; }
+.rt-table { position: absolute; inset: 40px 56px; border-radius: 50%;
   background: radial-gradient(ellipse at 50% 35%, color-mix(in srgb, var(--c1) 30%, var(--card)), color-mix(in srgb, var(--c2) 45%, var(--card)) 75%);
   border: 1px solid color-mix(in srgb, var(--c3) 45%, transparent);
   box-shadow: inset 0 0 48px rgba(0, 0, 0, .35), 0 0 32px color-mix(in srgb, var(--c1) 25%, transparent); }
-.rt-chat { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: calc((100% - 88px) * .7);
-  height: calc((100% - 88px) * .64); display: flex; flex-direction: column; gap: 8px; }
-.rt-log { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 4px; font-size: 14px; scrollbar-width: none;
-  mask-image: linear-gradient(transparent, #000 40px); -webkit-mask-image: linear-gradient(transparent, #000 40px); }
-.rt-log > :first-child { margin-top: auto; }
+/* The table only shows who is talking; the conversation reads below it, full width. */
+.rt-center { position: absolute; inset: 40px 56px; display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 0 16px; text-align: center; font-size: 14px; font-weight: 600; color: var(--text); pointer-events: none; }
+.rt-chat { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+.rt-log { max-height: 480px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 4px; font-size: 14px; scrollbar-width: thin; }
 .rt-q { align-self: flex-end; max-width: 85%; background: var(--c1); color: #fff; padding: 8px 12px; border-radius: 14px 14px 4px 14px; }
 .rt-a { align-self: flex-start; max-width: 95%; background: var(--card); border: 1px solid var(--line); padding: 8px 12px; border-radius: 14px 14px 14px 4px; }
 .rt-a .who { display: flex; align-items: center; gap: 6px; font-weight: 650; font-size: 12px; margin-bottom: 4px; }
@@ -487,9 +487,8 @@ header { margin-bottom: 16px; }
 @keyframes rt-bob { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(4px, -4px); } 50% { transform: translate(0, -7px); } 75% { transform: translate(-4px, -4px); } }
 @keyframes rt-bang { from { transform: scale(.9) rotate(-8deg); } to { transform: scale(1.15) rotate(8deg); } }
 @media (max-width: 640px) {
-  .stage { height: 300px; margin-left: -8px; margin-right: -8px; }
-  .rt-table { inset: 38px 30px; }
-  .rt-chat { width: calc((100% - 60px) * .86); height: calc((100% - 76px) * .8); }
+  .stage { height: 200px; margin-left: -8px; margin-right: -8px; }
+  .rt-table, .rt-center { inset: 36px 30px; }
   .rt-log { font-size: 13px; }
 }
 @media (prefers-reduced-motion: reduce) { .seat .icon, .seat .bang { animation: none !important; } }
@@ -588,13 +587,14 @@ header { margin-bottom: 16px; }
     <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3" /><path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z" /><path d="M5 18v2" /><path d="M19 18v2" /></svg>Counselors</span> <span class="small">ask anything · whoever fits answers</span></h2>
     <div class="stage" id="stage">
       <div class="rt-table"></div>
-      <div class="rt-chat">
-        <div class="rt-log" id="rtLog" aria-live="polite"></div>
-        <form class="rt-ask" id="askForm" autocomplete="off">
-          <input id="askQ" maxlength="1000" placeholder="Ask the counselors…" aria-label="Ask the counselors a question">
-          <button type="submit" id="askSend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z" /><path d="M6 12h16" /></svg></button>
-        </form>
-      </div>
+      <div class="rt-center" id="rtCenter" aria-live="polite"></div>
+    </div>
+    <div class="rt-chat">
+      <div class="rt-log" id="rtLog" aria-live="polite"></div>
+      <form class="rt-ask" id="askForm" autocomplete="off">
+        <input id="askQ" maxlength="1000" placeholder="Ask the counselors…" aria-label="Ask the counselors a question">
+        <button type="submit" id="askSend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z" /><path d="M6 12h16" /></svg></button>
+      </form>
     </div>
     <div class="status"></div>
   </section>
@@ -1171,12 +1171,15 @@ function showTable(list, pending) {
   $("rtLog").replaceChildren(...log);
   $("rtLog").scrollTop = $("rtLog").scrollHeight;
   seats.forEach(({seat}) => seat.classList.toggle("thinking", !!pending));
+  center(pending ? [el("span", {class: "spin"}), "Thinking…"] : ["Ask below"]);
 }
+const center = parts => $("rtCenter").replaceChildren(...parts);
 function spoke(entry) {
   const roles = entry.answers.map(a => a.role);
   seats.forEach(({role, seat}) => seat.classList.toggle("spoke", roles.includes(role)));
   talking = true;
-  setTimeout(() => { talking = false; seats.forEach(({seat}) => seat.classList.remove("spoke")); }, 20000);
+  center([roles.length + (roles.length > 1 ? " counselors answered" : " counselor answered")]);
+  setTimeout(() => { center(["Ask below"]); talking = false; seats.forEach(({seat}) => seat.classList.remove("spoke")); }, 20000);
 }
 let tableLoaded = false;
 async function openTable() {
