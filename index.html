@@ -528,6 +528,15 @@ header { margin-bottom: 16px; }
 /* A speaker stops and drifts in a small loop around its spot. */
 @keyframes rt-bob { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(4px, -4px); } 50% { transform: translate(0, -7px); } 75% { transform: translate(-4px, -4px); } }
 @keyframes rt-bang { from { transform: scale(.9) rotate(-8deg); } to { transform: scale(1.15) rotate(8deg); } }
+/* Wide screens: the table on the left half, the chat log on the right, same height. */
+@media (min-width: 861px) {
+  .rt-split { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .rt-split .stage { height: 360px; }
+  .rt-split .rt-table, .rt-split .rt-center { inset: 80px 36px; }
+  .rt-split .rt-chat { height: 360px; margin-top: 8px; }
+  .rt-split .rt-log { flex: 1; min-height: 0; max-height: none; mask-image: linear-gradient(transparent, #000 24px); -webkit-mask-image: linear-gradient(transparent, #000 24px); }
+  .rt-split .rt-log > :first-child { margin-top: auto; }
+}
 @media (max-width: 640px) {
   .stage { height: 200px; margin-left: -8px; margin-right: -8px; }
   .rt-table, .rt-center { inset: 36px 30px; }
@@ -642,6 +651,7 @@ header { margin-bottom: 16px; }
 
   <section class="card" data-view="ai">
     <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3" /><path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z" /><path d="M5 18v2" /><path d="M19 18v2" /></svg>Counselors</span> <span class="small">ask anything · whoever fits answers</span></h2>
+    <div class="rt-split">
     <div class="stage" id="stage">
       <div class="rt-table"></div>
       <div class="rt-center" id="rtCenter" aria-live="polite"></div>
@@ -652,6 +662,7 @@ header { margin-bottom: 16px; }
         <input id="askQ" maxlength="1000" placeholder="Ask the counselors…" aria-label="Ask the counselors a question">
         <button type="submit" id="askSend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z" /><path d="M6 12h16" /></svg></button>
       </form>
+    </div>
     </div>
     <div class="status"></div>
 
@@ -1274,7 +1285,7 @@ function showTable(list, pending) {
   $("rtLog").replaceChildren(...log);
   $("rtLog").scrollTop = $("rtLog").scrollHeight;
   seats.forEach(({seat}) => seat.classList.toggle("thinking", !!pending));
-  center(pending ? [el("span", {class: "spin"}), "Thinking…"] : ["Ask below"]);
+  center(pending ? [el("span", {class: "spin"}), "Thinking…"] : ["Ask away"]);
 }
 const center = parts => $("rtCenter").replaceChildren(...parts);
 function spoke(entry) {
@@ -1282,7 +1293,7 @@ function spoke(entry) {
   seats.forEach(({role, seat}) => seat.classList.toggle("spoke", roles.includes(role)));
   talking = true;
   center([roles.length + (roles.length > 1 ? " counselors answered" : " counselor answered")]);
-  setTimeout(() => { center(["Ask below"]); talking = false; seats.forEach(({seat}) => seat.classList.remove("spoke")); }, 20000);
+  setTimeout(() => { center(["Ask away"]); talking = false; seats.forEach(({seat}) => seat.classList.remove("spoke")); }, 20000);
 }
 let tableLoaded = false;
 async function openTable() {
