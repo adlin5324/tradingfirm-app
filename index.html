@@ -531,7 +531,12 @@ header { margin-bottom: 16px; }
   text-shadow: 0 0 4px var(--c1), 0 0 12px var(--c1); display: none; }
 .seat.thinking .icon { animation: rt-think 1.6s ease-in-out infinite; }
 .seat.spoke .icon { animation: rt-bob 2.4s ease-in-out infinite; }
-.seat.spoke .bang { display: block; animation: rt-bang .8s ease-in-out infinite alternate; }
+.seat.spoke .bang, .seat.news .bang { display: block; animation: rt-bang .8s ease-in-out infinite alternate; }
+.seat { cursor: pointer; outline: none; } .seat:focus-visible .icon { outline: 2px solid var(--c3); border-radius: 50%; }
+.rt-a .told-title { font-weight: 650; margin: 0 0 4px; }
+.rt-a pre { white-space: pre-wrap; font-size: 12px; margin: 0; max-height: 260px; overflow: auto; }
+.rt-a .acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; font-size: 13px; }
+.rt-a .acts button { padding: 4px 10px; font-size: 12px; }
 @keyframes rt-think { 50% { opacity: .45; } }
 /* A speaker stops and drifts in a small loop around its spot. */
 @keyframes rt-bob { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(4px, -4px); } 50% { transform: translate(0, -7px); } 75% { transform: translate(-4px, -4px); } }
@@ -691,33 +696,6 @@ header { margin-bottom: 16px; }
     </div>
     <div class="status"></div>
 
-    <div class="part">
-    <h3><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></svg>Reports</span></h3>
-    <div class="list" id="team"><div class="empty">No reports yet</div></div>
-    <div id="shadow" class="small"></div>
-    <div class="row" style="margin-top:16px">
-      <select id="agentPick" aria-label="Agent">
-        <option value="scout">News scout</option><option value="risk">Risk officer</option>
-        <option value="analyst">Equity analyst</option><option value="auditor">Auditor</option>
-        <option value="chief">Chief of staff</option>
-      </select>
-      <button id="agentRun">Run agent</button>
-    </div>
-    <div class="status"></div>
-    </div>
-
-    <div class="part">
-    <h3><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg>Next run's picks</span> <span class="small" id="picksWhen"></span></h3>
-    <div id="picksBody"><div class="empty">Press Preview Picks to see what the next run would likely buy.</div></div>
-    <div class="row" style="margin-top:16px"><button data-cmd="picks">Preview picks</button></div>
-    </div>
-
-    <div class="part">
-    <details class="fold">
-      <summary><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /></svg>Latest report</summary>
-      <pre id="report" class="muted">No report yet</pre>
-    </details>
-    </div>
   </section>
 
   <section class="card" data-view="junk">
@@ -864,24 +842,8 @@ function show(d) {
       tag(state, state === "filled" ? "good" : /reject|cancel|never/.test(state) ? "bad" : ""));
   }) : [empty("No orders yet")]));
 
-  if (d.picks) {
-    const p = d.picks, ready = p.stocks.filter(s => s.votes >= p.need), close = p.stocks.filter(s => s.votes < p.need);
-    $("picksWhen").textContent = "for " + shortDate(p.day) + " · needs " + p.need + " of 10 votes";
-    const body = [el("p", {class: "small", text: p.orders.length
-      ? "Likely orders: " + p.orders.map(o => o.side.toLowerCase() + " " + o.shares + " " + o.symbol).join(", ")
-      : "No orders likely: all slots are full or nothing qualifies."})];
-    if (ready.length) {
-      body.push(el("div", {class: "table-wrap"}, el("table", {},
-        el("thead", {}, el("tr", {}, el("th", {text: "Stock"}), el("th", {class: "num", text: "Votes"}),
-                                     el("th", {class: "num", text: "Price"}), el("th", {class: "opt", text: "Strategies"}))),
-        el("tbody", {}, ready.slice(0, 12).map(s => el("tr", {}, td(s.symbol, "sym"), td(String(s.votes), "num"),
-          td(money(s.price), "num"), td(s.strategies.join(", "), "muted small opt")))))));
-    }
-    if (close.length) body.push(el("p", {class: "muted small", text: "One vote short: " + close.map(s => s.symbol).join(", ")}));
-    $("picksBody").replaceChildren(...body);
-  }
   showTeam(d.team, d.shadow || []);
-  if (d.report) { $("report").textContent = d.report; $("report").classList.remove("muted"); }
+  gatherNews(d);
 }
 
 const AGENTS = {scout: "News scout", risk: "Risk officer", analyst: "Equity analyst", auditor: "Auditor",
@@ -933,15 +895,10 @@ function showTeam(team, shadow) {
   lastTeam = team;
   const prs = team.prs.map(p => el("div", {class: "item"},
     el("a", {href: p.url, target: "_blank", rel: "noopener", text: "#" + p.number + " " + p.title}), tag("needs you", "blue")));
-  const reports = team.reports.filter(r => !ARCHITECTS.includes(r.role)).map(item);
   const arch = team.reports.filter(r => ARCHITECTS.includes(r.role)).map(item);
-  $("team").replaceChildren(...(reports.length ? reports : [empty("No reports yet")]));
   $("arch").replaceChildren(...(arch.length ? arch : [empty("No reports yet")]));
   $("prs").replaceChildren(...(prs.length ? prs : [empty("Nothing waiting")]));
   drawShop();
-  $("shadow").replaceChildren(...(shadow.length ? [el("p", {class: "muted small", text:
-    "Would have skipped (shadow mode, bought anyway): " + shadow.slice(-8).reverse()
-      .map(s => s.symbol + " on " + shortDate(s.date) + " (" + s.why + ")").join("; ")})] : []));
 }
 
 // Anything that fails in the app goes to the Architects page, with where it failed. Kept in this browser only.
@@ -1013,15 +970,14 @@ function reportProblem(source, error, url, from) {
 }
 showProblems();
 
-async function runAgent() {
-  const role = $("agentPick").value;
+async function runAgent(role, from) {
   try {
     const res = await api("/actions/workflows/agents.yml/dispatches", {
       method: "POST", body: JSON.stringify({ref: "main", inputs: {role}}), headers: {"Content-Type": "application/json"},
     });
     if (res.status !== 204) throw new Error("GitHub didn't start it (" + res.status + ").");
-    setStatus(AGENTS[role] + " started. Its report shows here in a few minutes, after the next data update.", $("agentRun"));
-  } catch (e) { reportProblem("Run Agent: " + AGENTS[role], e.message, "", $("agentRun")); }
+    setStatus(AGENTS[role] + " started. A fresh one shows up as !! in a few minutes.", from);
+  } catch (e) { reportProblem("Run Agent: " + AGENTS[role], e.message, "", from); }
 }
 
 // The chart runs from the start (everything at 0%) to today's live numbers.
@@ -1163,7 +1119,6 @@ $("tradeSwitch").addEventListener("click", () => {
   if (!$("tradeSwitch").dataset.ready) return;  // state unknown until the dashboard loads
   dispatch($("tradeSwitch").getAttribute("aria-checked") === "true" ? "halt" : "resume");
 });
-$("agentRun").addEventListener("click", runAgent);
 $("summaryBtn").addEventListener("click", async () => {
   const btn = $("summaryBtn"), spinner = el("span", {class: "spin btn-spin"}), started = Date.now() - 5000;
   if (btn.disabled) return;
@@ -1261,29 +1216,34 @@ const SEATS = {
 };
 const seatIcon = role => { const box = el("span"); box.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (SEATS[role] || SEATS.chief)[1] + "</svg>"; return box.firstChild; };
 const seats = Object.keys(SEATS).map((role, i) => {
-  const seat = el("div", {class: "seat", title: AGENTS[role]}, el("div", {class: "icon"}, seatIcon(role)), el("span", {class: "bang", text: "!!"}));
+  const seat = el("div", {class: "seat", title: AGENTS[role], role: "button", tabindex: "0", "aria-label": AGENTS[role]}, el("div", {class: "icon"}, seatIcon(role)), el("span", {class: "bang", text: "!!"}));
   seat.querySelector(".icon").style.animationDelay = (i * .25) + "s";
   $("stage").append(seat);
+  seat.addEventListener("click", () => hear(role));
+  seat.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); hear(role); } });
   return {role, seat};
 });
 // Seats travel clockwise from just left of your seat, over the top, to just right of it, then fade out
 // and come back in on the left. One lap takes 45 seconds. While someone is talking the circle eases to a stop.
 const GAP = 28, LAP = 45000, FADE = .06, still = matchMedia("(prefers-reduced-motion: reduce)");
-let lapClock = 0, lapSpeed = 1, lastFrame = 0, talking = false;
+let lapClock = 0, lapSpeed = 1, lastFrame = 0, talking = false, hovering = false;
+$("stage").addEventListener("pointerenter", () => hovering = true);
+$("stage").addEventListener("pointerleave", () => hovering = false);
 function moveSeats(now) {
   requestAnimationFrame(moveSeats);
   const dt = Math.min(now - lastFrame, 100); lastFrame = now;
   const stage = $("stage"), table = stage.querySelector(".rt-table");
   if (!stage.offsetParent) return;
-  lapSpeed += ((talking || still.matches ? 0 : 1) - lapSpeed) * Math.min(1, dt / 400);
-  if (lapSpeed < .002) lapSpeed = talking || still.matches ? 0 : .002;
+  const stop = talking || hovering || still.matches;
+  lapSpeed += ((stop ? 0 : 1) - lapSpeed) * Math.min(1, dt / 400);
+  if (lapSpeed < .002) lapSpeed = stop ? 0 : .002;
   lapClock += dt * lapSpeed / LAP;
   const cx = stage.clientWidth / 2, cy = stage.clientHeight / 2;
   const rx = table.clientWidth / 2 + 8, ry = table.clientHeight / 2 + 8;
   seats.forEach(({seat}, i) => {
     const p = (lapClock + i / seats.length + .1) % 1, a = (90 + GAP + p * (360 - 2 * GAP)) * Math.PI / 180;
     seat.style.transform = `translate(${cx + rx * Math.cos(a) - 20}px, ${cy + ry * Math.sin(a) - 20}px)`;
-    seat.style.opacity = seat.classList.contains("spoke") ? 1 : Math.min(1, p / FADE, (1 - p) / FADE);
+    seat.style.opacity = seat.classList.contains("spoke") || seat.classList.contains("news") ? 1 : Math.min(1, p / FADE, (1 - p) / FADE);
   });
 }
 requestAnimationFrame(moveSeats);
@@ -1293,7 +1253,9 @@ async function loadAnswers() {
   const list = res.ok ? await res.json() : [];
   return list.map(e => ({...e, answers: e.answers || [{role: e.role, answer: e.answer}]}));
 }
+let tableList = [], tablePending;
 function showTable(list, pending) {
+  tableList = list; tablePending = pending;
   const log = [];
   list.slice(-4).forEach(e => {
     log.push(el("div", {class: "rt-q", text: e.question}));
@@ -1302,11 +1264,58 @@ function showTable(list, pending) {
   });
   if (pending) log.push(el("div", {class: "rt-q", text: pending}),
     el("div", {class: "rt-a"}, el("div", {class: "status", style: "margin:0"}, el("span", {class: "spin"}), el("span", {text: "The counselors are thinking. Usually 1 to 3 minutes."}))));
+  log.push(...told);
   if (!log.length) log.push(el("p", {class: "rt-hint", text: "Ask anything, like \"Why did the bot buy KDP?\" or \"Are we beating the S&P 500?\" The counselors whose jobs fit will answer here."}));
   $("rtLog").replaceChildren(...log);
   $("rtLog").scrollTop = $("rtLog").scrollHeight;
   seats.forEach(({seat}) => seat.classList.toggle("thinking", !!pending));
-  center(pending ? [el("span", {class: "spin"}), "Thinking…"] : ["Ask away"]);
+  center(pending ? [el("span", {class: "spin"}), "Thinking…"] : idle());
+}
+// Each counselor holds its latest news: reports, the next run's likely buys, the last trading run.
+// New news shows "!!" on its seat; tapping the seat makes it tell you in the chat.
+let news = {}, told = [];
+const seenList = () => { try { return JSON.parse(store.get("seen") || "[]"); } catch { return []; } };
+const unread = role => (news[role] || []).filter(n => !seenList().includes(n.key));
+const idle = () => {
+  const n = Object.keys(SEATS).filter(r => unread(r).length).length;
+  return [n ? n + (n > 1 ? " counselors have" : " counselor has") + " news · tap a !!" : "Ask away"];
+};
+function gatherNews(d) {
+  const reports = (d.team && d.team.reports) || [], newest = role => reports.filter(r => r.role === role).sort((a, b) => a.created < b.created ? 1 : -1)[0];
+  const report = (role, as = role) => { const r = newest(role); return r ? [{key: "r:" + r.url + r.created, at: r.created, title: r.title, role: as, url: r.url,
+    body: () => [md(r.body)]}] : []; };
+  news = {scout: report("scout"), risk: report("risk"), analyst: report("analyst"), auditor: [...report("auditor"), ...report("breakdown", "auditor")], chief: report("chief")};
+  if (d.picks) {
+    const p = d.picks, price = Object.fromEntries(p.stocks.map(s => [s.symbol, s.price]));
+    const ready = p.stocks.filter(s => s.votes >= p.need), close = p.stocks.filter(s => s.votes < p.need);
+    const text = (p.orders.length ? "The next run will likely buy " + p.orders.map(o => o.shares + " " + o.symbol + (price[o.symbol] ? " (about " + money(price[o.symbol]) + ")" : "")).join(", ") + "."
+      : "No buys likely next run: every slot is full or nothing got enough votes.")
+      + (ready.length ? " Strongest: " + ready.slice(0, 6).map(s => s.symbol + " (" + s.votes + " of 10 votes)").join(", ") + "." : "")
+      + (close.length ? " One vote short: " + close.slice(0, 8).map(s => s.symbol).join(", ") + "." : "");
+    news.scout.push({key: "p:" + p.day + p.stocks.length + p.orders.length, at: p.day, title: "Likely buys for " + shortDate(p.day), role: "scout", picks: true,
+      body: () => [el("p", {text})]});
+  }
+  if ((d.shadow || []).length) news.analyst.push({key: "s:" + d.shadow.length + d.shadow[d.shadow.length - 1].date, at: d.shadow[d.shadow.length - 1].date,
+    title: "Buys I'd have skipped", role: "analyst", body: () => [el("p", {text: d.shadow.slice(-5).reverse().map(x => x.symbol + " on " + shortDate(x.date) + ": " + x.why).join(". ") + "."})]});
+  if (d.report && d.last_run) news.auditor.push({key: "t:" + d.last_run, at: d.last_run, title: "The last trading run, " + when(d.last_run), role: "auditor",
+    body: () => [el("pre", {text: d.report})]});
+  seats.forEach(({role, seat}) => seat.classList.toggle("news", unread(role).length > 0));
+  if (!talking && !document.querySelector(".seat.thinking")) center(idle());
+}
+function hear(role) {
+  const items = unread(role).length ? unread(role) : (news[role] || []).slice(0, 1);
+  if (!items.length) { told.push(el("div", {class: "rt-a"}, el("div", {class: "who"}, seatIcon(role)), el("p", {text: "Nothing new from me yet."}))); }
+  items.forEach(n => {
+    const acts = el("div", {class: "acts"});
+    if (n.url) acts.append(el("a", {href: n.url, target: "_blank", rel: "noopener", text: "Open on GitHub"}));
+    if (n.picks) acts.append(Object.assign(el("button", {"data-cmd": "picks", text: "Check again"}), {onclick: () => dispatch("picks")}));
+    else if (n.url) acts.append(Object.assign(el("button", {text: "Get a fresh one"}), {onclick: e => runAgent(n.role, e.target)}));
+    told.push(el("div", {class: "rt-a"}, el("div", {class: "who", title: AGENTS[role]}, seatIcon(role)),
+      el("p", {class: "told-title", text: n.title}), ...n.body(), ...(acts.childNodes.length ? [acts] : [])));
+  });
+  store.set("seen", JSON.stringify([...seenList(), ...items.map(n => n.key)].slice(-100)));
+  seats.forEach(({role: r, seat}) => seat.classList.toggle("news", unread(r).length > 0));
+  showTable(tableList, tablePending);
 }
 const center = parts => $("rtCenter").replaceChildren(...parts);
 function spoke(entry) {
@@ -1314,7 +1323,7 @@ function spoke(entry) {
   seats.forEach(({role, seat}) => seat.classList.toggle("spoke", roles.includes(role)));
   talking = true;
   center([roles.length + (roles.length > 1 ? " counselors answered" : " counselor answered")]);
-  setTimeout(() => { center(["Ask away"]); talking = false; seats.forEach(({seat}) => seat.classList.remove("spoke")); }, 20000);
+  setTimeout(() => { center(idle()); talking = false; seats.forEach(({seat}) => seat.classList.remove("spoke")); }, 20000);
 }
 let tableLoaded = false;
 async function openTable() {
