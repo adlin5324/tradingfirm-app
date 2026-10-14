@@ -473,7 +473,9 @@ header { margin-bottom: 16px; }
 .topnav button.on { color: var(--text); background: var(--faint); }
 /* Round table: the AI team circles the table; your seat is the gap at the bottom. */
 .stage { position: relative; height: 260px; margin-top: 8px; overflow: hidden; }
-.rt-table { position: absolute; inset: 40px 56px; border-radius: 50%;
+/* Seen from a little behind and above your empty seat at the bottom: the table tilts away (keep TILT/DEPTH in
+   placeSeats in step with this transform). */
+.rt-table { position: absolute; inset: 14px 56px; border-radius: 50%; transform: perspective(700px) rotateX(52deg);
   background: radial-gradient(ellipse at 50% 35%, color-mix(in srgb, var(--c1) 30%, var(--card)), color-mix(in srgb, var(--c2) 45%, var(--card)) 75%);
   border: 1px solid color-mix(in srgb, var(--c3) 45%, transparent);
   box-shadow: inset 0 0 48px rgba(0, 0, 0, .35), 0 0 32px color-mix(in srgb, var(--c1) 25%, transparent); }
@@ -526,7 +528,7 @@ header { margin-bottom: 16px; }
 @media (min-width: 861px) {
   .rt-split { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
   .rt-split .stage { height: 360px; }
-  .rt-split .rt-table { inset: 80px 52px; }
+  .rt-split .rt-table { inset: 30px 60px; }
   .rt-split .site { inset: 56px 64px; }
   .rt-split .rt-chat { height: 360px; margin-top: 8px; }
   .rt-split .rt-log { flex: 1; min-height: 0; max-height: none; mask-image: linear-gradient(transparent, #000 24px); -webkit-mask-image: linear-gradient(transparent, #000 24px); }
@@ -534,7 +536,7 @@ header { margin-bottom: 16px; }
 }
 @media (max-width: 640px) {
   .stage { height: 200px; margin-left: -8px; margin-right: -8px; }
-  .rt-table { inset: 40px 44px; }
+  .rt-table { inset: 6px 44px; }
   .site { inset: 46px 44px 28px; }
   .rt-log { font-size: 13px; }
 }
@@ -1201,13 +1203,16 @@ const seats = Object.keys(SEATS).filter(r => !ASSOC.includes(r)).map((role, i) =
   return {role, seat};
 });
 // Seats sit still around the table, evenly spaced, leaving the gap at the bottom where you sit.
-const GAP = 30;
+// The table is tilted in 3D, so each seat is projected the same way: far seats sit higher and smaller.
+const GAP = 30, TILT = 52 * Math.PI / 180, DEPTH = 700;
 function placeSeats() {
   const stage = $("stage"), table = stage.querySelector(".rt-table");
-  const cx = stage.clientWidth / 2, cy = stage.clientHeight / 2, rx = table.clientWidth / 2 + 10, ry = table.clientHeight / 2 + 10;
+  const cx = table.offsetLeft + table.offsetWidth / 2, cy = table.offsetTop + table.offsetHeight / 2;
+  const rx = table.offsetWidth / 2 + 12, ry = table.offsetHeight / 2 + 12;
   seats.forEach(({seat}, i) => {
     const deg = 90 + GAP + (i + .5) * (360 - 2 * GAP) / seats.length, a = deg * Math.PI / 180;
-    seat.style.transform = `translate(${cx + rx * Math.cos(a) - 20}px, ${cy + ry * Math.sin(a) - 20}px)`;
+    const y = ry * Math.sin(a), near = DEPTH / (DEPTH - y * Math.sin(TILT));
+    seat.style.transform = `translate(${cx + rx * Math.cos(a) * near - 20}px, ${cy + y * Math.cos(TILT) * near - 20}px) scale(${near.toFixed(3)})`;
     seat.style.setProperty("--rot", deg + 90 + "deg");
   });
 }
