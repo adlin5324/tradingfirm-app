@@ -488,14 +488,13 @@ header { margin-bottom: 16px; }
    screen counts down and launches a rocket; the console lights blink. The architects walk laps around it. */
 .site { position: absolute; inset: 40px 56px; }
 #archStage { height: 400px; } #archStage .site { inset: 48px 120px 70px; }
-/* What they'd really do: the Mechanic cranks a wrench, the Quant swirls a flask, the Reviewer sweeps a magnifier. */
+/* What they'd really do: the Mechanic cranks a wrench, the Quant swirls a flask. */
 #archStage .seat .icon svg { width: 48px; height: 48px; }
 #archStage .job-mechanic .icon svg { transform-origin: 75% 25%; animation: job-crank 1.2s ease-in-out infinite; }
 #archStage .job-quant .icon svg { transform-origin: 50% 15%; animation: job-swirl 1.6s ease-in-out infinite; }
-#archStage .job-reviewer .icon svg { animation: job-scan 3s ease-in-out infinite; }
 @keyframes job-crank { 0%, 100% { transform: rotate(0); } 40% { transform: rotate(-38deg); } 55% { transform: rotate(-38deg); } }
 @keyframes job-swirl { 0%, 100% { transform: rotate(-14deg); } 50% { transform: rotate(14deg); } }
-@keyframes job-scan { 0%, 100% { transform: translate(-22px, 0); } 25% { transform: translate(-8px, -8px); } 50% { transform: translate(22px, 0); } 75% { transform: translate(8px, -8px); } }
+
 @media (max-width: 640px) { #archStage { height: 280px; } #archStage .site { inset: 34px 54px 54px; } #archStage .seat .icon svg { width: 36px; height: 36px; } }
 .site svg { width: 100%; height: 100%; overflow: visible; }
 .site .mc-scr { fill: color-mix(in srgb, var(--c2) 55%, var(--card)); stroke: color-mix(in srgb, var(--c3) 55%, transparent); stroke-width: 1; }
@@ -898,7 +897,7 @@ const ARCH_ICONS = {mechanic: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 
   reviewer: '<circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /><path d="m8 11 2 2 4-4" />'};
 const ARCH_RUNS = {quant: "quant.yml", reviewer: "reviewer.yml"};
 const archIcon = role => { const box = el("span"); box.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ARCH_ICONS[role] + "</svg>"; return box.firstChild; };
-const archSeats = ARCHITECTS.map(role => {
+const archSeats = ["mechanic", "quant"].map(role => {
   const seat = el("div", {class: "seat still job-" + role, title: AGENTS[role]}, el("div", {class: "icon"}, archIcon(role)));
   $("archStage").append(seat);
   return {role, seat};
@@ -938,9 +937,8 @@ async function runArch(role, from) {
     setTimeout(() => seat.classList.remove("thinking"), 180000);
   } catch (e) { reportProblem("Run: " + AGENTS[role], e.message, "", from); }
 }
-// Each architect works at a station by the console: the Mechanic on the left, the Quant on the right, the
-// Code reviewer up front checking the work.
-const STATIONS = {mechanic: [.1, .62], quant: [.9, .62], reviewer: [.5, .93]};
+// Each architect works at a station by the console: the Mechanic on the left, the Quant on the right.
+const STATIONS = {mechanic: [.1, .62], quant: [.9, .62]};
 function placeArch() {
   const stage = $("archStage");
   archSeats.forEach(({role, seat}) => {
