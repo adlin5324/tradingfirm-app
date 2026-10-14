@@ -920,7 +920,7 @@ document.querySelectorAll("[data-cmd]").forEach(b => b.addEventListener("click",
 // Top bar picks the page: Positions (with Activity / Picks tabs), Performance or AI Team.
 let view = ["positions", "performance", "ai"].includes(store.get("view")) ? store.get("view") : "positions";
 let tab = ["activity", "picks"].includes(store.get("tab")) ? store.get("tab") : "activity";
-function show() {
+function showView() {
   const panel = view === "positions" ? tab : view;
   document.querySelectorAll("[data-tab]").forEach(t => t.setAttribute("aria-selected", t.dataset.tab === tab));
   document.querySelectorAll("[data-panel]").forEach(p => p.classList.toggle("hidden", p.dataset.panel !== panel));
@@ -928,9 +928,9 @@ function show() {
   document.querySelectorAll("[data-go]").forEach(b => b.classList.toggle("on", b.dataset.go === view));
   store.set("view", view); store.set("tab", tab);
 }
-document.querySelectorAll("[data-tab]").forEach(t => t.addEventListener("click", () => { tab = t.dataset.tab; show(); }));
-document.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => { view = b.dataset.go; show(); }));
-show();
+document.querySelectorAll("[data-tab]").forEach(t => t.addEventListener("click", () => { tab = t.dataset.tab; showView(); }));
+document.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => { view = b.dataset.go; showView(); }));
+showView();
 // Looks: fade-in on scroll, and a soft glow that follows the cursor over cards.
 if ("IntersectionObserver" in window) {
   document.documentElement.classList.add("js-anim");
