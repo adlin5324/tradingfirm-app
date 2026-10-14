@@ -583,6 +583,30 @@ header { margin-bottom: 16px; }
 @keyframes meet-note { 50% { transform: rotate(var(--look, 0deg)) translate(2px, 3px) rotate(4deg); } }
 .seat { cursor: pointer; outline: none; } .seat.still { cursor: default; } .seat:focus-visible .icon { outline: 2px solid var(--c3); border-radius: 50%; }
 .rt-a .told-title { font-weight: 650; margin: 0 0 4px; }
+/* Office: the Code reviewer goes over a document at your desk; your inbox of every agent's news sits below. */
+.desk { position: relative; height: 150px; margin: 4px 0 12px; }
+.desk-top { position: absolute; left: 6%; right: 6%; bottom: 10px; height: 14px; border-radius: 6px;
+  background: color-mix(in srgb, var(--c2) 70%, var(--card)); box-shadow: 0 6px 0 color-mix(in srgb, var(--c2) 70%, black), 0 12px 20px rgba(0, 0, 0, .25); }
+.desk-doc { position: absolute; left: 50%; bottom: 24px; width: 86px; height: 108px; margin-left: -43px; padding: 14px 12px; border-radius: 4px;
+  background: color-mix(in srgb, white 88%, var(--c3)); box-shadow: 0 3px 10px rgba(0, 0, 0, .3); display: flex; flex-direction: column; gap: 9px; }
+.desk-doc i { height: 4px; border-radius: 2px; background: rgba(0, 0, 0, .18); }
+.desk-doc i:nth-child(2) { width: 80%; } .desk-doc i:nth-child(4) { width: 60%; } .desk-doc i:last-child { width: 40%; background: var(--c1); opacity: .7; }
+.desk-glass { position: absolute; left: 50%; bottom: 58px; width: 56px; height: 56px; margin-left: -28px; color: color-mix(in srgb, var(--c1) 55%, white);
+  filter: drop-shadow(0 0 3px var(--c1)) drop-shadow(0 0 10px var(--c1)); animation: office-scan 4s ease-in-out infinite; }
+:root[data-mode="light"] .desk-glass { color: var(--c1); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--c1) 45%, transparent)); }
+.desk-glass svg { width: 100%; height: 100%; }
+@keyframes office-scan { 0%, 100% { transform: translate(-30px, -22px); } 25% { transform: translate(24px, -10px); } 50% { transform: translate(-22px, 10px); }
+  75% { transform: translate(28px, 24px) rotate(8deg); } }
+@media (prefers-reduced-motion: reduce) { .desk-glass { animation: none; } }
+.inbox .item { display: block; cursor: pointer; }
+.inbox .head { display: flex; align-items: center; gap: 10px; }
+.inbox .head svg { width: 20px; height: 20px; flex: none; color: var(--c1); }
+.inbox .head .what { flex: 1; min-width: 0; } .inbox .head .what b { display: block; }
+.inbox .new { width: 8px; height: 8px; border-radius: 50%; background: var(--c1); flex: none; box-shadow: 0 0 6px var(--c1); }
+.inbox .body { margin-top: 10px; cursor: auto; } .inbox .body pre { white-space: pre-wrap; font-size: 12px; max-height: 260px; overflow: auto; }
+.inbox .acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; font-size: 13px; }
+.inbox .acts button { padding: 4px 10px; font-size: 12px; }
+#officeCount:not(:empty) { margin-left: 6px; padding: 1px 7px; border-radius: 99px; font-size: 11px; background: var(--c1); color: #fff; }
 .rt-a pre { white-space: pre-wrap; font-size: 12px; margin: 0; max-height: 260px; overflow: auto; }
 .rt-a .acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; font-size: 13px; }
 .rt-a .acts button { padding: 4px 10px; font-size: 12px; }
@@ -620,6 +644,7 @@ header { margin-bottom: 16px; }
         <button data-go="positions">Positions</button>
         <button data-go="performance">Performance</button>
         <button data-go="firm">The Firm</button>
+        <button data-go="office">Office<span id="officeCount"></span></button>
         <button data-go="junk">Junkyard</button>
       </nav>
       <button class="ghost" id="settingsBtn" title="Settings" aria-label="Settings"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg></button>
@@ -718,6 +743,17 @@ header { margin-bottom: 16px; }
         <path class="mc-desk" d="M8 108 H192 L184 126 H16 Z" /><circle class="mc-light" cx="40" cy="116" r="1.8" style="animation-delay:-0.00s" /><circle class="mc-light" cx="55" cy="116" r="1.8" style="animation-delay:-0.53s" /><circle class="mc-light" cx="70" cy="116" r="1.8" style="animation-delay:-1.06s" /><circle class="mc-light" cx="85" cy="116" r="1.8" style="animation-delay:-1.59s" /><circle class="mc-light" cx="100" cy="116" r="1.8" style="animation-delay:-0.52s" /><circle class="mc-light" cx="115" cy="116" r="1.8" style="animation-delay:-1.05s" /><circle class="mc-light" cx="130" cy="116" r="1.8" style="animation-delay:-1.58s" /><circle class="mc-light" cx="145" cy="116" r="1.8" style="animation-delay:-0.51s" /><circle class="mc-light" cx="160" cy="116" r="1.8" style="animation-delay:-1.04s" />
       </svg></div>
     </div>
+  </section>
+
+  <section class="card" data-view="office">
+    <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 4h3a2 2 0 0 1 2 2v14" /><path d="M2 20h3" /><path d="M13 20h9" /><path d="M10 12v.01" /><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z" /></svg>Office</span></h2>
+    <div class="desk" aria-hidden="true">
+      <div class="desk-doc"><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="desk-glass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /><path d="m8 11 2 2 4-4" /></svg></div>
+      <div class="desk-top"></div>
+    </div>
+    <div class="list inbox" id="inbox"></div>
+    <div class="status"></div>
   </section>
 
   <section class="card" data-view="junk">
@@ -922,7 +958,7 @@ function showProblems() { archNews(); }
 
 // Architects walk laps around the building site. Each holds its news: the Mechanic the app's problems, the Quant
 // its research, the Code Reviewer its reviews and the plans waiting for your approval. Tap one to hear it.
-let lastTeam = null, archTold = [], archTalking = false;
+let lastTeam = null;
 const ARCH_ICONS = {mechanic: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />',
   quant: '<path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" /><path d="M6.453 15h11.094" /><path d="M8.5 2h7" />',
   reviewer: '<circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /><path d="m8 11 2 2 4-4" />'};
@@ -957,9 +993,10 @@ function archNews() {
   news.quant = report("quant");
   news.reviewer = [...t.prs.map(p => ({key: "pr:" + p.number, title: "Waiting on you: #" + p.number + " " + p.title, role: "reviewer",
     body: () => [el("p", {text: "A change to the bot is ready. Nothing changes until you approve it on GitHub."})], acts: () => [link("Open it", p.url)]})), ...report("reviewer")];
+  showOffice();
 }
 async function runArch(role, from) {
-  const seat = archSeats.find(s => s.role === role).seat;
+  const seat = (archSeats.find(s => s.role === role) || {seat: from}).seat;
   try {
     const res = await api("/actions/workflows/" + ARCH_RUNS[role] + "/dispatches", {
       method: "POST", body: JSON.stringify({ref: "main"}), headers: {"Content-Type": "application/json"},
@@ -1295,7 +1332,7 @@ setInterval(() => {
 
 // Each counselor holds its latest news: reports, the next run's likely buys, the last trading run.
 // New news shows "!!" on its seat; tapping the seat makes it tell you in the chat.
-let news = {}, told = [];
+let news = {};
 const seenList = () => { try { return JSON.parse(store.get("seen") || "[]"); } catch { return []; } };
 const unread = role => (news[role] || []).filter(n => !seenList().includes(n.key));
 function gatherNews(d) {
@@ -1317,34 +1354,37 @@ function gatherNews(d) {
     title: "Buys I'd have skipped", role: "analyst", body: () => [el("p", {text: d.shadow.slice(-5).reverse().map(x => x.symbol + " on " + shortDate(x.date) + ": " + x.why).join(". ") + "."})]});
   if (d.report && d.last_run) news.auditor.push({key: "t:" + d.last_run, at: d.last_run, title: "The last trading run, " + when(d.last_run), role: "auditor",
     body: () => [el("pre", {text: d.report})]});
-  // The associates hand their news to the counselors: the Scout's to the Risk officer, the Analyst's to the Auditor.
-  news.risk.push(...news.scout.map(n => ({...n, title: "From the Scout: " + n.title})));
-  news.auditor.push(...news.analyst.map(n => ({...n, title: "From the Analyst: " + n.title})));
-  news.scout = news.analyst = [];
   archNews();
 }
-function hear(role) {
-  const items = unread(role).length ? unread(role) : (news[role] || []).slice(0, 1);
-  const log = ARCHITECTS.includes(role) ? archTold : told;
-  const last = log[log.length - 1];
-  if (!items.length && !(last && last.dataset.empty === role)) log.push(el("div", {class: "rt-a", "data-empty": role}, el("div", {class: "who"}, seatIcon(role)), el("p", {text: "Nothing new from me yet."}),
-    ...(ARCH_RUNS[role] ? [el("div", {class: "acts"}, btn("Run now", e => runArch(role, e.target)))] : [])));
-  items.forEach(n => {
-    const acts = el("div", {class: "acts"});
-    if (n.acts) acts.append(...n.acts());
-    else if (n.url) acts.append(el("a", {href: n.url, target: "_blank", rel: "noopener", text: "Open on GitHub"}));
-    if (n.acts) {} else if (n.picks) acts.append(Object.assign(el("button", {"data-cmd": "picks", text: "Check again"}), {onclick: () => dispatch("picks")}));
-    else if (n.url) acts.append(Object.assign(el("button", {text: "Get a fresh one"}), {onclick: e => runAgent(n.role, e.target)}));
-    log.push(el("div", {class: "rt-a"}, el("div", {class: "who", title: AGENTS[role]}, seatIcon(role)),
-      el("p", {class: "told-title", text: n.title}), ...n.body(), ...(acts.childNodes.length ? [acts] : [])));
-  });
-  store.set("seen", JSON.stringify([...seenList(), ...items.map(n => n.key)].slice(-100)));
-  if (ARCHITECTS.includes(role)) {
-    archNews();
-    const seat = archSeats.find(s => s.role === role).seat;
-    seat.classList.add("spoke"); archTalking = true;
-    setTimeout(() => { seat.classList.remove("spoke"); archTalking = archSeats.some(s => s.seat.classList.contains("spoke")); }, 6000);
-  }
+// The office inbox: everything the agents have for you, newest first, with what waits on you at the top.
+// Tap an item to open it; that marks it read. The top bar shows how many are unread.
+function actsFor(n) {
+  if (n.acts) return n.acts();
+  const acts = [];
+  if (n.url) acts.push(link("Open on GitHub", n.url));
+  if (n.picks) acts.push(btn("Check again", () => dispatch("picks")));
+  else if (n.url) acts.push(btn("Get a fresh one", e => runAgent(n.role, e.target)));
+  return acts;
+}
+let opened = new Set();
+function showOffice() {
+  const seen = seenList(), all = Object.values(news).flat().filter(Boolean);
+  const rank = n => n.key.startsWith("pr:") ? 0 : n.role === "mechanic" ? 1 : 2;
+  all.sort((a, b) => rank(a) - rank(b) || String(b.at || "").localeCompare(String(a.at || "")));
+  const fresh = all.filter(n => !seen.includes(n.key)).length;
+  $("officeCount").textContent = fresh ? fresh : "";
+  $("inbox").replaceChildren(...(all.length ? all.map(n => {
+    const item = el("div", {class: "item"}, el("div", {class: "head"}, seatIcon(n.role),
+      el("div", {class: "what"}, el("b", {text: n.title}), el("span", {class: "sub", text: (AGENTS[n.role] || n.role) + (n.at ? " · " + when(n.at) : "")})),
+      ...(seen.includes(n.key) ? [] : [el("span", {class: "new", title: "Unread"})])));
+    if (opened.has(n.key)) item.append(el("div", {class: "body"}, ...n.body(), el("div", {class: "acts"}, ...actsFor(n))));
+    item.querySelector(".head").addEventListener("click", () => {
+      opened.has(n.key) ? opened.delete(n.key) : opened.add(n.key);
+      if (!seen.includes(n.key)) store.set("seen", JSON.stringify([...seenList(), n.key].slice(-200)));
+      showOffice();
+    });
+    return item;
+  }) : [empty("Nothing from the team yet")]));
 }
 // The trading floor: the ticker shows your holdings; each desk says whether its associate has news.
 
@@ -1378,7 +1418,7 @@ titleLabels();
 
 // Top bar picks the page: Positions, Performance, The Firm (every AI team) or the Junkyard.
 let view = ({ai: "firm", assoc: "firm", arch: "firm"})[store.get("view")] || store.get("view");
-if (!["positions", "performance", "firm", "junk"].includes(view)) view = "positions";
+if (!["positions", "performance", "firm", "office", "junk"].includes(view)) view = "positions";
 function showView() {
   document.querySelectorAll("[data-view]").forEach(e => e.classList.toggle("hidden", e.dataset.view !== view));
   document.querySelectorAll("[data-go]").forEach(b => b.classList.toggle("on", b.dataset.go === view));
