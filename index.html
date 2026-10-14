@@ -1025,7 +1025,6 @@ async function labPress(g) {
     });
     if (res.status !== 204) throw new Error("GitHub didn't start it (" + res.status + ").");
     busy.add(id); drawShop();
-    setStatus(name + " started. Its work shows here when it's done.", g);
     setTimeout(() => { busy.delete(id); drawShop(); }, 180000);
   } catch (e) { reportProblem("Run: " + name, e.message, "", g); }
 }
@@ -1050,7 +1049,6 @@ async function runAgent(role, from) {
       method: "POST", body: JSON.stringify({ref: "main", inputs: {role}}), headers: {"Content-Type": "application/json"},
     });
     if (res.status !== 204) throw new Error("GitHub didn't start it (" + res.status + ").");
-    setStatus(AGENTS[role] + " started. A fresh one shows up as !! in a few minutes.", from);
   } catch (e) { reportProblem("Run Agent: " + AGENTS[role], e.message, "", from); }
 }
 
@@ -1344,17 +1342,13 @@ function showTable(list, pending) {
   $("rtLog").replaceChildren(...log);
   $("rtLog").scrollTop = $("rtLog").scrollHeight;
   seats.forEach(({seat}) => seat.classList.toggle("thinking", !!pending));
-  center(pending ? [el("span", {class: "spin"}), "Thinking…"] : idle());
+  center(pending ? [el("span", {class: "spin"})] : []);
 }
 // Each counselor holds its latest news: reports, the next run's likely buys, the last trading run.
 // New news shows "!!" on its seat; tapping the seat makes it tell you in the chat.
 let news = {}, told = [], assocTold = [];
 const seenList = () => { try { return JSON.parse(store.get("seen") || "[]"); } catch { return []; } };
 const unread = role => (news[role] || []).filter(n => !seenList().includes(n.key));
-const idle = () => {
-  const n = seats.filter(({role}) => unread(role).length).length;
-  return [n ? n + (n > 1 ? " counselors have" : " counselor has") + " news · tap a !!" : "Ask away"];
-};
 function gatherNews(d) {
   const reports = (d.team && d.team.reports) || [], newest = role => reports.filter(r => r.role === role).sort((a, b) => a.created < b.created ? 1 : -1)[0];
   const report = (role, as = role) => { const r = newest(role); return r ? [{key: "r:" + r.url + r.created, at: r.created, title: r.title, role: as, url: r.url,
@@ -1376,7 +1370,6 @@ function gatherNews(d) {
     body: () => [el("pre", {text: d.report})]});
   seats.forEach(({role, seat}) => seat.classList.toggle("news", unread(role).length > 0));
   drawFloor(d);
-  if (!talking && !document.querySelector(".seat.thinking")) center(idle());
 }
 function hear(role) {
   const items = unread(role).length ? unread(role) : (news[role] || []).slice(0, 1);
@@ -1425,8 +1418,7 @@ function spoke(entry) {
   const roles = entry.answers.map(a => a.role);
   seats.forEach(({role, seat}) => seat.classList.toggle("spoke", roles.includes(role)));
   talking = true;
-  center([roles.length + (roles.length > 1 ? " counselors answered" : " counselor answered")]);
-  setTimeout(() => { center(idle()); talking = false; seats.forEach(({seat}) => seat.classList.remove("spoke")); }, 20000);
+  setTimeout(() => { talking = false; seats.forEach(({seat}) => seat.classList.remove("spoke")); }, 20000);
 }
 let tableLoaded = false;
 async function openTable() {
