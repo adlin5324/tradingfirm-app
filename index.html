@@ -478,7 +478,7 @@ header { margin-bottom: 16px; }
 .ttt { position: absolute; display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); line-height: 1; font-weight: 800; }
 .ttt .cell { display: grid; place-items: center; border: 0 solid color-mix(in srgb, var(--c3) 55%, transparent); }
 .ttt .cell:nth-child(-n+6) { border-bottom-width: 4px; } .ttt .cell:not(:nth-child(3n)) { border-right-width: 4px; }
-.ttt .cell.x, .ttt .cell.o { animation: ttt-pop .45s cubic-bezier(.2, .8, .3, 1); }
+.ttt .cell b { display: block; animation: ttt-pop .45s cubic-bezier(.2, .8, .3, 1); }
 .ttt .cell.x { color: var(--c1); text-shadow: 0 0 10px color-mix(in srgb, var(--c1) 70%, transparent); }
 .ttt .cell.o { color: var(--c3); text-shadow: 0 0 10px color-mix(in srgb, var(--c3) 70%, transparent); }
 /* Each mark grows from nothing to fill its square. */
@@ -1280,7 +1280,7 @@ setInterval(() => {
   if (over && --over === 0) { grid.fill(""); cells.forEach(c => { c.textContent = ""; c.className = "cell"; }); strike.className = "strike"; turn = "X"; }
   if (over) return;
   const i = pickSquare(turn);
-  grid[i] = turn; cells[i].textContent = turn; cells[i].className = "cell " + turn.toLowerCase();
+  grid[i] = turn; cells[i].replaceChildren(el("b", {text: turn})); cells[i].className = "cell " + turn.toLowerCase();
   const won = winner(grid);
   // The mover reaches for the board, the other player thinks, the Chief nods when someone wins.
   seats.forEach(({role, seat}) => {
