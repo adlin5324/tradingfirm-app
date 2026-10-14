@@ -451,7 +451,7 @@ header { margin-bottom: 16px; }
 .rt-q { align-self: flex-end; max-width: 85%; background: var(--c1); color: #fff; padding: 8px 12px; border-radius: 14px 14px 4px 14px; }
 .rt-a { align-self: flex-start; max-width: 95%; background: var(--card); border: 1px solid var(--line); padding: 8px 12px; border-radius: 14px 14px 14px 4px; }
 .rt-a .who { display: flex; align-items: center; gap: 6px; font-weight: 650; font-size: 12px; margin-bottom: 4px; }
-.rt-a .who svg { width: 14px; height: 14px; }
+.rt-a .who svg { width: 16px; height: 16px; color: var(--c3); }
 .rt-a .md p { margin: 4px 0 0; } .rt-a .md > :first-child { margin-top: 0; }
 .rt-hint { color: var(--muted); font-size: 13px; text-align: center; }
 .rt-ask { display: flex; align-items: center; gap: 6px; background: var(--card); border: 1px solid var(--line); border-radius: 99px; padding: 4px 4px 4px 14px; }
@@ -459,25 +459,27 @@ header { margin-bottom: 16px; }
 .rt-ask input { flex: 1; min-width: 0; margin: 0; padding: 6px 0; border: 0; background: none; outline: none; font-size: 14px; }
 .rt-ask button { width: 34px; height: 34px; padding: 0; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--c1); color: #fff; border: 0; }
 .rt-ask button svg { width: 16px; height: 16px; margin: 0; }
-.rt-you { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 12px; color: var(--muted);
-  border: 1px solid var(--line); border-radius: 99px; padding: 2px 10px; background: var(--card); }
-.seat { position: absolute; left: 0; top: 0; width: 56px; display: flex; flex-direction: column; align-items: center; gap: 3px; will-change: transform, opacity; }
-.seat .disc { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: var(--c2);
-  border: 1.5px solid var(--c3); box-shadow: 0 0 12px color-mix(in srgb, var(--c3) 40%, transparent); }
-.seat .disc svg { width: 22px; height: 22px; }
-.seat .nm { font-size: 11px; color: var(--muted); white-space: nowrap; }
-.seat.thinking .disc { animation: rt-think 1.6s ease-in-out infinite; }
-.seat.spoke .disc { animation: rt-spoke 1.2s ease-in-out infinite; box-shadow: 0 0 24px var(--c3); }
-.seat.spoke .nm { color: var(--text); font-weight: 650; }
-@keyframes rt-think { 50% { opacity: .5; } }
-@keyframes rt-spoke { 50% { transform: scale(1.14); } }
+.seat { position: absolute; left: 0; top: 0; width: 40px; height: 40px; will-change: transform, opacity; }
+.seat .icon { display: grid; place-items: center; width: 40px; height: 40px; color: color-mix(in srgb, var(--c1) 55%, white);
+  filter: drop-shadow(0 0 3px var(--c1)) drop-shadow(0 0 10px var(--c1)); }
+.seat .icon svg { width: 30px; height: 30px; }
+:root[data-mode="light"] .seat .icon { color: var(--c1); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--c1) 45%, transparent)); }
+.seat .bang { position: absolute; top: -14px; right: -12px; font-weight: 800; font-size: 17px; color: color-mix(in srgb, var(--c1) 45%, white);
+  text-shadow: 0 0 4px var(--c1), 0 0 12px var(--c1); display: none; }
+.seat.thinking .icon { animation: rt-think 1.6s ease-in-out infinite; }
+.seat.spoke .icon { animation: rt-bob 2.4s ease-in-out infinite; }
+.seat.spoke .bang { display: block; animation: rt-bang .8s ease-in-out infinite alternate; }
+@keyframes rt-think { 50% { opacity: .45; } }
+/* A speaker stops and drifts in a small loop around its spot. */
+@keyframes rt-bob { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(4px, -4px); } 50% { transform: translate(0, -7px); } 75% { transform: translate(-4px, -4px); } }
+@keyframes rt-bang { from { transform: scale(.9) rotate(-8deg); } to { transform: scale(1.15) rotate(8deg); } }
 @media (max-width: 640px) {
-  .stage { height: 600px; }
-  .rt-table { inset: 40px 30px; }
-  .rt-chat { width: calc((100% - 60px) * .88); height: calc((100% - 80px) * .7); }
+  .stage { height: 300px; margin-left: -8px; margin-right: -8px; }
+  .rt-table { inset: 38px 30px; }
+  .rt-chat { width: calc((100% - 60px) * .86); height: calc((100% - 76px) * .8); }
   .rt-log { font-size: 13px; }
 }
-@media (prefers-reduced-motion: reduce) { .seat .disc { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .seat .icon, .seat .bang { animation: none !important; } }
 </style>
 </head>
 <body>
@@ -575,7 +577,6 @@ header { margin-bottom: 16px; }
           <button type="submit" id="askSend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z" /><path d="M6 12h16" /></svg></button>
         </form>
       </div>
-      <div class="rt-you">You</div>
     </div>
   </section>
 
@@ -1039,24 +1040,29 @@ const SEATS = {
 };
 const seatIcon = role => { const box = el("span"); box.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (SEATS[role] || SEATS.chief)[1] + "</svg>"; return box.firstChild; };
 const seats = Object.keys(SEATS).map((role, i) => {
-  const seat = el("div", {class: "seat", title: AGENTS[role]}, el("div", {class: "disc"}, seatIcon(role)), el("span", {class: "nm", text: SEATS[role][0]}));
-  seat.querySelector(".disc").style.animationDelay = (i * .25) + "s";
+  const seat = el("div", {class: "seat", title: AGENTS[role]}, el("div", {class: "icon"}, seatIcon(role)), el("span", {class: "bang", text: "!!"}));
+  seat.querySelector(".icon").style.animationDelay = (i * .25) + "s";
   $("stage").append(seat);
   return {role, seat};
 });
 // Seats travel clockwise from just left of your seat, over the top, to just right of it, then fade out
-// and come back in on the left. One lap takes 45 seconds.
+// and come back in on the left. One lap takes 45 seconds. While someone is talking the circle eases to a stop.
 const GAP = 28, LAP = 45000, FADE = .06, still = matchMedia("(prefers-reduced-motion: reduce)");
+let lapClock = 0, lapSpeed = 1, lastFrame = 0, talking = false;
 function moveSeats(now) {
   requestAnimationFrame(moveSeats);
+  const dt = Math.min(now - lastFrame, 100); lastFrame = now;
   const stage = $("stage"), table = stage.querySelector(".rt-table");
   if (!stage.offsetParent) return;
+  lapSpeed += ((talking || still.matches ? 0 : 1) - lapSpeed) * Math.min(1, dt / 400);
+  if (lapSpeed < .002) lapSpeed = talking || still.matches ? 0 : .002;
+  lapClock += dt * lapSpeed / LAP;
   const cx = stage.clientWidth / 2, cy = stage.clientHeight / 2;
-  const rx = table.clientWidth / 2 + 10, ry = table.clientHeight / 2 + 10, t = still.matches ? 0 : now / LAP;
+  const rx = table.clientWidth / 2 + 8, ry = table.clientHeight / 2 + 8;
   seats.forEach(({seat}, i) => {
-    const p = (t + i / seats.length + .1) % 1, a = (90 + GAP + p * (360 - 2 * GAP)) * Math.PI / 180;
-    seat.style.transform = `translate(${cx + rx * Math.cos(a) - 28}px, ${cy + ry * Math.sin(a) - 23}px)`;
-    seat.style.opacity = Math.min(1, p / FADE, (1 - p) / FADE);
+    const p = (lapClock + i / seats.length + .1) % 1, a = (90 + GAP + p * (360 - 2 * GAP)) * Math.PI / 180;
+    seat.style.transform = `translate(${cx + rx * Math.cos(a) - 20}px, ${cy + ry * Math.sin(a) - 20}px)`;
+    seat.style.opacity = seat.classList.contains("spoke") ? 1 : Math.min(1, p / FADE, (1 - p) / FADE);
   });
 }
 requestAnimationFrame(moveSeats);
@@ -1071,7 +1077,7 @@ function showTable(list, pending) {
   list.slice(-4).forEach(e => {
     log.push(el("div", {class: "rt-q", text: e.question}));
     e.answers.forEach(a => log.push(el("div", {class: "rt-a"},
-      el("div", {class: "who"}, seatIcon(a.role), AGENTS[a.role] || a.role), md(a.answer))));
+      el("div", {class: "who", title: AGENTS[a.role] || a.role}, seatIcon(a.role)), md(a.answer))));
   });
   if (pending) log.push(el("div", {class: "rt-q", text: pending}),
     el("div", {class: "rt-a"}, el("div", {class: "status", style: "margin:0"}, el("span", {class: "spin"}), el("span", {text: "The team is thinking. Usually 1 to 3 minutes."}))));
@@ -1083,7 +1089,8 @@ function showTable(list, pending) {
 function spoke(entry) {
   const roles = entry.answers.map(a => a.role);
   seats.forEach(({role, seat}) => seat.classList.toggle("spoke", roles.includes(role)));
-  setTimeout(() => seats.forEach(({seat}) => seat.classList.remove("spoke")), 15000);
+  talking = true;
+  setTimeout(() => { talking = false; seats.forEach(({seat}) => seat.classList.remove("spoke")); }, 20000);
 }
 let tableLoaded = false;
 async function openTable() {
@@ -1117,7 +1124,7 @@ $("askForm").addEventListener("submit", async e => {
 
 // Labels in Title Case ("Chief of Staff"); sentences, reports and data stay as written.
 const SMALL = new Set(["a", "an", "the", "and", "or", "of", "for", "to", "in", "on", "at", "by", "vs"]);
-const LABELS = "button, option, label, summary, h2, #runs a, .tag, .menu .label, .acct-head, .stats, .legend, .rt-a .who";
+const LABELS = "button, option, label, summary, h2, #runs a, .tag, .menu .label, .acct-head, .stats, .legend";
 function titleCase(text, first) {
   return text.split(/(\s+)/).map(w => {
     if (!/\S/.test(w)) return w;
