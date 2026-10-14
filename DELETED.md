@@ -18,3 +18,19 @@ Actions > Trading bot > Run workflow, then pick `cancel` or `dry-run`.
 The order history is also in `dashboard.json` and in Webull itself.
 
 Earlier, the Junkyard also held the **Latest report** card, which was removed before this.
+
+## Unused code cleanup (removed 2026-10-14, last present in fc58f18)
+
+Leftovers from features already gone from the screen. Nothing visible changed (checked with before/after screenshots).
+
+- Styles for the old round-table chat (chat log, answer bubbles, "!!" badges, the half-table/half-chat layout),
+  old page tabs, the "more" menu, the compare panel, two-column grids, the trade switch's old pulsing dot, and
+  two crowd rows that were never drawn.
+- The old team report list on the AI Team page, and a few unused constants and helpers.
+- Recent runs no longer reloads every minute (only the trading buttons use it, to wait for their run).
+
+## Ask the team / round table (removed 2026-10-14)
+
+The app's chat with the counselors was removed earlier at your request; this removed what still sat behind it
+in the `tradingfirm` repo: the `ask.yml` workflow (last present in 2e76230), the ask and save-answer steps of
+the agents' script, and their test. Old answers stay on the `answers` branch, which nothing reads now.
