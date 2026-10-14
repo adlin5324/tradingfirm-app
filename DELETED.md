@@ -27,7 +27,6 @@ Leftovers from features already gone from the screen. Nothing visible changed (c
   old page tabs, the "more" menu, the compare panel, two-column grids, the trade switch's old pulsing dot, and
   two crowd rows that were never drawn.
 - The old team report list on the AI Team page, and a few unused constants and helpers.
-- Recent runs no longer reloads every minute (only the trading buttons use it, to wait for their run).
 
 ## Ask the team / round table (removed 2026-10-14)
 
