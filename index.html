@@ -474,15 +474,28 @@ header { margin-bottom: 16px; }
 /* Round table: the AI team circles the table; your seat is the gap at the bottom. */
 .stage { position: relative; height: 260px; margin-top: 8px; overflow: hidden; }
 #stage { height: 320px; } @media (max-width: 640px) { #stage { height: 230px; } }
-/* The chessboard, in the theme's colors. */
-.chess { position: absolute; border-radius: 6px; overflow: hidden; border: 3px solid color-mix(in srgb, var(--c2) 70%, black);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, .35);
-  background: repeating-conic-gradient(color-mix(in srgb, var(--c1) 50%, var(--card)) 0 25%, color-mix(in srgb, var(--c2) 85%, black) 0 50%) 0 0 / 25% 25%; }
-.chess .pc { position: absolute; left: 0; top: 0; width: 12.5%; height: 12.5%; display: grid; place-items: center; line-height: 1;
-  transition: transform .6s cubic-bezier(.3, .7, .3, 1), opacity .5s; }
-.chess .pc.w { color: color-mix(in srgb, white 85%, var(--c3)); text-shadow: 0 1px 2px rgba(0, 0, 0, .6); }
-.chess .pc.b { color: color-mix(in srgb, var(--c1) 85%, black); text-shadow: 0 0 2px rgba(255, 255, 255, .7), 0 0 6px color-mix(in srgb, var(--c3) 60%, transparent); }
-.chess .pc.taken { opacity: 0; }
+/* Tic-tac-toe in the theme's colors: a 3x3 grid, glowing X and O, and a line through the winning row. */
+.ttt { position: absolute; display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); line-height: 1; font-weight: 800; }
+.ttt .cell { display: grid; place-items: center; border: 0 solid color-mix(in srgb, var(--c3) 55%, transparent); }
+.ttt .cell:nth-child(-n+6) { border-bottom-width: 4px; } .ttt .cell:not(:nth-child(3n)) { border-right-width: 4px; }
+.ttt .cell.x, .ttt .cell.o { animation: ttt-pop .35s ease-out; }
+.ttt .cell.x { color: var(--c1); text-shadow: 0 0 10px color-mix(in srgb, var(--c1) 70%, transparent); }
+.ttt .cell.o { color: var(--c3); text-shadow: 0 0 10px color-mix(in srgb, var(--c3) 70%, transparent); }
+@keyframes ttt-pop { from { transform: scale(.3); opacity: 0; } }
+:root[data-mode="light"] .ttt .cell.o { color: color-mix(in srgb, var(--c1) 35%, var(--text)); text-shadow: none; }
+:root[data-mode="light"] .ttt .cell { border-color: color-mix(in srgb, var(--text) 35%, transparent); }
+.ttt .strike { position: absolute; height: 6px; margin-top: -3px; border-radius: 3px; background: color-mix(in srgb, var(--c1) 60%, white);
+  box-shadow: 0 0 10px var(--c1); transform-origin: 0 50%; display: none; }
+.ttt .strike.on { display: block; animation: ttt-strike .4s ease-out; }
+@keyframes ttt-strike { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+.ttt .strike.l0 { left: 5%; top: 16.7%; width: 90.0%; transform: rotate(0.0deg); }
+.ttt .strike.l1 { left: 5%; top: 50%; width: 90.0%; transform: rotate(0.0deg); }
+.ttt .strike.l2 { left: 5%; top: 83.3%; width: 90.0%; transform: rotate(0.0deg); }
+.ttt .strike.l3 { left: 16.7%; top: 5%; width: 90.0%; transform: rotate(90.0deg); }
+.ttt .strike.l4 { left: 50%; top: 5%; width: 90.0%; transform: rotate(90.0deg); }
+.ttt .strike.l5 { left: 83.3%; top: 5%; width: 90.0%; transform: rotate(90.0deg); }
+.ttt .strike.l6 { left: 5%; top: 5%; width: 127.3%; transform: rotate(45.0deg); }
+.ttt .strike.l7 { left: 95%; top: 5%; width: 127.3%; transform: rotate(135.0deg); }
 #stage .seat.think .icon { animation: meet-think 1.8s ease-in-out infinite; }
 @keyframes meet-think { 50% { transform: translateY(-2px) rotate(-8deg); } }
 .rt-chat { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
@@ -679,7 +692,7 @@ header { margin-bottom: 16px; }
   <section class="card" data-view="firm" id="aiCard">
     <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3" /><path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z" /><path d="M5 18v2" /><path d="M19 18v2" /></svg>Counselors</span></h2>
     <div class="stage" id="stage">
-      <div class="chess" id="chess"></div>
+      <div class="ttt" id="ttt"></div>
     </div>
 
   </section>
@@ -1235,53 +1248,47 @@ const ASSOC = ["scout", "analyst"];
 // The pit is 800 wide; show a band as wide as the stage's shape needs, so icons keep their size and fill it.
 new ResizeObserver(([e]) => { const w = Math.min(800, 220 * e.contentRect.width / (e.contentRect.height || 1));
   $("crowdSvg").setAttribute("viewBox", `${400 - w / 2} 0 ${w} 220`); }).observe($("assocStage"));
-// Counselors: the Risk officer and the Auditor play chess while the Chief of staff watches. Moves are for show,
-// not real chess: each turn a piece hops one or two squares, often taking one of the other side's pieces.
-const players = {risk: "w", auditor: "b"}, seats = ["risk", "auditor", "chief"].map(role => {
+// Counselors: the Risk officer (X) and the Auditor (O) play tic-tac-toe while the Chief of staff watches. Each takes a
+// winning square if it has one, usually blocks the other's win, and otherwise picks a square at random.
+const players = {risk: "X", auditor: "O"}, seats = ["risk", "auditor", "chief"].map(role => {
   const seat = el("div", {class: "seat still", title: AGENTS[role]}, el("div", {class: "icon"}, seatIcon(role)));
   $("stage").append(seat);
   return {role, seat};
 });
-const BACK = "♜♞♝♛♚♝♞♜";
-let pieces = [];
-const placePiece = p => p.node.style.transform = `translate(${p.x * 100}%, ${p.y * 100}%)`;
-function setBoard() {
-  pieces.forEach(p => p.node.remove());
-  pieces = [];
-  for (let x = 0; x < 8; x++) for (const [y, side, glyph] of [[0, "b", BACK[x]], [1, "b", "♟"], [6, "w", "♟"], [7, "w", BACK[x]]])
-    pieces.push({x, y, side, node: $("chess").appendChild(el("span", {class: "pc " + side, text: glyph}))});
-  pieces.forEach(placePiece);
-}
+const LINES = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+const cells = Array.from({length: 9}, () => $("ttt").appendChild(el("span", {class: "cell"})));
+const strike = $("ttt").appendChild(el("i", {class: "strike"}));
+let grid = Array(9).fill(""), turn = "X", over = 0;
 function placeChess() {
-  const stage = $("stage"), W = stage.clientWidth, H = stage.clientHeight, size = Math.min(H - 40, W * .5), board = $("chess");
-  Object.assign(board.style, {width: size + "px", height: size + "px", left: (W - size) / 2 + "px", top: (H - size) / 2 + 6 + "px",
-    fontSize: size / 11 + "px"});
-  const spot = {risk: [(W - size) / 2 - 44, H / 2 + size * .2], auditor: [(W + size) / 2 + 44, H / 2 - size * .2], chief: [(W - size) / 2 - 40, (H - size) / 2 + 20]};
+  const stage = $("stage"), W = stage.clientWidth, H = stage.clientHeight, size = Math.min(H - 40, W * .5), board = $("ttt");
+  Object.assign(board.style, {width: size + "px", height: size + "px", left: (W - size) / 2 + "px", top: (H - size) / 2 + 6 + "px", fontSize: size / 4 + "px"});
+  const spot = {risk: [(W - size) / 2 - 50, H / 2 + size * .2], auditor: [(W + size) / 2 + 50, H / 2 + size * .2], chief: [W / 2 + size / 2 + 46, (H - size) / 2 + 18]};
   seats.forEach(({role, seat}) => { const [x, y] = spot[role]; seat.style.transform = `translate(${x - 20}px, ${y - 20}px) scale(${role === "chief" ? .85 : 1.15})`; });
 }
-setBoard();
 new ResizeObserver(placeChess).observe($("stage"));
-let turn = "w", moves = 0;
+const winner = g => LINES.find(([a, b, c]) => g[a] && g[a] === g[b] && g[a] === g[c]);
+function pickSquare(me) {
+  const free = grid.map((v, i) => v ? -1 : i).filter(i => i >= 0), them = me === "X" ? "O" : "X";
+  const wins = who => free.filter(i => { const g = grid.slice(); g[i] = who; return winner(g); });
+  return wins(me)[0] ?? (Math.random() < .75 ? wins(them)[0] : undefined) ?? free[Math.floor(Math.random() * free.length)];
+}
 setInterval(() => {
   if (!$("stage").offsetParent || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  if (++moves > 40 || pieces.filter(p => p.side === turn).length < 4) { moves = 0; turn = "w"; return setBoard(); }
-  const at = (x, y) => pieces.find(p => p.x === x && p.y === y);
-  const options = pieces.filter(p => p.side === turn).flatMap(p => [-2, -1, 0, 1, 2].flatMap(dx => [-2, -1, 0, 1, 2].map(dy => ({p, x: p.x + dx, y: p.y + dy}))))
-    .filter(({p, x, y}) => (x !== p.x || y !== p.y) && x >= 0 && x < 8 && y >= 0 && y < 8 && (!at(x, y) || at(x, y).side !== turn));
-  const takes = options.filter(o => at(o.x, o.y)), pool = takes.length && Math.random() < .6 ? takes : options;
-  const {p, x, y} = pool[Math.floor(Math.random() * pool.length)] || {};
-  if (!p) return;
-  const victim = at(x, y);
-  if (victim) { victim.node.classList.add("taken"); setTimeout(() => victim.node.remove(), 500); pieces = pieces.filter(q => q !== victim); }
-  Object.assign(p, {x, y}); placePiece(p);
-  // The mover reaches for the board, the other player thinks, the Chief nods at every capture.
+  if (over && --over === 0) { grid.fill(""); cells.forEach(c => { c.textContent = ""; c.className = "cell"; }); strike.className = "strike"; turn = "X"; }
+  if (over) return;
+  const i = pickSquare(turn);
+  grid[i] = turn; cells[i].textContent = turn; cells[i].className = "cell " + turn.toLowerCase();
+  const won = winner(grid);
+  // The mover reaches for the board, the other player thinks, the Chief nods when someone wins.
   seats.forEach(({role, seat}) => {
     seat.classList.toggle("speak", players[role] === turn);
-    seat.classList.toggle("think", role !== "chief" && players[role] !== turn);
-    seat.classList.toggle("nod", role === "chief" && !!victim);
+    seat.classList.toggle("think", role !== "chief" && players[role] !== turn && !won);
+    seat.classList.toggle("nod", role === "chief" && !!won);
   });
-  turn = turn === "w" ? "b" : "w";
-}, 1800);
+  if (won) { strike.className = "strike on l" + LINES.indexOf(won); over = 3; }
+  else if (grid.every(Boolean)) over = 2;
+  turn = turn === "X" ? "O" : "X";
+}, 1100);
 
 // Each counselor holds its latest news: reports, the next run's likely buys, the last trading run.
 // New news shows "!!" on its seat; tapping the seat makes it tell you in the chat.
