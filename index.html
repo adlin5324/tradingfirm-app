@@ -487,8 +487,16 @@ header { margin-bottom: 16px; }
 /* Architects: mission control. Side screens plot a chart, sweep a radar, type code and pulse bars; the main
    screen counts down and launches a rocket; the console lights blink. The architects walk laps around it. */
 .site { position: absolute; inset: 40px 56px; }
-#archStage { height: 400px; } #archStage .site { inset: 24px 40px; }
-@media (max-width: 640px) { #archStage { height: 280px; } #archStage .site { inset: 30px 36px 24px; } }
+#archStage { height: 400px; } #archStage .site { inset: 48px 120px 70px; }
+/* What they'd really do: the Mechanic cranks a wrench, the Quant swirls a flask, the Reviewer sweeps a magnifier. */
+#archStage .seat .icon svg { width: 48px; height: 48px; }
+#archStage .job-mechanic .icon svg { transform-origin: 75% 25%; animation: job-crank 1.2s ease-in-out infinite; }
+#archStage .job-quant .icon svg { transform-origin: 50% 15%; animation: job-swirl 1.6s ease-in-out infinite; }
+#archStage .job-reviewer .icon svg { animation: job-scan 3s ease-in-out infinite; }
+@keyframes job-crank { 0%, 100% { transform: rotate(0); } 40% { transform: rotate(-38deg); } 55% { transform: rotate(-38deg); } }
+@keyframes job-swirl { 0%, 100% { transform: rotate(-14deg); } 50% { transform: rotate(14deg); } }
+@keyframes job-scan { 0%, 100% { transform: translate(-22px, 0); } 25% { transform: translate(-8px, -8px); } 50% { transform: translate(22px, 0); } 75% { transform: translate(8px, -8px); } }
+@media (max-width: 640px) { #archStage { height: 280px; } #archStage .site { inset: 34px 54px 54px; } #archStage .seat .icon svg { width: 36px; height: 36px; } }
 .site svg { width: 100%; height: 100%; overflow: visible; }
 .site .mc-scr { fill: color-mix(in srgb, var(--c2) 55%, var(--card)); stroke: color-mix(in srgb, var(--c3) 55%, transparent); stroke-width: 1; }
 .site .mc-main { stroke-width: 1.4; filter: drop-shadow(0 0 6px color-mix(in srgb, var(--c1) 50%, transparent)); }
@@ -506,7 +514,7 @@ header { margin-bottom: 16px; }
 .site .mc-flame { fill: var(--c3); opacity: 0; transform-box: fill-box; transform-origin: top; }
 .site .mc-count { fill: var(--c3); font: 700 7px ui-monospace, Menlo, monospace; text-anchor: start; }
 .site .launch .mc-flame { opacity: 1; animation: mc-flick .12s steps(2) infinite; }
-.site .launch { animation: mc-lift 3.5s ease-in forwards; }
+.site .launch { animation: mc-lift 2s ease-in forwards; }
 @keyframes mc-draw { 0% { stroke-dashoffset: 1; } 60%, 100% { stroke-dashoffset: 0; } }
 @keyframes mc-spin { to { transform: rotate(360deg); } }
 @keyframes mc-blink { 50% { opacity: .2; } }
@@ -514,7 +522,7 @@ header { margin-bottom: 16px; }
 @keyframes mc-bars { from { transform: scaleY(.25); } to { transform: scaleY(1); } }
 @keyframes mc-flick { 50% { transform: scaleY(.6); } }
 @keyframes mc-lift { 0% { transform: translateY(0); } 15% { transform: translate(.6px, 0); } 25% { transform: translate(-.6px, -1px); } 75% { opacity: 1; } 100% { transform: translateY(-24px); opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .site * { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .site *, #archStage .icon svg, #stage .icon { animation: none !important; } }
 /* Each counselor sits in a chair turned toward the table; the backrest faces away from it. */
 .seat .chair { position: absolute; left: -5px; top: -5px; width: 50px; height: 50px; z-index: -1; border-radius: 14px 14px 10px 10px;
   background: color-mix(in srgb, var(--c2) 45%, var(--card)); border: 1px solid color-mix(in srgb, var(--c3) 30%, transparent);
@@ -530,6 +538,19 @@ header { margin-bottom: 16px; }
 .seat.thinking .icon { animation: rt-think 1.6s ease-in-out infinite; }
 .seat.spoke .icon { animation: rt-bob 2.4s ease-in-out infinite; }
 .seat.spoke .bang, .seat.news .bang { display: block; animation: rt-bang .8s ease-in-out infinite alternate; }
+#stage .seat .say { position: absolute; left: 50%; bottom: 46px; transform: translateX(-50%); display: none; gap: 3px; padding: 5px 7px;
+  border-radius: 10px; background: var(--card); border: 1px solid color-mix(in srgb, var(--c3) 45%, transparent); }
+#stage .seat .say i { width: 4px; height: 4px; border-radius: 50%; background: var(--c3); animation: say-dot 1s ease-in-out infinite; }
+#stage .seat .say i:nth-child(2) { animation-delay: .15s; } #stage .seat .say i:nth-child(3) { animation-delay: .3s; }
+#stage .seat.speak .say { display: flex; }
+#stage .seat.speak .icon { animation: meet-speak 1.4s ease-in-out infinite; }
+#stage .seat .icon { transition: transform .6s ease; transform: rotate(var(--look, 0deg)); }
+#stage .seat.nod .icon { animation: meet-nod 2.2s ease-in-out infinite; }
+#stage .seat.note .icon { animation: meet-note .5s ease-in-out 4; }
+@keyframes say-dot { 50% { transform: translateY(-3px); opacity: .5; } }
+@keyframes meet-speak { 0%, 100% { transform: rotate(var(--look, 0deg)) scale(1); } 30% { transform: rotate(calc(var(--look, 0deg) - 6deg)) scale(1.06); } 60% { transform: rotate(calc(var(--look, 0deg) + 5deg)) scale(1.04); } }
+@keyframes meet-nod { 0%, 60%, 100% { transform: rotate(var(--look, 0deg)) translateY(0); } 70% { transform: rotate(var(--look, 0deg)) translateY(3px); } 80% { transform: rotate(var(--look, 0deg)) translateY(0); } 90% { transform: rotate(var(--look, 0deg)) translateY(2px); } }
+@keyframes meet-note { 50% { transform: rotate(var(--look, 0deg)) translate(2px, 3px) rotate(4deg); } }
 .seat { cursor: pointer; outline: none; } .seat.still { cursor: default; } .seat:focus-visible .icon { outline: 2px solid var(--c3); border-radius: 50%; }
 .rt-a .told-title { font-weight: 650; margin: 0 0 4px; }
 .rt-a pre { white-space: pre-wrap; font-size: 12px; margin: 0; max-height: 260px; overflow: auto; }
@@ -871,19 +892,17 @@ function showProblems() { archNews(); }
 
 // Architects walk laps around the building site. Each holds its news: the Mechanic the app's problems, the Quant
 // its research, the Code Reviewer its reviews and the plans waiting for your approval. Tap one to hear it.
-let lastTeam = null, archTold = [], archTalking = false, archHover = false;
+let lastTeam = null, archTold = [], archTalking = false;
 const ARCH_ICONS = {mechanic: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />',
   quant: '<path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" /><path d="M6.453 15h11.094" /><path d="M8.5 2h7" />',
   reviewer: '<circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /><path d="m8 11 2 2 4-4" />'};
 const ARCH_RUNS = {quant: "quant.yml", reviewer: "reviewer.yml"};
 const archIcon = role => { const box = el("span"); box.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ARCH_ICONS[role] + "</svg>"; return box.firstChild; };
 const archSeats = ARCHITECTS.map(role => {
-  const seat = el("div", {class: "seat still", title: AGENTS[role]}, el("div", {class: "icon"}, archIcon(role)));
+  const seat = el("div", {class: "seat still job-" + role, title: AGENTS[role]}, el("div", {class: "icon"}, archIcon(role)));
   $("archStage").append(seat);
   return {role, seat};
 });
-$("archStage").addEventListener("pointerenter", () => archHover = true);
-$("archStage").addEventListener("pointerleave", () => archHover = false);
 const svgEl = (name, attrs) => { const e = document.createElementNS("http://www.w3.org/2000/svg", name); Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v)); return e; };
 // Mission control's countdown runs only while the Architects page is open.
 let mcCount = 10;
@@ -919,26 +938,17 @@ async function runArch(role, from) {
     setTimeout(() => seat.classList.remove("thinking"), 180000);
   } catch (e) { reportProblem("Run: " + AGENTS[role], e.message, "", from); }
 }
-// Laps around the site: along the edges of a box just outside the building. One lap takes 40 seconds.
-let archClock = 0, archSpeed = 1, archFrame = 0;
-function moveArch(now) {
-  requestAnimationFrame(moveArch);
-  const dt = Math.min(now - archFrame, 100); archFrame = now;
+// Each architect works at a station by the console: the Mechanic on the left, the Quant on the right, the
+// Code reviewer up front checking the work.
+const STATIONS = {mechanic: [.1, .62], quant: [.9, .62], reviewer: [.5, .93]};
+function placeArch() {
   const stage = $("archStage");
-  if (!stage.offsetParent) return;
-  const stop = archTalking || archHover || matchMedia("(prefers-reduced-motion: reduce)").matches;
-  archSpeed += ((stop ? 0 : 1) - archSpeed) * Math.min(1, dt / 400);
-  if (archSpeed < .002) archSpeed = stop ? 0 : .002;
-  archClock += dt * archSpeed / 40000;
-  const box = stage.querySelector(".site"), x0 = box.offsetLeft - 14, y0 = box.offsetTop - 4, w = box.offsetWidth + 28, h = box.offsetHeight + 8;
-  archSeats.forEach(({seat}, i) => {
-    let d = ((archClock + i / archSeats.length) % 1) * 2 * (w + h), x, y;
-    if (d < w) { x = x0 + d; y = y0; } else if ((d -= w) < h) { x = x0 + w; y = y0 + d; }
-    else if ((d -= h) < w) { x = x0 + w - d; y = y0 + h; } else { x = x0; y = y0 + h - (d - w); }
-    seat.style.transform = `translate(${x - 20}px, ${y - 20}px)`;
+  archSeats.forEach(({role, seat}) => {
+    const [fx, fy] = STATIONS[role];
+    seat.style.transform = `translate(${fx * stage.clientWidth - 20}px, ${fy * stage.clientHeight - 20}px)`;
   });
 }
-requestAnimationFrame(moveArch);
+new ResizeObserver(placeArch).observe($("archStage"));
 function reportProblem(source, error, url, from) {
   const list = problemList(), last = list[list.length - 1];
   if (last && last.source === source && last.error === error) list.pop();
@@ -1203,7 +1213,8 @@ const ASSOC = ["scout", "analyst"];
 new ResizeObserver(([e]) => { const w = Math.min(800, 220 * e.contentRect.width / (e.contentRect.height || 1));
   $("crowdSvg").setAttribute("viewBox", `${400 - w / 2} 0 ${w} 220`); }).observe($("assocStage"));
 const seats = Array.from({length: 9}, (_, i) => ["risk", "auditor", "chief"][i % 3]).map((role, i) => {
-  const seat = el("div", {class: "seat still", title: AGENTS[role]}, el("div", {class: "chair"}), el("div", {class: "icon"}, seatIcon(role)));
+  const seat = el("div", {class: "seat still", title: AGENTS[role]}, el("div", {class: "chair"}), el("div", {class: "icon"}, seatIcon(role)),
+    el("span", {class: "say"}, el("i"), el("i"), el("i")));
   seat.querySelector(".icon").style.animationDelay = (i * .25) + "s";
   $("stage").append(seat);
   return {role, seat};
@@ -1226,6 +1237,19 @@ function placeSeats() {
   });
 }
 new ResizeObserver(placeSeats).observe($("stage"));
+// The meeting: every few seconds the floor passes to someone else; the others turn toward them and nod.
+setInterval(() => {
+  if (!$("stage").offsetParent || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const pick = Math.floor(Math.random() * seats.length), sp = seats[pick].seat.getBoundingClientRect();
+  seats.forEach(({seat}, i) => {
+    const r = seat.getBoundingClientRect(), look = Math.max(-25, Math.min(25, (sp.left - r.left) / 12));
+    seat.classList.toggle("speak", i === pick);
+    seat.classList.toggle("nod", i !== pick && Math.random() < .5);
+    seat.classList.remove("note");
+    if (i !== pick && Math.random() < .15) seat.classList.add("note");
+    seat.style.setProperty("--look", i === pick ? "0deg" : look.toFixed(1) + "deg");
+  });
+}, 3200);
 
 // Each counselor holds its latest news: reports, the next run's likely buys, the last trading run.
 // New news shows "!!" on its seat; tapping the seat makes it tell you in the chat.
