@@ -164,6 +164,9 @@ button.ghost:hover { background: var(--faint); color: var(--text); }
 button:disabled { opacity: .5; cursor: wait; }
 .status { display: flex; align-items: center; gap: 8px; font-size: 14px; margin-top: 12px; }
 .status:empty { display: none; }
+#problems .list { margin-bottom: 16px; }
+#problems .head { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--muted); }
+#problems .head button { padding: 4px 10px; font-size: 12px; }
 .btn-spin { display: inline-block; margin-left: 8px; vertical-align: -2px; }
 .spin { width: 14px; height: 14px; flex: none; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -556,6 +559,7 @@ header { margin-bottom: 16px; }
 
   <section class="card" data-view="arch">
     <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12.99 6.74 1.93 3.44" /><path d="M19.136 12a10 10 0 0 1-14.271 0" /><path d="m21 21-2.16-3.84" /><path d="m3 21 8.02-14.26" /><circle cx="12" cy="5" r="2" /></svg>Architects</span> <span class="small">fix and improve the bot · nothing changes until you approve</span></h2>
+    <div id="problems"></div>
     <div class="list" id="arch"><div class="empty">Nothing waiting</div></div>
     <div class="row" style="margin-top:16px">
       <select id="archPick" aria-label="Architect">
@@ -824,6 +828,27 @@ function showTeam(team, shadow) {
       .map(s => s.symbol + " on " + shortDate(s.date) + " (" + s.why + ")").join("; ")})] : []));
 }
 
+// Anything that fails in the app goes to the Architects page, with where it failed. Kept in this browser only.
+function problemList() { try { return JSON.parse(store.get("problems") || "[]"); } catch { return []; } }
+function showProblems() {
+  const list = problemList();
+  $("problems").replaceChildren(...(list.length ? [
+    el("div", {class: "head"}, el("span", {text: "Problems"}), Object.assign(el("button", {text: "Clear"}), {onclick: () => { store.del("problems"); showProblems(); }})),
+    el("div", {class: "list"}, list.slice().reverse().map(p => el("div", {class: "item"},
+      el("div", {}, el("b", {text: p.source}), el("div", {class: "sub", text: p.error + " · " + when(p.at)}),
+        ...(p.url ? [el("a", {href: p.url, target: "_blank", rel: "noopener", text: "Open the run"})] : [])),
+      tag("failed", "bad"))))] : []));
+}
+function reportProblem(source, error, url) {
+  const list = problemList(), last = list[list.length - 1];
+  if (last && last.source === source && last.error === error) list.pop();
+  list.push({source, error, url: url || "", at: new Date().toISOString()});
+  store.set("problems", JSON.stringify(list.slice(-8)));
+  showProblems();
+  setStatus("Failed. Details on the Architects page.");
+}
+showProblems();
+
 async function runAgent() {
   const role = $("agentPick").value;
   try {
@@ -832,7 +857,7 @@ async function runAgent() {
     });
     if (res.status !== 204) throw new Error("GitHub didn't start it (" + res.status + ").");
     setStatus(AGENTS[role] + " started. Its report shows here in a few minutes, after the next data update.");
-  } catch (e) { setStatus(e.message); }
+  } catch (e) { reportProblem("Run Agent: " + AGENTS[role], e.message); }
 }
 
 // The chart runs from the start (everything at 0%) to today's live numbers.
@@ -905,7 +930,7 @@ function setStatus(text, busy) {
 async function refresh() {
   if (!store.get("token")) { $("setup").classList.remove("hidden"); $("chip").textContent = "Not connected"; return; }
   try { await Promise.all([loadDashboard(), loadRuns()]); }
-  catch (e) { setStatus(e.message); }
+  catch (e) { reportProblem("Loading the app's data", e.message); }
 }
 
 const needed = v => v ? "" : "Add a short reason.";
@@ -982,7 +1007,7 @@ $("archRun").addEventListener("click", async () => {
     });
     if (res.status !== 204) throw new Error("GitHub didn't start it (" + res.status + ").");
     setStatus(pick.selectedOptions[0].text + " started. Its work shows here when it's done.");
-  } catch (e) { setStatus(e.message); }
+  } catch (e) { reportProblem("Run: " + pick.selectedOptions[0].text, e.message); }
 });
 $("sellCancel").addEventListener("click", () => $("sellBox").close());
 $("sellGo").addEventListener("click", async () => {
@@ -993,6 +1018,19 @@ $("sellGo").addEventListener("click", async () => {
                  ok: "Sell"}) === null) return;
   dispatch("sell", picked.join(" "));
 });
+
+// Which job and step of a failed run broke, for the Architects page.
+async function failedAt(run) {
+  const outcome = run.conclusion === "failure" ? "Failed" : "Ended (" + run.conclusion + ")";
+  try {
+    const jobs = (await (await api("/actions/runs/" + run.id + "/jobs")).json()).jobs || [];
+    for (const job of jobs) {
+      const step = (job.steps || []).find(s => s.conclusion === "failure");
+      if (step || job.conclusion === "failure") return outcome + " in job \"" + job.name + "\"" + (step ? ", step \"" + step.name + "\"" : "");
+    }
+  } catch {}
+  return outcome;
+}
 
 async function dispatch(cmd, preset = "") {
   let reason = preset;
@@ -1006,6 +1044,7 @@ async function dispatch(cmd, preset = "") {
   // A spinner right of the pressed button while its run is going.
   const pressed = cmd === "sell" ? $("sellBtn") : cmd === "halt" || cmd === "resume" ? $("tradeSwitch") : document.querySelector(`[data-cmd="${cmd}"]`);
   const spinner = el("span", {class: "spin btn-spin"});
+  const label = {halt: "Halt Trading", resume: "Resume Trading"}[cmd] || pressed.textContent.trim();
   const started = Date.now() - 5000;
   try {
     const res = await api("/actions/workflows/bot.yml/dispatches", {
@@ -1020,13 +1059,13 @@ async function dispatch(cmd, preset = "") {
       const runs = await loadRuns();
       const mine = runs.find(r => r.event === "workflow_dispatch" && Date.parse(r.created_at) >= started);
       if (mine && mine.status === "completed") {
-        setStatus(mine.conclusion === "success" ? "" : "\"" + cmd + "\" ended: " + mine.conclusion + ". Open it under Recent runs.");
+        if (mine.conclusion !== "success") reportProblem(label, await failedAt(mine), mine.html_url);
         await loadDashboard();
         return;
       }
     }
   } catch (e) {
-    setStatus(e.message);
+    reportProblem(label, e.message);
   } finally {
     buttons.forEach(b => b.disabled = false);
     spinner.remove();
@@ -1123,7 +1162,7 @@ $("askForm").addEventListener("submit", async e => {
     }
     showTable(await loadAnswers());
     setStatus("The counselors are taking long. The answer will show at the table once it's ready.");
-  } catch (err) { setStatus(err.message); }
+  } catch (err) { reportProblem("Question to the counselors", err.message); }
   finally { $("askSend").disabled = false; }
 });
 
