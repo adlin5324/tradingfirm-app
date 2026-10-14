@@ -500,8 +500,8 @@ header { margin-bottom: 16px; }
 #archStage .seat .icon svg { width: 48px; height: 48px; }
 /* The Mechanic twirls its wrench like a gunslinger, tosses it, catches it and strikes, throwing sparks. */
 #archStage .job-mechanic .icon svg { transform-origin: 50% 50%; animation: wrench-trick 3.6s ease-in-out infinite; }
-#archStage .job-mechanic .spark { position: absolute; left: 40px; top: 30px; width: 6px; height: 6px; border-radius: 50%; background: var(--c3);
-  box-shadow: 0 0 6px var(--c1); opacity: 0; animation: spark 3.6s ease-out infinite; }
+#archStage .job-mechanic .spark { position: absolute; left: 40px; top: 30px; width: 6px; height: 6px; border-radius: 50%; background: color-mix(in srgb, var(--c1) 70%, white);
+  box-shadow: 0 0 4px var(--c1), 0 0 10px var(--c1); opacity: 0; animation: spark 3.6s ease-out infinite; }
 #archStage .job-mechanic .spark:nth-child(3) { --sx: 26px; --sy: -26px; } #archStage .job-mechanic .spark:nth-child(4) { --sx: 34px; --sy: 4px; }
 #archStage .job-mechanic .spark:nth-child(5) { --sx: 18px; --sy: 26px; } #archStage .job-mechanic .spark:nth-child(6) { --sx: -6px; --sy: -32px; }
 /* The Quant flips its flask like a water bottle: sometimes it lands, sometimes it topples. */
