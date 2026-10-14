@@ -180,43 +180,11 @@ button.ghost:hover { background: var(--faint); color: var(--text); }
 button:disabled { opacity: .5; cursor: wait; }
 .status { display: flex; align-items: center; gap: 8px; font-size: 14px; margin-top: 12px; }
 .status:empty { display: none; }
-#probClear { padding: 4px 10px; font-size: 12px; }
-/* Architects lab: a drafting room on blueprint paper. The Mechanic turns gears, the Quant brews in a flask,
-   the Code Reviewer scans the drawing, finished plans drop into your tray. The work log sits on the right. */
 .lab-split { display: grid; gap: 16px; margin-top: 8px; }
-.lab { position: relative; border-radius: 12px; overflow: hidden; background-color: #0b2545;
   background-image: linear-gradient(rgba(125, 211, 252, .2) 1px, transparent 1px), linear-gradient(90deg, rgba(125, 211, 252, .2) 1px, transparent 1px),
     linear-gradient(rgba(125, 211, 252, .07) 1px, transparent 1px), linear-gradient(90deg, rgba(125, 211, 252, .07) 1px, transparent 1px);
   background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px; box-shadow: inset 0 0 60px rgba(0, 0, 0, .45); }
-.lab svg { display: block; width: 100%; height: auto; }
-.lab .ln { fill: none; stroke: #7dd3fc; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 3px #38bdf8); }
-.lab .faint { stroke: rgba(125, 211, 252, .45); filter: none; }
-.lab .fill { fill: rgba(8, 28, 54, .9); }
-.lab text { fill: #e0f2fe; font: 600 13px Inter, system-ui, sans-serif; text-anchor: middle; }
-.lab text.sub { fill: #93c5fd; font-weight: 400; font-size: 12px; }
-.lab text.sheet { fill: rgba(147, 197, 253, .6); font: 9px ui-monospace, Menlo, monospace; letter-spacing: .08em; text-anchor: end; }
-.lab .st { cursor: pointer; outline: none; }
-.lab .st:hover .ln, .lab .st:focus-visible .ln { stroke-width: 2.2; }
-.lab .spin, .lab .wig, .lab .scan, .lab .bub, .lab .paper { transform-box: fill-box; }
-.lab .spin { transform-origin: center; animation: lab-spin 8s linear infinite; }
-.lab .spin.back { animation-direction: reverse; animation-duration: 5s; }
-.lab .wig { transform-origin: 85% 15%; animation: lab-wig 2.4s ease-in-out infinite; }
-.lab .draw { stroke-dasharray: 1; animation: lab-draw 8s ease-in-out infinite; }
-.lab .scan { animation: lab-scan 7s ease-in-out infinite; }
-.lab .bub { fill: #7dd3fc; animation: lab-rise 2.6s ease-in infinite; }
-.lab .plot { stroke-dasharray: 1; animation: lab-draw 5s ease-in-out infinite; }
-.lab .paper { display: none; animation: lab-drop 3s ease-in infinite; }
-.lab .has-pr .paper { display: inline; }
-.lab .alert .ln { stroke: #fbbf24; filter: drop-shadow(0 0 4px #f59e0b); } .lab .alert text.sub { fill: #fbbf24; }
-.lab .alert .spin { animation-duration: 2.5s; } .lab .alert .spin.back { animation-duration: 1.6s; } .lab .alert .wig { animation-duration: .9s; }
-.lab .ready .ln { stroke: #4ade80; filter: drop-shadow(0 0 4px #22c55e); } .lab .ready text.sub { fill: #4ade80; }
-.lab .busy .bub { animation-duration: 1.1s; } .lab .busy .scan { animation-duration: 2.8s; } .lab .busy text.sub { fill: #e0f2fe; }
-@keyframes lab-spin { to { transform: rotate(360deg); } }
-@keyframes lab-wig { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-22deg); } 60% { transform: rotate(8deg); } }
 @keyframes lab-draw { 0% { stroke-dashoffset: 1; opacity: 1; } 55%, 85% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
-@keyframes lab-scan { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(70px, 22px); } 50% { transform: translate(110px, -6px); } 75% { transform: translate(36px, 34px); } }
-@keyframes lab-rise { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateY(-38px); opacity: 0; } }
-@keyframes lab-drop { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } 80% { transform: translateY(56px); opacity: 1; } 100% { transform: translateY(60px); opacity: 0; } }
 /* Associates: an investment-bank trading floor. A ticker runs overhead; screens flicker; a desk's phone rings
    and shows !! when that associate has news. */
 .floor { position: relative; border-radius: 12px; overflow: hidden; background: radial-gradient(ellipse at 50% 0%, #1c1917, #0a0a0a 70%);
@@ -255,8 +223,8 @@ button:disabled { opacity: .5; cursor: wait; }
 @keyframes fl-ring { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-16deg); } 75% { transform: rotate(16deg); } }
 @media (prefers-reduced-motion: reduce) { .floor * { animation: none !important; } }
 /* Narrow screens: same as the Counselors table, a short scene with the log below it. */
-@media (max-width: 860px) { .lab svg, .floor svg { height: 260px; } }
-@media (max-width: 640px) { .lab svg, .floor svg { height: 210px; } }
+@media (max-width: 860px) { .floor svg { height: 260px; } }
+@media (max-width: 640px) { .floor svg { height: 210px; } }
 .lab-log { display: flex; flex-direction: column; gap: 10px; padding: 4px; max-height: 240px; overflow-y: auto; font-size: 14px; scrollbar-width: thin; }
 .lab-log .rt-a { max-width: 100%; align-self: stretch; }
 .lab-log .rt-a .when { color: var(--muted); font-weight: 400; margin-left: auto; }
@@ -265,7 +233,6 @@ button:disabled { opacity: .5; cursor: wait; }
   .lab-log { max-height: none; height: 0; min-height: 100%; mask-image: linear-gradient(transparent, #000 24px); -webkit-mask-image: linear-gradient(transparent, #000 24px); }
   .lab-log > :first-child { margin-top: auto; }
 }
-@media (prefers-reduced-motion: reduce) { .lab * { animation: none !important; } }
 .btn-spin { display: inline-block; margin-left: 8px; vertical-align: -2px; }
 .spin { width: 14px; height: 14px; flex: none; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -562,6 +529,25 @@ header { margin-bottom: 16px; }
 .rt-ask input { flex: 1; min-width: 0; margin: 0; padding: 6px 0; border: 0; background: none; outline: none; font-size: 14px; }
 .rt-ask button { width: 34px; height: 34px; padding: 0; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--c1); color: #fff; border: 0; }
 .rt-ask button svg { width: 16px; height: 16px; margin: 0; }
+/* Architects: a building going up, in the theme's colors. Windows light up, the crane swings and lifts a beam,
+   the architects walk laps around the site. */
+.site { position: absolute; inset: 40px 56px; }
+.site svg { width: 100%; height: 100%; overflow: visible; }
+.site .b-top { stop-color: color-mix(in srgb, var(--c1) 35%, var(--card)); } .site .b-bot { stop-color: color-mix(in srgb, var(--c2) 50%, var(--card)); }
+.site .b-body { fill: url(#bGrad); stroke: color-mix(in srgb, var(--c3) 55%, transparent); stroke-width: 1; }
+.site .b-ln, .site .b-scaf { fill: none; stroke: color-mix(in srgb, var(--c3) 70%, transparent); stroke-width: 1.2; stroke-linejoin: round;
+  filter: drop-shadow(0 0 3px var(--c1)); }
+.site .b-scaf { stroke-dasharray: 3 3; animation: b-ants 1.4s linear infinite; }
+.site .b-win { fill: color-mix(in srgb, var(--c3) 60%, white); animation: b-win 4s steps(1) infinite; }
+.site .b-door { fill: color-mix(in srgb, var(--c1) 60%, var(--card)); }
+.site .b-beam { fill: var(--c3); filter: drop-shadow(0 0 4px var(--c1)); }
+.site .b-jib { transform-box: view-box; transform-origin: 153px 10px; animation: b-swing 7s ease-in-out infinite; }
+.site .b-hook { animation: b-lift 5s ease-in-out infinite; }
+@keyframes b-ants { to { stroke-dashoffset: -6; } }
+@keyframes b-win { 0% { opacity: .15; } 40% { opacity: .95; } 70% { opacity: .35; } }
+@keyframes b-swing { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+@keyframes b-lift { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-26px); } }
+@media (prefers-reduced-motion: reduce) { .site * { animation: none !important; } }
 .seat { position: absolute; left: 0; top: 0; width: 40px; height: 40px; will-change: transform, opacity; }
 .seat .icon { display: grid; place-items: center; width: 40px; height: 40px; color: color-mix(in srgb, var(--c1) 55%, white);
   filter: drop-shadow(0 0 3px var(--c1)) drop-shadow(0 0 10px var(--c1)); }
@@ -586,6 +572,7 @@ header { margin-bottom: 16px; }
   .rt-split { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
   .rt-split .stage { height: 360px; }
   .rt-split .rt-table, .rt-split .rt-center { inset: 80px 36px; }
+  .rt-split .site { inset: 56px 64px; }
   .rt-split .rt-chat { height: 360px; margin-top: 8px; }
   .rt-split .rt-log { flex: 1; min-height: 0; max-height: none; mask-image: linear-gradient(transparent, #000 24px); -webkit-mask-image: linear-gradient(transparent, #000 24px); }
   .rt-split .rt-log > :first-child { margin-top: auto; }
@@ -593,6 +580,7 @@ header { margin-bottom: 16px; }
 @media (max-width: 640px) {
   .stage { height: 200px; margin-left: -8px; margin-right: -8px; }
   .rt-table, .rt-center { inset: 36px 30px; }
+  .site { inset: 46px 44px 28px; }
   .rt-log { font-size: 13px; }
 }
 @media (prefers-reduced-motion: reduce) { .seat .icon, .seat .bang { animation: none !important; } }
@@ -709,48 +697,27 @@ header { margin-bottom: 16px; }
   </section>
 
   <section class="card" data-view="arch">
-    <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12.99 6.74 1.93 3.44" /><path d="M19.136 12a10 10 0 0 1-14.271 0" /><path d="m21 21-2.16-3.84" /><path d="m3 21 8.02-14.26" /><circle cx="12" cy="5" r="2" /></svg>Architects</span> <span class="small">fix and improve the bot · nothing changes until you approve</span></h2>
-    <div class="lab-split">
-      <div class="lab"><svg id="labSvg" viewBox="0 0 400 300" role="img" aria-label="The architects at work">
-        <g class="faint ln"><path d="M20 268 H380" /><path d="M40 262 v12 M120 262 v12 M200 262 v12 M280 262 v12 M360 262 v12" /></g>
-        <g class="st" id="sRev" role="button" tabindex="0" aria-label="Code Reviewer: run it" data-run="reviewer.yml"><rect fill="transparent" x="118" y="28" width="164" height="184" /><rect class="fill ln" x="118" y="58" width="164" height="112" rx="4" />
-          <path class="ln faint" d="M150 170 L140 210 M250 170 L260 210 M130 196 H270" />
-          <path class="ln draw" pathLength="1" d="M150 152 V108 L200 76 L250 108 V152 Z M176 152 V126 H196 V152 M210 116 H236 V136 H210 Z" />
-          <path class="ln faint" d="M150 162 H250 M150 158 v8 M250 158 v8" /><text class="sub" x="200" y="186" style="font-size:9px">HL-1 · 1:100</text>
-          <g class="scan"><g transform="translate(128 66) scale(1.2)"><g class=""><g class="ln" stroke-width="1.25"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /><path d="m8 11 2 2 4-4" /></g></g></g></g>
-          <text x="200" y="34">Code Reviewer</text><text class="sub" id="tRev" x="200" y="49"></text></g>
-        <g class="st" id="sMech" role="button" tabindex="0" aria-label="Mechanic: see problems" data-jump="probPart"><rect fill="transparent" x="8" y="82" width="112" height="140" /><circle class="ln spin" cx="56" cy="112" r="20" stroke-width="7" stroke-dasharray="4 3.5" /><circle class="ln spin" cx="56" cy="112" r="11" />
-          <circle class="ln spin back" cx="86" cy="140" r="13" stroke-width="6" stroke-dasharray="3.4 3" /><circle class="ln spin back" cx="86" cy="140" r="6" />
-          <g transform="translate(30 146) scale(1.3)"><g class="wig"><g class="ln" stroke-width="1.15"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" /></g></g></g>
-          <text x="62" y="200">Mechanic</text><text class="sub" id="tMech" x="62" y="214"></text></g>
-        <g class="st" id="sQuant" role="button" tabindex="0" aria-label="Quant Researcher: run it" data-run="quant.yml"><rect fill="transparent" x="290" y="82" width="104" height="140" /><g transform="translate(318 92) scale(2)"><g class=""><g class="ln" stroke-width="0.75"><path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" /><path d="M6.453 15h11.094" /><path d="M8.5 2h7" /></g></g></g>
-          <circle class="bub" cx="336" cy="112" r="2.5" /><circle class="bub" cx="342" cy="114" r="2" style="animation-delay:-.9s" /><circle class="bub" cx="331" cy="116" r="1.8" style="animation-delay:-1.7s" />
-          <path class="ln faint" d="M306 182 V150 M306 182 H372" /><polyline class="ln plot" pathLength="1" points="308,176 322,168 334,172 348,158 360,162 370,150" />
-          <text x="336" y="200">Quant Researcher</text><text class="sub" id="tQuant" x="336" y="214"></text></g>
-        <g class="st" id="sYou" role="button" tabindex="0" aria-label="You: see what's waiting" data-jump="prPart"><rect fill="transparent" x="150" y="214" width="100" height="74" /><g class="paper"><rect class="fill ln" x="192" y="176" width="16" height="20" rx="2" /><path class="ln" d="M196 182 h8 M196 187 h8" /></g>
-          <g transform="translate(186 220) scale(1.2)"><g class=""><g class="ln" stroke-width="1.25"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12" /><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" /></g></g></g>
-          <text x="200" y="266">You</text><text class="sub" id="tYou" x="200" y="281"></text></g>
-        <text class="sheet" x="392" y="294">SHEET A-1 · HOWIELEGACY</text>
+    <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12.99 6.74 1.93 3.44" /><path d="M19.136 12a10 10 0 0 1-14.271 0" /><path d="m21 21-2.16-3.84" /><path d="m3 21 8.02-14.26" /><circle cx="12" cy="5" r="2" /></svg>Architects</span> <span class="small">tap an architect · !! means they have something</span></h2>
+    <div class="rt-split">
+    <div class="stage" id="archStage">
+      <div class="site" aria-hidden="true"><svg viewBox="0 0 200 140" preserveAspectRatio="xMidYMax meet">
+        <defs><linearGradient id="bGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="b-top" /><stop offset="1" class="b-bot" /></linearGradient></defs>
+        <rect class="b-body" x="18" y="88" width="44" height="47" rx="2" />
+        <rect class="b-body" x="66" y="40" width="62" height="95" rx="2" />
+        <g class="b-scaf"><rect x="66" y="14" width="62" height="26" /><path d="M66 27 H128 M66 14 L97 40 L128 14 M97 14 V40" /></g>
+        <g><rect class="b-win" x="74" y="50" width="10" height="8" style="animation-delay:-0.00s" /><rect class="b-win" x="91" y="50" width="10" height="8" style="animation-delay:-1.37s" /><rect class="b-win" x="108" y="50" width="10" height="8" style="animation-delay:-2.74s" /><rect class="b-win" x="74" y="64" width="10" height="8" style="animation-delay:-0.11s" /><rect class="b-win" x="91" y="64" width="10" height="8" style="animation-delay:-1.48s" /><rect class="b-win" x="108" y="64" width="10" height="8" style="animation-delay:-2.85s" /><rect class="b-win" x="74" y="78" width="10" height="8" style="animation-delay:-0.22s" /><rect class="b-win" x="91" y="78" width="10" height="8" style="animation-delay:-1.59s" /><rect class="b-win" x="108" y="78" width="10" height="8" style="animation-delay:-2.96s" /><rect class="b-win" x="74" y="92" width="10" height="8" style="animation-delay:-0.33s" /><rect class="b-win" x="91" y="92" width="10" height="8" style="animation-delay:-1.70s" /><rect class="b-win" x="108" y="92" width="10" height="8" style="animation-delay:-3.07s" /><rect class="b-win" x="74" y="106" width="10" height="8" style="animation-delay:-0.44s" /><rect class="b-win" x="91" y="106" width="10" height="8" style="animation-delay:-1.81s" /><rect class="b-win" x="108" y="106" width="10" height="8" style="animation-delay:-3.18s" /><rect class="b-win" x="26" y="96" width="10" height="8" style="animation-delay:-0.55s" /><rect class="b-win" x="42" y="96" width="10" height="8" style="animation-delay:-1.92s" /><rect class="b-win" x="26" y="110" width="10" height="8" style="animation-delay:-3.29s" /><rect class="b-win" x="42" y="110" width="10" height="8" style="animation-delay:-0.66s" /></g>
+        <rect class="b-door" x="89" y="120" width="16" height="15" rx="1" />
+        <path class="b-ln" d="M150 135 V8 M156 135 V8 M150 120 L156 110 L150 100 L156 90 L150 80 L156 70 L150 60 L156 50 L150 40 L156 30 L150 20 L156 10" />
+        <g class="b-jib"><path class="b-ln" d="M120 10 H196 M120 10 L153 2 L196 10" /><rect class="b-body" x="122" y="10" width="10" height="7" />
+          <g class="b-hook"><path class="b-ln" d="M182 10 V44" /><rect class="b-beam" x="170" y="44" width="24" height="5" rx="1" /></g></g>
+        <path class="b-ln" d="M4 135 H196" />
       </svg></div>
-      <div class="lab-log" id="labLog" aria-live="polite"></div>
     </div>
-    <p class="muted small">Tap the Quant Researcher or Code Reviewer to run them. The Mechanic starts by itself when a bot run fails.</p>
+    <div class="rt-chat">
+      <div class="rt-log" id="archLog" aria-live="polite"></div>
+    </div>
+    </div>
     <div class="status"></div>
-
-    <div class="part" id="probPart">
-    <h3><span class="ttl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hi" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>Problems</span> <button id="probClear" class="hidden">Clear</button></h3>
-    <div class="list" id="problems"></div>
-    </div>
-
-    <div class="part" id="prPart">
-    <h3><span class="ttl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hi" aria-hidden="true"><circle cx="18" cy="18" r="3" /><circle cx="6" cy="6" r="3" /><path d="M13 6h3a2 2 0 0 1 2 2v7" /><line x1="6" x2="6" y1="9" y2="21" /></svg>Waiting on you</span></h3>
-    <div class="list" id="prs"></div>
-    </div>
-
-    <div class="part">
-    <h3><span class="ttl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hi" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /></svg>Architect reports</span></h3>
-    <div class="list" id="arch"></div>
-    </div>
   </section>
 
   <section class="card" data-view="ai">
@@ -967,71 +934,81 @@ function showTeam(team, shadow) {
       el("div", {class: "report"}, md(r.body)), el("a", {href: r.url, target: "_blank", rel: "noopener", text: "Open on GitHub"}));
   };
   lastTeam = team;
-  const prs = team.prs.map(p => el("div", {class: "item"},
-    el("a", {href: p.url, target: "_blank", rel: "noopener", text: "#" + p.number + " " + p.title}), tag("needs you", "blue")));
-  const arch = team.reports.filter(r => ARCHITECTS.includes(r.role)).map(item);
-  $("arch").replaceChildren(...(arch.length ? arch : [empty("No reports yet")]));
-  $("prs").replaceChildren(...(prs.length ? prs : [empty("Nothing waiting")]));
-  drawShop();
+  archNews();
 }
 
 // Anything that fails in the app goes to the Architects page, with where it failed. Kept in this browser only.
 function problemList() { try { return JSON.parse(store.get("problems") || "[]"); } catch { return []; } }
-function showProblems() {
-  const list = problemList();
-  $("probClear").classList.toggle("hidden", !list.length);
-  $("problems").replaceChildren(...(list.length ? list.slice().reverse().map(p => el("div", {class: "item"},
-      el("div", {}, el("b", {text: p.source}), el("div", {class: "sub", text: p.error + " · " + when(p.at)}),
-        ...(p.url ? [el("a", {href: p.url, target: "_blank", rel: "noopener", text: "Open the run"})] : [])),
-      tag("failed", "bad"))) : [empty("No problems")]));
-  drawShop();
-}
-$("probClear").addEventListener("click", () => { store.del("problems"); showProblems(); });
+function showProblems() { archNews(); }
 
-// The lab: each architect's label says what they're up to; their animation speeds up or changes color with it.
-let lastTeam = null;
-const busy = new Set();
-const LAB_ICONS = {mechanic: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />', quant: '<path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" /><path d="M6.453 15h11.094" /><path d="M8.5 2h7" />', reviewer: '<circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /><path d="m8 11 2 2 4-4" />', you: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><polyline points="16 11 18 13 22 9" />'};
-const labIcon = role => { const box = el("span"); box.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + LAB_ICONS[role] + "</svg>"; return box.firstChild; };
-function drawShop() {
-  const t = lastTeam || {reports: [], prs: []}, probs = problemList(), n = t.prs.length;
-  const last = role => t.reports.filter(r => r.role === role).map(r => r.created).sort().pop();
-  const set = (id, text, cls) => { $("t" + id).textContent = text; $("s" + id).classList.remove("alert", "ready", "busy"); if (cls) $("s" + id).classList.add(cls); };
-  set("Mech", probs.length ? probs.length + (probs.length > 1 ? " problems to fix" : " problem to fix") : "All clear", probs.length ? "alert" : "");
-  [["Quant", "quant"], ["Rev", "reviewer"]].forEach(([id, role]) =>
-    set(id, busy.has(id) ? "Working…" : last(role) ? "Last " + shortDate(last(role)) : "Tap to start", busy.has(id) ? "busy" : ""));
-  set("You", n ? n + " plan" + (n > 1 ? "s" : "") + " to approve" : "Nothing waiting", n ? "ready" : "");
-  $("labSvg").classList.toggle("has-pr", n > 0);
-  // Work log: problems, architect reports and plans waiting on you, oldest first, like a chat.
-  const say = (role, at, ...body) => ({at: at || "9999", node: el("div", {class: "rt-a"},
-    el("div", {class: "who"}, labIcon(role), el("span", {class: "when", text: at ? when(at) : ""})), ...body)});
-  const log = [
-    ...probs.map(p => say("mechanic", p.at, el("p", {text: p.source + " failed: " + p.error}))),
-    ...t.reports.filter(r => ARCHITECTS.includes(r.role)).map(r => say(r.role, r.created,
-      el("p", {}, el("b", {text: r.title})), el("a", {href: r.url, target: "_blank", rel: "noopener", text: "Read it"}))),
-    ...t.prs.map(p => say("you", "", el("p", {text: "Waiting on you: "}, el("a", {href: p.url, target: "_blank", rel: "noopener", text: "#" + p.number + " " + p.title})))),
-  ].sort((a, b) => a.at < b.at ? -1 : 1).map(x => x.node);
-  $("labLog").replaceChildren(...(log.length ? log : [el("p", {class: "rt-hint", text: "The architects are quiet. Problems, fixes and research land here."})]));
-  $("labLog").scrollTop = $("labLog").scrollHeight;
-}
+// Architects walk laps around the building site. Each holds its news: the Mechanic the app's problems, the Quant
+// its research, the Code Reviewer its reviews and the plans waiting for your approval. Tap one to hear it.
+let lastTeam = null, archTold = [], archTalking = false, archHover = false;
+const ARCH_ICONS = {mechanic: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />',
+  quant: '<path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" /><path d="M6.453 15h11.094" /><path d="M8.5 2h7" />',
+  reviewer: '<circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /><path d="m8 11 2 2 4-4" />'};
+const ARCH_RUNS = {quant: "quant.yml", reviewer: "reviewer.yml"};
+const archIcon = role => { const box = el("span"); box.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ARCH_ICONS[role] + "</svg>"; return box.firstChild; };
+const archSeats = ARCHITECTS.map(role => {
+  const seat = el("div", {class: "seat", title: AGENTS[role], role: "button", tabindex: "0", "aria-label": AGENTS[role]},
+    el("div", {class: "icon"}, archIcon(role)), el("span", {class: "bang", text: "!!"}));
+  $("archStage").append(seat);
+  seat.addEventListener("click", () => hear(role));
+  seat.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); hear(role); } });
+  return {role, seat};
+});
+$("archStage").addEventListener("pointerenter", () => archHover = true);
+$("archStage").addEventListener("pointerleave", () => archHover = false);
 const svgEl = (name, attrs) => { const e = document.createElementNS("http://www.w3.org/2000/svg", name); Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v)); return e; };
-async function labPress(g) {
-  if (g.dataset.jump) return $(g.dataset.jump).scrollIntoView({behavior: "smooth", block: "start"});
-  const id = g.id.slice(1), name = AGENTS[id === "Quant" ? "quant" : "reviewer"];
-  if (busy.has(id)) return;
+const link = (text, href) => el("a", {href, target: "_blank", rel: "noopener", text});
+const btn = (text, onclick) => Object.assign(el("button", {text}), {onclick});
+function archNews() {
+  const t = lastTeam || {reports: [], prs: []};
+  const newest = role => t.reports.filter(r => r.role === role).sort((a, b) => a.created < b.created ? 1 : -1)[0];
+  const report = role => { const r = newest(role); return r ? [{key: "r:" + r.url + r.created, at: r.created, title: r.title, role,
+    body: () => [md(r.body)], acts: () => [link("Open on GitHub", r.url), btn("Run again", e => runArch(role, e.target))]}] : []; };
+  news.mechanic = problemList().slice().reverse().map(p => ({key: "pb:" + p.at + p.source, at: p.at, title: p.source + " failed", role: "mechanic",
+    body: () => [el("p", {text: p.error})], acts: () => [...(p.url ? [link("Open the run", p.url)] : []), btn("Clear problems", () => { store.del("problems"); showProblems(); })]}));
+  news.quant = report("quant");
+  news.reviewer = [...t.prs.map(p => ({key: "pr:" + p.number, title: "Waiting on you: #" + p.number + " " + p.title, role: "reviewer",
+    body: () => [el("p", {text: "A change to the bot is ready. Nothing changes until you approve it on GitHub."})], acts: () => [link("Open it", p.url)]})), ...report("reviewer")];
+  archSeats.forEach(({role, seat}) => seat.classList.toggle("news", unread(role).length > 0));
+}
+async function runArch(role, from) {
+  const seat = archSeats.find(s => s.role === role).seat;
   try {
-    const res = await api("/actions/workflows/" + g.dataset.run + "/dispatches", {
+    const res = await api("/actions/workflows/" + ARCH_RUNS[role] + "/dispatches", {
       method: "POST", body: JSON.stringify({ref: "main"}), headers: {"Content-Type": "application/json"},
     });
     if (res.status !== 204) throw new Error("GitHub didn't start it (" + res.status + ").");
-    busy.add(id); drawShop();
-    setTimeout(() => { busy.delete(id); drawShop(); }, 180000);
-  } catch (e) { reportProblem("Run: " + name, e.message, "", g); }
+    seat.classList.add("thinking");
+    setTimeout(() => seat.classList.remove("thinking"), 180000);
+  } catch (e) { reportProblem("Run: " + AGENTS[role], e.message, "", from); }
 }
-document.querySelectorAll("#labSvg .st").forEach(g => {
-  g.addEventListener("click", () => labPress(g));
-  g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); labPress(g); } });
-});
+function showArchLog() {
+  $("archLog").replaceChildren(...(archTold.length ? archTold : [el("p", {class: "rt-hint", text: "Tap an architect to hear from them. !! means they have something for you."})]));
+  $("archLog").scrollTop = $("archLog").scrollHeight;
+}
+// Laps around the site: along the edges of a box just outside the building. One lap takes 40 seconds.
+let archClock = 0, archSpeed = 1, archFrame = 0;
+function moveArch(now) {
+  requestAnimationFrame(moveArch);
+  const dt = Math.min(now - archFrame, 100); archFrame = now;
+  const stage = $("archStage");
+  if (!stage.offsetParent) return;
+  const stop = archTalking || archHover || matchMedia("(prefers-reduced-motion: reduce)").matches;
+  archSpeed += ((stop ? 0 : 1) - archSpeed) * Math.min(1, dt / 400);
+  if (archSpeed < .002) archSpeed = stop ? 0 : .002;
+  archClock += dt * archSpeed / 40000;
+  const box = stage.querySelector(".site"), x0 = box.offsetLeft - 14, y0 = box.offsetTop - 4, w = box.offsetWidth + 28, h = box.offsetHeight + 8;
+  archSeats.forEach(({seat}, i) => {
+    let d = ((archClock + i / archSeats.length) % 1) * 2 * (w + h), x, y;
+    if (d < w) { x = x0 + d; y = y0; } else if ((d -= w) < h) { x = x0 + w; y = y0 + d; }
+    else if ((d -= h) < w) { x = x0 + w - d; y = y0 + h; } else { x = x0; y = y0 + h - (d - w); }
+    seat.style.transform = `translate(${x - 20}px, ${y - 20}px)`;
+  });
+}
+requestAnimationFrame(moveArch);
 function reportProblem(source, error, url, from) {
   const list = problemList(), last = list[list.length - 1];
   if (last && last.source === source && last.error === error) list.pop();
@@ -1041,7 +1018,6 @@ function reportProblem(source, error, url, from) {
   setStatus("Logged and sent to the Architects.", from);
   if (from) setTimeout(() => setStatus("", from), 10000);
 }
-showProblems();
 
 async function runAgent(role, from) {
   try {
@@ -1286,7 +1262,7 @@ const SEATS = {
   auditor: ["Auditor", '<rect width="8" height="4" x="8" y="2" rx="1" ry="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="m9 14 2 2 4-4" />'],
   chief: ["Chief", '<path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z" /><path d="M5 21h14" />'],
 };
-const seatIcon = role => { const box = el("span"); box.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (SEATS[role] || SEATS.chief)[1] + "</svg>"; return box.firstChild; };
+const seatIcon = role => ARCH_ICONS[role] ? archIcon(role) : (box => (box.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (SEATS[role] || SEATS.chief)[1] + "</svg>", box.firstChild))(el("span"));
 const ASSOC = ["scout", "analyst"];
 const seats = Object.keys(SEATS).filter(r => !ASSOC.includes(r)).map((role, i) => {
   const seat = el("div", {class: "seat", title: AGENTS[role], role: "button", tabindex: "0", "aria-label": AGENTS[role]}, el("div", {class: "icon"}, seatIcon(role)), el("span", {class: "bang", text: "!!"}));
@@ -1370,22 +1346,31 @@ function gatherNews(d) {
     body: () => [el("pre", {text: d.report})]});
   seats.forEach(({role, seat}) => seat.classList.toggle("news", unread(role).length > 0));
   drawFloor(d);
+  archNews();
 }
 function hear(role) {
   const items = unread(role).length ? unread(role) : (news[role] || []).slice(0, 1);
-  const log = ASSOC.includes(role) ? assocTold : told;
-  if (!items.length) { log.push(el("div", {class: "rt-a"}, el("div", {class: "who"}, seatIcon(role)), el("p", {text: "Nothing new from me yet."}))); }
+  const log = ASSOC.includes(role) ? assocTold : ARCHITECTS.includes(role) ? archTold : told;
+  if (!items.length) log.push(el("div", {class: "rt-a"}, el("div", {class: "who"}, seatIcon(role)), el("p", {text: "Nothing new from me yet."}),
+    ...(ARCH_RUNS[role] ? [el("div", {class: "acts"}, btn("Run now", e => runArch(role, e.target)))] : [])));
   items.forEach(n => {
     const acts = el("div", {class: "acts"});
-    if (n.url) acts.append(el("a", {href: n.url, target: "_blank", rel: "noopener", text: "Open on GitHub"}));
-    if (n.picks) acts.append(Object.assign(el("button", {"data-cmd": "picks", text: "Check again"}), {onclick: () => dispatch("picks")}));
+    if (n.acts) acts.append(...n.acts());
+    else if (n.url) acts.append(el("a", {href: n.url, target: "_blank", rel: "noopener", text: "Open on GitHub"}));
+    if (n.acts) {} else if (n.picks) acts.append(Object.assign(el("button", {"data-cmd": "picks", text: "Check again"}), {onclick: () => dispatch("picks")}));
     else if (n.url) acts.append(Object.assign(el("button", {text: "Get a fresh one"}), {onclick: e => runAgent(n.role, e.target)}));
     log.push(el("div", {class: "rt-a"}, el("div", {class: "who", title: AGENTS[role]}, seatIcon(role)),
       el("p", {class: "told-title", text: n.title}), ...n.body(), ...(acts.childNodes.length ? [acts] : [])));
   });
   store.set("seen", JSON.stringify([...seenList(), ...items.map(n => n.key)].slice(-100)));
   seats.forEach(({role: r, seat}) => seat.classList.toggle("news", unread(r).length > 0));
-  if (ASSOC.includes(role)) { drawFloor(); showFloorLog(); } else showTable(tableList, tablePending);
+  if (ASSOC.includes(role)) { drawFloor(); showFloorLog(); }
+  else if (ARCHITECTS.includes(role)) {
+    archNews(); showArchLog();
+    const seat = archSeats.find(s => s.role === role).seat;
+    seat.classList.add("spoke"); archTalking = true;
+    setTimeout(() => { seat.classList.remove("spoke"); archTalking = archSeats.some(s => s.seat.classList.contains("spoke")); }, 6000);
+  } else showTable(tableList, tablePending);
 }
 // The trading floor: the ticker shows your holdings; each desk says whether its associate has news.
 function drawFloor(d) {
@@ -1520,6 +1505,8 @@ showSchools();
 $("modePick").value = store.get("mode") === "light" ? "light" : "dark";
 $("modePick").addEventListener("change", () => { store.set("mode", $("modePick").value); applyMode($("modePick").value); });
 $("themePick").addEventListener("change", () => { store.set("theme", $("themePick").value); applyTheme($("themePick").value); showSchools(); });
+showProblems();
+showArchLog();
 refresh();
 if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js");
 // The live job updates the data about every 10 minutes during market hours.
