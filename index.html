@@ -898,12 +898,15 @@ const link = (text, href) => el("a", {href, target: "_blank", rel: "noopener", t
 const btn = (text, onclick) => Object.assign(el("button", {text}), {onclick});
 function archNews() {
   const t = lastTeam || {reports: [], prs: []};
-  const newest = role => t.reports.filter(r => r.role === role).sort((a, b) => a.created < b.created ? 1 : -1)[0];
-  const report = role => { const r = newest(role); return r ? [{key: "r:" + r.url + r.created, at: r.created, title: r.title, role,
-    body: () => [md(r.body)], acts: () => [link("Open on GitHub", r.url), btn("Run again", e => runArch(role, e.target))]}] : []; };
-  news.mechanic = problemList().slice().reverse().map(p => ({key: "pb:" + p.at + p.source, at: p.at, title: p.source + " failed", role: "mechanic",
-    body: () => [el("p", {text: p.error})], acts: () => [...(p.url ? [link("Open the run", p.url)] : []), btn("Clear problems", () => { store.del("problems"); archNews(); })]}));
-  news.quant = report("quant");
+  // Every open report, newest first: each Quant test and each Mechanic check is its own message.
+  const reports = role => t.reports.filter(r => r.role === role).sort((a, b) => a.created < b.created ? 1 : -1).map(r => ({key: "r:" + r.url + r.created,
+    at: r.created, title: r.title, role, body: () => [md(r.body)],
+    acts: () => [link("Open on GitHub", r.url), ...(ARCH_RUNS[role] ? [btn("Run again", e => runArch(role, e.target))] : [])]}));
+  const report = role => reports(role).slice(0, 1);
+  news.mechanic = [...problemList().slice().reverse().map(p => ({key: "pb:" + p.at + p.source, at: p.at, title: p.source + " failed", role: "mechanic",
+    body: () => [el("p", {text: p.error})], acts: () => [...(p.url ? [link("Open the run", p.url)] : []), btn("Clear problems", () => { store.del("problems"); archNews(); })]})),
+    ...reports("mechanic")];
+  news.quant = reports("quant");
   news.reviewer = [...t.prs.map(p => ({key: "pr:" + p.number, title: "Waiting on you: #" + p.number + " " + p.title, role: "reviewer",
     body: () => [el("p", {text: "A change to the bot is ready. Nothing changes until you approve it on GitHub."})], acts: () => [link("Open it", p.url)]})), ...report("reviewer")];
   showOffice();
