@@ -77,6 +77,13 @@ h1 { font-size: 18px; margin: 0; letter-spacing: -.01em; }
 .card h2 { font-size: 15px; margin: 0 0 12px; font-weight: 650;
   display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
 .card h2 span { font-weight: 400; color: var(--muted); }
+/* A card split into parts (Counselors): each part gets a line and a smaller heading. */
+.part { border-top: 1px solid var(--line); margin-top: 20px; padding-top: 16px; }
+.part.grid2 { margin-bottom: 0; }
+@media (max-width: 760px) { .part.grid2 > div + div { border-top: 1px solid var(--line); padding-top: 16px; margin-top: 4px; } }
+.card h3 { font-size: 14px; margin: 0 0 12px; font-weight: 650;
+  display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.card h3 span { font-weight: 400; color: var(--muted); }
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .grid2 > * { min-width: 0; }
 .grid2 { margin-bottom: 16px; } .grid2 > .card { margin-bottom: 0; }
@@ -370,7 +377,7 @@ body::after { opacity: var(--topo); transform-origin: 50% 100%; animation: drift
 }
 @media (prefers-reduced-motion: reduce) { body::after { animation: none; } }
 .banner.halted, .banner { background: var(--c2); color: var(--text); border: 1px solid var(--c1); }
-.card h2 .ttl { color: var(--text); font-weight: 650; display: inline-flex; align-items: center; }
+.card :is(h2, h3) .ttl { color: var(--text); font-weight: 650; display: inline-flex; align-items: center; }
 .hi { width: 16px; height: 16px; vertical-align: -2px; margin-right: 8px; color: var(--text); }
 #settingsBtn { display: inline-flex; align-items: center; }
 #settingsBtn .hi { margin-right: 4px; }
@@ -597,10 +604,9 @@ header { margin-bottom: 16px; }
       </form>
     </div>
     <div class="status"></div>
-  </section>
 
-  <section class="card" data-view="ai">
-    <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></svg>AI team</span> <span class="small">reports</span></h2>
+    <div class="part">
+    <h3><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></svg>Reports</span></h3>
     <div class="list" id="team"><div class="empty">No reports yet</div></div>
     <div id="shadow" class="small"></div>
     <div class="row" style="margin-top:16px">
@@ -612,31 +618,33 @@ header { margin-bottom: 16px; }
       <button id="agentRun">Run agent</button>
     </div>
     <div class="status"></div>
-  </section>
+    </div>
 
-  <section class="card" data-view="ai">
-    <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg>Next run's picks</span> <span class="small" id="picksWhen"></span></h2>
+    <div class="part">
+    <h3><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg>Next run's picks</span> <span class="small" id="picksWhen"></span></h3>
     <div id="picksBody"><div class="empty">Press Preview Picks to see what the next run would likely buy.</div></div>
     <div class="row" style="margin-top:16px"><button data-cmd="picks">Preview picks</button></div>
-  </section>
+    </div>
 
-  <div class="grid2" data-view="ai">
-    <section class="card">
-      <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z" /><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" /><path d="M12 17.5v-11" /></svg>Recent orders</span></h2>
+    <div class="part grid2">
+    <div>
+      <h3><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z" /><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" /><path d="M12 17.5v-11" /></svg>Recent orders</span></h3>
       <div class="list" id="orders"><div class="empty">No data yet</div></div>
     <div class="row" style="margin-top:16px"><button data-cmd="cancel" class="danger">Cancel open orders</button></div>
-    </section>
-    <section class="card">
-      <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg>Recent runs</span></h2>
+    </div>
+    <div>
+      <h3><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg>Recent runs</span></h3>
       <div class="list" id="runs"><div class="empty">No data yet</div></div>
     <div class="row" style="margin-top:16px"><button data-cmd="dry-run">Dry run</button></div>
-    </section>
-  </div>
-  <section class="card" data-view="ai">
+    </div>
+    </div>
+
+    <div class="part">
     <details class="fold">
       <summary><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /></svg>Latest report</summary>
       <pre id="report" class="muted">No report yet</pre>
     </details>
+    </div>
   </section>
 
 </main>
@@ -941,9 +949,9 @@ async function loadRuns() {
   return runs;
 }
 
-// Status lines belong to one card: the one holding the button that was pressed.
+// Status lines belong to one card (or one part of a card): the one holding the button that was pressed.
 function setStatus(text, from) {
-  const box = from && from.closest(".card") && from.closest(".card").querySelector(".status");
+  const box = from && from.closest(".part, .card") && from.closest(".part, .card").querySelector(".status");
   if (box) box.replaceChildren(...(text ? [el("span", {text})] : []));
 }
 
@@ -1213,7 +1221,7 @@ $("askForm").addEventListener("submit", async e => {
 
 // Labels in Title Case ("Chief of Staff"); sentences, reports and data stay as written.
 const SMALL = new Set(["a", "an", "the", "and", "or", "of", "for", "to", "in", "on", "at", "by", "vs"]);
-const LABELS = "button, option, label, summary, h2, #runs a, .tag, .menu .label, .acct-head, .stats, .legend";
+const LABELS = "button, option, label, summary, h2, h3, #runs a, .tag, .menu .label, .acct-head, .stats, .legend";
 function titleCase(text, first) {
   return text.split(/(\s+)/).map(w => {
     if (!/\S/.test(w)) return w;
