@@ -532,12 +532,23 @@ header { margin-bottom: 16px; }
 @keyframes office-scan { 0%, 100% { transform: translate(-30px, -22px); } 25% { transform: translate(24px, -10px); } 50% { transform: translate(-22px, 10px); }
   75% { transform: translate(28px, 24px) rotate(8deg); } }
 @media (prefers-reduced-motion: reduce) { .desk-glass { animation: none; } }
-.inbox .item { display: block; cursor: pointer; }
-.inbox .head { display: flex; align-items: center; gap: 10px; }
-.inbox .head svg { width: 20px; height: 20px; flex: none; color: var(--c1); }
-.inbox .head .what { flex: 1; min-width: 0; } .inbox .head .what b { display: block; }
-.inbox .new { width: 8px; height: 8px; border-radius: 50%; background: var(--c1); flex: none; box-shadow: 0 0 6px var(--c1); }
-.inbox .body { margin-top: 10px; cursor: auto; } .inbox .body pre { white-space: pre-wrap; font-size: 12px; max-height: 260px; overflow: auto; }
+.mail-folder { display: flex; justify-content: space-between; align-items: baseline; padding: 0 4px 8px; border-bottom: 1px solid var(--line); }
+.inbox .mail { display: flex; gap: 12px; width: 100%; text-align: left; padding: 12px 4px; border: 0; border-bottom: 1px solid var(--line);
+  border-radius: 0; background: transparent; color: var(--muted); font: inherit; cursor: pointer; }
+.inbox .mail:hover { background: var(--faint); opacity: 1; }
+.inbox .mail.unread { color: var(--text); box-shadow: inset 3px 0 0 var(--c1); }
+.mail-avatar { width: 36px; height: 36px; flex: none; border-radius: 50%; display: grid; place-items: center;
+  background: color-mix(in srgb, var(--c1) 18%, transparent); color: var(--c1); }
+.mail-avatar svg { width: 18px; height: 18px; margin: 0; }
+.mail-text { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.mail-top { display: flex; justify-content: space-between; gap: 8px; }
+.mail-sender, .mail-subj, .mail-snip { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mail.unread .mail-sender, .mail.unread .mail-subj, .mail.unread .mail-date { font-weight: 700; color: var(--text); }
+.mail-subj { color: var(--text); } .mail-date { font-size: 12px; flex: none; } .mail-snip { font-size: 13px; }
+.mail-back { margin-bottom: 12px; }
+.inbox .mail-subject { margin: 0 0 12px; font-size: 20px; }
+.mail-from { display: flex; gap: 12px; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.mail-body { padding: 12px 0; } .mail-body pre { white-space: pre-wrap; font-size: 12px; max-height: 360px; overflow: auto; }
 .inbox .acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; font-size: 13px; }
 .inbox .acts button { padding: 4px 10px; font-size: 12px; }
 #officeCount:not(:empty) { margin-left: 6px; padding: 1px 7px; border-radius: 99px; font-size: 11px; background: var(--c1); color: #fff; }
@@ -667,7 +678,7 @@ header { margin-bottom: 16px; }
       <div class="desk-glass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /><path d="m8 11 2 2 4-4" /></svg></div>
       <div class="desk-top"></div>
     </div>
-    <div class="list inbox" id="inbox"></div>
+    <div class="inbox" id="inbox"></div>
     <div class="status"></div>
   </section>
 
@@ -1236,7 +1247,7 @@ function gatherNews(d) {
   archNews();
 }
 // The office inbox: everything the agents have for you, newest first, with what waits on you at the top.
-// Tap an item to open it; that marks it read. The top bar shows how many are unread.
+// Opening a message marks it read. The top bar shows how many are unread.
 function actsFor(n) {
   if (n.acts) return n.acts();
   const acts = [];
@@ -1245,25 +1256,46 @@ function actsFor(n) {
   else if (n.url) acts.push(btn("Get a fresh one", e => runAgent(n.role, e.target)));
   return acts;
 }
-let opened = new Set();
+// Email style: a list of messages (sender, subject, first line, date); tap one to read it, back to return.
+let reading = null;
+const mailDate = s => !s ? "" : /^\d{4}-\d\d-\d\d$/.test(s) || new Date(s).toDateString() !== new Date().toDateString() ? shortDate(s)
+  : new Date(s).toLocaleTimeString(undefined, {hour: "numeric", minute: "2-digit"});
+const sender = n => AGENTS[n.role] || n.role;
+// The message's text on one line, with a space between headings, bullets and cells so words don't run together.
+const textOf = box => { const w = document.createTreeWalker(box, NodeFilter.SHOW_TEXT), out = [];
+  for (let t; (t = w.nextNode());) out.push(t.data); return out.join(" ").replace(/\s+/g, " ").trim(); };
 function showOffice() {
   const seen = seenList(), all = Object.values(news).flat().filter(Boolean);
   const rank = n => n.key.startsWith("pr:") ? 0 : n.role === "mechanic" ? 1 : 2;
   all.sort((a, b) => rank(a) - rank(b) || String(b.at || "").localeCompare(String(a.at || "")));
   const fresh = all.filter(n => !seen.includes(n.key)).length;
   $("officeCount").textContent = fresh ? fresh : "";
-  $("inbox").replaceChildren(...(all.length ? all.map(n => {
-    const item = el("div", {class: "item"}, el("div", {class: "head"}, seatIcon(n.role),
-      el("div", {class: "what"}, el("b", {text: n.title}), el("span", {class: "sub", text: (AGENTS[n.role] || n.role) + (n.at ? " · " + when(n.at) : "")})),
-      ...(seen.includes(n.key) ? [] : [el("span", {class: "new", title: "Unread"})])));
-    if (opened.has(n.key)) item.append(el("div", {class: "body"}, ...n.body(), el("div", {class: "acts"}, ...actsFor(n))));
-    item.querySelector(".head").addEventListener("click", () => {
-      opened.has(n.key) ? opened.delete(n.key) : opened.add(n.key);
-      if (!seen.includes(n.key)) store.set("seen", JSON.stringify([...seenList(), n.key].slice(-200)));
-      showOffice();
-    });
-    return item;
-  }) : [empty("Nothing from the team yet")]));
+  const open = all.find(n => n.key === reading);
+  if (open) {
+    const back = el("button", {class: "mail-back", text: "← Inbox"});
+    back.onclick = () => { reading = null; showOffice(); };
+    $("inbox").replaceChildren(el("div", {class: "mail-read"}, back,
+      el("h3", {class: "mail-subject", text: open.title}),
+      el("div", {class: "mail-from"}, el("span", {class: "mail-avatar"}, seatIcon(open.role)),
+        el("div", {}, el("b", {text: sender(open)}), el("div", {class: "sub", text: "to you" + (open.at ? " · " + when(open.at) : "")}))),
+      el("div", {class: "mail-body"}, ...open.body()), el("div", {class: "acts"}, ...actsFor(open))));
+    return;
+  }
+  $("inbox").replaceChildren(el("div", {class: "mail-folder"}, el("b", {text: "Inbox"}), el("span", {class: "sub", text: fresh ? fresh + " unread" : "All read"})),
+    ...(all.length ? all.map(n => {
+      const unread = !seen.includes(n.key), preview = textOf(el("div", {}, ...n.body()));
+      const row = el("button", {class: "mail" + (unread ? " unread" : ""), "aria-label": sender(n) + ": " + n.title},
+        el("span", {class: "mail-avatar"}, seatIcon(n.role)),
+        el("span", {class: "mail-text"},
+          el("span", {class: "mail-top"}, el("span", {class: "mail-sender", text: sender(n)}), el("span", {class: "mail-date", text: mailDate(n.at)})),
+          el("span", {class: "mail-subj", text: n.title}), el("span", {class: "mail-snip", text: preview})));
+      row.onclick = () => {
+        reading = n.key;
+        if (unread) store.set("seen", JSON.stringify([...seenList(), n.key].slice(-200)));
+        showOffice();
+      };
+      return row;
+    }) : [empty("Nothing from the team yet")]));
 }
 // The trading floor: the ticker shows your holdings; each desk says whether its associate has news.
 
@@ -1283,7 +1315,7 @@ function titleLabels() {
     const walk = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
     let first = true;
     for (let n; (n = walk.nextNode());) {
-      if (n.parentElement.closest(".small, .sym, .md")) continue;
+      if (n.parentElement.closest(".small, .sym, .md, .mail-text")) continue;
       const t = titleCase(n.data, first);
       if (t !== n.data) n.data = t;
       if (/\S/.test(n.data)) first = false;
