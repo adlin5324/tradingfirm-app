@@ -415,15 +415,19 @@ header { margin-bottom: 16px; }
 .topbar h1 { flex: none; }
 .topbar .switch { width: auto; padding: 4px 0; background: none; border: 0; box-shadow: none; }
 .topbar .switch:hover { opacity: 1; }
-.topnav { flex: 1; display: flex; justify-content: center; gap: 4px; min-width: 0; }
+.topnav { flex: 1; display: flex; justify-content: safe center; gap: 4px; min-width: 0; }
 .topnav button { border: 0; background: none; color: var(--muted); font-weight: 600; padding: 8px 14px; border-radius: 99px; white-space: nowrap; }
 .topnav button:hover { color: var(--text); background: var(--faint); opacity: 1; }
 #settingsBtn { width: 40px; height: 40px; padding: 0; border-radius: 50%; justify-content: center; flex: none; }
 #settingsBtn .hi { margin: 0; width: 18px; height: 18px; }
-@media (max-width: 640px) {
+/* Too narrow for title and pages on one line: pages move to their own row, spread evenly. */
+@media (max-width: 860px) {
   .topbar { flex-wrap: wrap; border-radius: 22px; padding: 8px 8px 8px 16px; gap: 8px; }
   .topbar h1 { flex: 1; }
-  .topnav { order: 3; flex-basis: 100%; justify-content: space-between; gap: 0; }
+  .topnav { order: 3; flex-basis: 100%; justify-content: space-evenly; }
+}
+@media (max-width: 640px) {
+  .topnav { justify-content: space-between; gap: 0; }
   .topnav button { padding: 8px 6px; font-size: 13px; }
   .topnav { overflow-x: auto; scrollbar-width: none; }
 }
