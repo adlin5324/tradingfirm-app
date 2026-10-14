@@ -180,9 +180,44 @@ button.ghost:hover { background: var(--faint); color: var(--text); }
 button:disabled { opacity: .5; cursor: wait; }
 .status { display: flex; align-items: center; gap: 8px; font-size: 14px; margin-top: 12px; }
 .status:empty { display: none; }
-#problems .list { margin-bottom: 16px; }
-#problems .head { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--muted); }
-#problems .head button { padding: 4px 10px; font-size: 12px; }
+#probClear { padding: 4px 10px; font-size: 12px; }
+/* Architects workshop: a blueprint. Fixes flow from the Mechanic and Quant through the Code Reviewer to you. */
+.shop { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; align-items: center; padding: 28px 20px 36px;
+  margin: 4px 0 12px; border-radius: 12px; overflow: hidden; color: #e0f2fe; background-color: #0b2545;
+  background-image: linear-gradient(rgba(125, 211, 252, .2) 1px, transparent 1px), linear-gradient(90deg, rgba(125, 211, 252, .2) 1px, transparent 1px),
+    linear-gradient(rgba(125, 211, 252, .07) 1px, transparent 1px), linear-gradient(90deg, rgba(125, 211, 252, .07) 1px, transparent 1px);
+  background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px; box-shadow: inset 0 0 60px rgba(0, 0, 0, .45); }
+.shop::after { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 80px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(125, 211, 252, .12), transparent); animation: shop-sweep 9s linear infinite; }
+@keyframes shop-sweep { from { transform: translateX(-100px); } to { transform: translateX(1200px); } }
+.shop .col { display: flex; flex-direction: column; align-items: center; gap: 28px; position: relative; z-index: 1; }
+.shop .node { width: 100%; max-width: 180px; }
+.shop .wires { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.wires .wire { fill: none; stroke: rgba(125, 211, 252, .55); stroke-width: 1.5; stroke-dasharray: 6 6; animation: shop-ants 1.2s linear infinite; }
+.wires .wire.on { stroke: #7dd3fc; stroke-dasharray: none; filter: drop-shadow(0 0 4px #38bdf8); }
+.wires .pkt { fill: #e0f2fe; filter: drop-shadow(0 0 4px #7dd3fc) drop-shadow(0 0 8px #38bdf8); }
+@keyframes shop-ants { to { stroke-dashoffset: -12; } }
+.node { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 8px; min-width: 0; text-align: center; white-space: normal;
+  color: #e0f2fe; background: rgba(8, 28, 54, .85); border: 1px dashed rgba(125, 211, 252, .6); border-radius: 10px; box-shadow: none; }
+.node:hover { border-style: solid; border-color: #7dd3fc; background: rgba(12, 40, 74, .95); }
+.node b { font-size: 13px; font-weight: 650; }
+.node .state { font-size: 11px; color: #93c5fd; }
+.node .ico { color: #7dd3fc; filter: drop-shadow(0 0 3px #38bdf8) drop-shadow(0 0 8px #0284c7); }
+.node .ico svg { width: 28px; height: 28px; margin: 0; }
+.node.alert { border-color: #fbbf24; } .node.alert .ico, .node.alert .state { color: #fbbf24; }
+.node.alert .ico { filter: drop-shadow(0 0 4px #f59e0b); animation: shop-wiggle 1.4s ease-in-out infinite; }
+.node.ready { border-color: #4ade80; } .node.ready .ico, .node.ready .state { color: #4ade80; }
+.node.ready .ico { filter: drop-shadow(0 0 4px #22c55e); animation: shop-pulse 1.6s ease-in-out infinite; }
+.node.busy .ico { animation: shop-pulse .9s ease-in-out infinite; }
+@keyframes shop-wiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-14deg); } 75% { transform: rotate(14deg); } }
+@keyframes shop-pulse { 50% { transform: scale(1.15); opacity: .7; } }
+.shop .sheet { position: absolute; right: 10px; bottom: 8px; font: 10px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .08em;
+  text-transform: uppercase; color: rgba(147, 197, 253, .6); }
+@media (max-width: 640px) {
+  .shop { gap: 14px; padding: 20px 10px 30px; margin-left: -8px; margin-right: -8px; }
+  .node { padding: 10px 4px; } .node b { font-size: 12px; } .node .ico svg { width: 24px; height: 24px; }
+}
+@media (prefers-reduced-motion: reduce) { .shop::after, .wires .wire, .node .ico { animation: none !important; } }
 .btn-spin { display: inline-block; margin-left: 8px; vertical-align: -2px; }
 .spin { width: 14px; height: 14px; flex: none; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -578,16 +613,30 @@ header { margin-bottom: 16px; }
 
   <section class="card" data-view="arch">
     <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12.99 6.74 1.93 3.44" /><path d="M19.136 12a10 10 0 0 1-14.271 0" /><path d="m21 21-2.16-3.84" /><path d="m3 21 8.02-14.26" /><circle cx="12" cy="5" r="2" /></svg>Architects</span> <span class="small">fix and improve the bot · nothing changes until you approve</span></h2>
-    <div id="problems"></div>
-    <div class="list" id="arch"><div class="empty">Nothing waiting</div></div>
-    <div class="row" style="margin-top:16px">
-      <select id="archPick" aria-label="Architect">
-        <option value="quant.yml">Quant researcher</option><option value="reviewer.yml">Code reviewer</option>
-      </select>
-      <button id="archRun">Run</button>
+    <div class="shop" id="shop">
+      <svg class="wires" id="wires" aria-hidden="true"></svg>
+      <div class="col"><button class="node" id="nMech" data-jump="probPart"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" /></svg></span><b>Mechanic</b><span class="state"></span></button><button class="node" id="nQuant" data-run="quant.yml"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" /><path d="M6.453 15h11.094" /><path d="M8.5 2h7" /></svg></span><b>Quant researcher</b><span class="state"></span></button></div>
+      <div class="col"><button class="node" id="nRev" data-run="reviewer.yml"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /><path d="m8 11 2 2 4-4" /></svg></span><b>Code reviewer</b><span class="state"></span></button></div>
+      <div class="col"><button class="node" id="nYou" data-jump="prPart"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><polyline points="16 11 18 13 22 9" /></svg></span><b>You</b><span class="state"></span></button></div>
+      <span class="sheet">Sheet A-1 · HowieLegacy</span>
     </div>
-    <p class="muted small">The Mechanic starts by itself when a bot run fails.</p>
+    <p class="muted small">Tap the Quant Researcher or Code Reviewer to run them. The Mechanic starts by itself when a bot run fails.</p>
     <div class="status"></div>
+
+    <div class="part" id="probPart">
+    <h3><span class="ttl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hi" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>Problems</span> <button id="probClear" class="hidden">Clear</button></h3>
+    <div class="list" id="problems"></div>
+    </div>
+
+    <div class="part" id="prPart">
+    <h3><span class="ttl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hi" aria-hidden="true"><circle cx="18" cy="18" r="3" /><circle cx="6" cy="6" r="3" /><path d="M13 6h3a2 2 0 0 1 2 2v7" /><line x1="6" x2="6" y1="9" y2="21" /></svg>Waiting on you</span></h3>
+    <div class="list" id="prs"></div>
+    </div>
+
+    <div class="part">
+    <h3><span class="ttl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hi" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /></svg>Architect reports</span></h3>
+    <div class="list" id="arch"></div>
+    </div>
   </section>
 
   <section class="card" data-view="ai">
@@ -842,12 +891,15 @@ function showTeam(team, shadow) {
     return el("details", {class: "item", style: "display:block"}, head,
       el("div", {class: "report"}, md(r.body)), el("a", {href: r.url, target: "_blank", rel: "noopener", text: "Open on GitHub"}));
   };
+  lastTeam = team;
   const prs = team.prs.map(p => el("div", {class: "item"},
     el("a", {href: p.url, target: "_blank", rel: "noopener", text: "#" + p.number + " " + p.title}), tag("needs you", "blue")));
   const reports = team.reports.filter(r => !ARCHITECTS.includes(r.role)).map(item);
-  const arch = [...prs, ...team.reports.filter(r => ARCHITECTS.includes(r.role)).map(item)];
+  const arch = team.reports.filter(r => ARCHITECTS.includes(r.role)).map(item);
   $("team").replaceChildren(...(reports.length ? reports : [empty("No reports yet")]));
-  $("arch").replaceChildren(...(arch.length ? arch : [empty("Nothing waiting")]));
+  $("arch").replaceChildren(...(arch.length ? arch : [empty("No reports yet")]));
+  $("prs").replaceChildren(...(prs.length ? prs : [empty("Nothing waiting")]));
+  drawShop();
   $("shadow").replaceChildren(...(shadow.length ? [el("p", {class: "muted small", text:
     "Would have skipped (shadow mode, bought anyway): " + shadow.slice(-8).reverse()
       .map(s => s.symbol + " on " + shortDate(s.date) + " (" + s.why + ")").join("; ")})] : []));
@@ -857,13 +909,64 @@ function showTeam(team, shadow) {
 function problemList() { try { return JSON.parse(store.get("problems") || "[]"); } catch { return []; } }
 function showProblems() {
   const list = problemList();
-  $("problems").replaceChildren(...(list.length ? [
-    el("div", {class: "head"}, el("span", {text: "Problems"}), Object.assign(el("button", {text: "Clear"}), {onclick: () => { store.del("problems"); showProblems(); }})),
-    el("div", {class: "list"}, list.slice().reverse().map(p => el("div", {class: "item"},
+  $("probClear").classList.toggle("hidden", !list.length);
+  $("problems").replaceChildren(...(list.length ? list.slice().reverse().map(p => el("div", {class: "item"},
       el("div", {}, el("b", {text: p.source}), el("div", {class: "sub", text: p.error + " · " + when(p.at)}),
         ...(p.url ? [el("a", {href: p.url, target: "_blank", rel: "noopener", text: "Open the run"})] : [])),
-      tag("failed", "bad"))))] : []));
+      tag("failed", "bad"))) : [empty("No problems")]));
+  drawShop();
 }
+$("probClear").addEventListener("click", () => { store.del("problems"); showProblems(); });
+
+// The workshop: each node says what that architect is up to; a lit wire with moving dots means work is flowing.
+let lastTeam = null;
+const busy = new Set();
+function drawShop() {
+  const t = lastTeam || {reports: [], prs: []}, probs = problemList().length, n = t.prs.length;
+  const last = role => t.reports.filter(r => r.role === role).map(r => r.created).sort().pop();
+  const set = (id, text, cls) => { const b = $(id); b.querySelector(".state").textContent = text; b.classList.remove("alert", "ready"); if (cls) b.classList.add(cls); };
+  set("nMech", probs ? probs + (probs > 1 ? " problems" : " problem") : "All clear", probs ? "alert" : "");
+  ["nQuant", "nRev"].forEach(id => {
+    const role = id === "nQuant" ? "quant" : "reviewer", when = last(role);
+    set(id, busy.has(id) ? "Working…" : when ? "Last " + shortDate(when) : "Not run yet");
+    $(id).classList.toggle("busy", busy.has(id));
+  });
+  set("nYou", n ? n + " to approve" : "Nothing waiting", n ? "ready" : "");
+  wireShop([["nMech", "nRev", probs > 0], ["nQuant", "nRev", busy.has("nQuant")], ["nRev", "nYou", n > 0]]);
+}
+const svgEl = (name, attrs) => { const e = document.createElementNS("http://www.w3.org/2000/svg", name); Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v)); return e; };
+function wireShop(links) {
+  const shop = $("shop"), svg = $("wires"), box = shop.getBoundingClientRect();
+  if (!box.width) return;
+  const moving = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+  svg.replaceChildren(...links.flatMap(([from, to, on], i) => {
+    const a = $(from).getBoundingClientRect(), b = $(to).getBoundingClientRect();
+    const x1 = a.right - box.left, y1 = a.top + a.height / 2 - box.top, x2 = b.left - box.left, y2 = b.top + b.height / 2 - box.top, mid = (x1 + x2) / 2;
+    const path = svgEl("path", {id: "wire" + i, class: "wire" + (on ? " on" : ""), d: `M${x1} ${y1} C${mid} ${y1} ${mid} ${y2} ${x2} ${y2}`});
+    const dots = on && moving ? [0, 1, 2].map(k => {
+      const dot = svgEl("circle", {class: "pkt", r: 3}), move = svgEl("animateMotion", {dur: "2.4s", repeatCount: "indefinite", begin: -k * .8 + "s"});
+      move.append(svgEl("mpath", {href: "#wire" + i}));
+      dot.append(move);
+      return dot;
+    }) : [];
+    return [path, ...dots];
+  }));
+}
+new ResizeObserver(() => drawShop()).observe($("shop"));
+document.querySelectorAll("#shop [data-jump]").forEach(b => b.addEventListener("click", () => $(b.dataset.jump).scrollIntoView({behavior: "smooth", block: "start"})));
+document.querySelectorAll("#shop [data-run]").forEach(b => b.addEventListener("click", async () => {
+  if (busy.has(b.id)) return;
+  const name = AGENTS[b.id === "nQuant" ? "quant" : "reviewer"];
+  try {
+    const res = await api("/actions/workflows/" + b.dataset.run + "/dispatches", {
+      method: "POST", body: JSON.stringify({ref: "main"}), headers: {"Content-Type": "application/json"},
+    });
+    if (res.status !== 204) throw new Error("GitHub didn't start it (" + res.status + ").");
+    busy.add(b.id); drawShop();
+    setStatus(name + " started. Its work shows here when it's done.", b);
+    setTimeout(() => { busy.delete(b.id); drawShop(); }, 180000);
+  } catch (e) { reportProblem("Run: " + name, e.message, "", b); }
+}));
 function reportProblem(source, error, url, from) {
   const list = problemList(), last = list[list.length - 1];
   if (last && last.source === source && last.error === error) list.pop();
@@ -917,10 +1020,9 @@ function drawChart(history, base) {
   const step = [0.5, 1, 2, 2.5, 5, 10, 20, 25, 50, 100, 250, 500, 1000].find(t => (max - min) / t <= 4) || 1000;
   const lo = Math.floor(min / step + 1e-9) * step, hi = Math.max(Math.ceil(max / step - 1e-9) * step, lo + step), span = hi - lo;
   const ticks = Array.from({length: Math.round(span / step) + 1}, (_, i) => lo + i * step);
-  const W = 600, H = 150, pad = 6, ns = "http://www.w3.org/2000/svg";
+  const W = 600, H = 150, pad = 6;
   const x = i => pad + i * (W - 2 * pad) / (history.length - 1);
   const y = v => pad + (hi - v) * (H - 2 * pad) / span;
-  const svgEl = (name, attrs) => { const e = document.createElementNS(ns, name); Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v)); return e; };
   const svg = svgEl("svg", {viewBox: `0 0 ${W} ${H}`, preserveAspectRatio: "none", role: "img", "aria-label": "Account value since start versus the markets"});
   if (min < base - 1e-9) svg.append(svgEl("rect", {x: 0, width: W, y: y(base), height: H - y(base), fill: "var(--bad)", opacity: 0.07}));
   ticks.forEach(t => svg.append(svgEl("line", {x1: 0, x2: W, y1: y(t), y2: y(t), stroke: "var(--line)", opacity: 0.5, "vector-effect": "non-scaling-stroke"})));
@@ -1048,16 +1150,6 @@ $("summaryBtn").addEventListener("click", async () => {
     }
   } catch (e) { reportProblem("Refresh Summary", e.message, "", btn); }
   finally { btn.disabled = false; spinner.remove(); }
-});
-$("archRun").addEventListener("click", async () => {
-  const pick = $("archPick");
-  try {
-    const res = await api("/actions/workflows/" + pick.value + "/dispatches", {
-      method: "POST", body: JSON.stringify({ref: "main"}), headers: {"Content-Type": "application/json"},
-    });
-    if (res.status !== 204) throw new Error("GitHub didn't start it (" + res.status + ").");
-    setStatus(pick.selectedOptions[0].text + " started. Its work shows here when it's done.", $("archRun"));
-  } catch (e) { reportProblem("Run: " + pick.selectedOptions[0].text, e.message, "", $("archRun")); }
 });
 $("sellCancel").addEventListener("click", () => $("sellBox").close());
 $("sellGo").addEventListener("click", async () => {
