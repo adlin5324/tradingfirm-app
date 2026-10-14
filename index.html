@@ -217,7 +217,47 @@ button:disabled { opacity: .5; cursor: wait; }
 @keyframes lab-scan { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(70px, 22px); } 50% { transform: translate(110px, -6px); } 75% { transform: translate(36px, 34px); } }
 @keyframes lab-rise { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateY(-38px); opacity: 0; } }
 @keyframes lab-drop { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } 80% { transform: translateY(56px); opacity: 1; } 100% { transform: translateY(60px); opacity: 0; } }
-.lab-log { display: flex; flex-direction: column; gap: 10px; padding: 4px; max-height: 420px; overflow-y: auto; font-size: 14px; scrollbar-width: thin; }
+/* Associates: an investment-bank trading floor. A ticker runs overhead; screens flicker; a desk's phone rings
+   and shows !! when that associate has news. */
+.floor { position: relative; border-radius: 12px; overflow: hidden; background: radial-gradient(ellipse at 50% 0%, #1c1917, #0a0a0a 70%);
+  box-shadow: inset 0 0 60px rgba(0, 0, 0, .6); }
+.floor svg { display: block; width: 100%; height: auto; }
+.floor .fl-board { fill: #0c0a09; stroke: rgba(251, 191, 36, .35); }
+.floor .fl-tick text { fill: #fbbf24; font: 600 12px ui-monospace, Menlo, monospace; text-anchor: start; letter-spacing: .04em; }
+.floor .fl-tick { animation: fl-tick var(--dur, 30s) linear infinite; }
+@keyframes fl-tick { to { transform: translateX(var(--len, -400px)); } }
+.floor .fl-floor { fill: none; stroke: rgba(251, 191, 36, .08); }
+.floor .fl-scr { fill: #0f172a; stroke: #334155; }
+.floor .flick { animation: fl-flick 3.2s steps(2) infinite; }
+@keyframes fl-flick { 50% { fill: #172554; } }
+.floor .fl-mon { fill: #020617; stroke: #475569; stroke-width: 1.5; }
+.floor .fl-desk { fill: #1c1917; stroke: #57534e; }
+.floor .fl-plate { fill: #0c0a09; stroke: #78716c; }
+.floor .fl-ln { fill: none; stroke: #fbbf24; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 3px rgba(251, 191, 36, .6)); }
+.floor .fl-txt { fill: #fbbf24; opacity: .8; }
+.floor .scroll { animation: fl-type 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: left; }
+@keyframes fl-type { 0% { transform: scaleX(.2); } 60%, 100% { transform: scaleX(1); } }
+.floor .blink { animation: fl-blink 1s steps(2) infinite; }
+@keyframes fl-blink { 50% { opacity: 0; } }
+.floor .fl-tiny { fill: #ef4444; font: 700 7px ui-monospace, Menlo, monospace; text-anchor: middle; }
+.floor .fl-grade { fill: #22c55e; font: 700 10px ui-monospace, Menlo, monospace; text-anchor: middle; letter-spacing: .2em; }
+.floor .fl-up { fill: none; stroke: #22c55e; } .floor .fl-dn { fill: none; stroke: #ef4444; }
+.floor .plot { stroke-dasharray: 1; animation: lab-draw 4s ease-in-out infinite; }
+.floor text { fill: #fafaf9; font: 600 13px Inter, system-ui, sans-serif; text-anchor: middle; }
+.floor text.sub { fill: #a8a29e; font-weight: 400; font-size: 12px; }
+.floor .fl-st { cursor: pointer; outline: none; }
+.floor .fl-st:hover .fl-mon, .floor .fl-st:focus-visible .fl-mon { stroke: #fbbf24; }
+.floor .fl-bang { display: none; fill: #fbbf24; font: 800 18px Inter, system-ui, sans-serif; filter: drop-shadow(0 0 6px #f59e0b); }
+.floor .fl-phone { transform-box: fill-box; transform-origin: center; }
+.floor .news .fl-bang { display: inline; animation: rt-bang .8s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center; }
+.floor .news .fl-phone { animation: fl-ring .5s ease-in-out infinite; }
+.floor .news text.sub { fill: #fbbf24; }
+@keyframes fl-ring { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-16deg); } 75% { transform: rotate(16deg); } }
+@media (prefers-reduced-motion: reduce) { .floor * { animation: none !important; } }
+/* Narrow screens: same as the Counselors table, a short scene with the log below it. */
+@media (max-width: 860px) { .lab svg, .floor svg { height: 260px; } }
+@media (max-width: 640px) { .lab svg, .floor svg { height: 210px; } }
+.lab-log { display: flex; flex-direction: column; gap: 10px; padding: 4px; max-height: 240px; overflow-y: auto; font-size: 14px; scrollbar-width: thin; }
 .lab-log .rt-a { max-width: 100%; align-self: stretch; }
 .lab-log .rt-a .when { color: var(--muted); font-weight: 400; margin-left: auto; }
 @media (min-width: 861px) {
@@ -571,6 +611,7 @@ header { margin-bottom: 16px; }
         <button data-go="positions">Positions</button>
         <button data-go="performance">Performance</button>
         <button data-go="ai">Counselors</button>
+        <button data-go="assoc">Associates</button>
         <button data-go="arch">Architects</button>
         <button data-go="junk">Junkyard</button>
       </nav>
@@ -633,6 +674,39 @@ header { margin-bottom: 16px; }
     <div class="status"></div>
   </section>
 
+
+  <section class="card" data-view="assoc">
+    <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /><rect width="20" height="14" x="2" y="6" rx="2" /></svg>Associates</span> <span class="small">news and stock research · tap a desk</span></h2>
+    <div class="lab-split">
+      <div class="floor"><svg id="floorSvg" viewBox="0 0 400 300" role="img" aria-label="The associates on the trading floor">
+        <rect class="fl-board" x="0" y="8" width="400" height="26" />
+        <clipPath id="tickClip"><rect x="0" y="8" width="400" height="26" /></clipPath>
+        <g clip-path="url(#tickClip)"><g id="tick" class="fl-tick"><text id="tickText" x="8" y="26"></text></g></g>
+        <path class="fl-floor" d="M0 160 H400 M0 210 H400 M60 34 L0 300 M340 34 L400 300" />
+        <g opacity="0.45"><rect class="fl-scr flick" x="22" y="70" width="18" height="11" rx="1.5" style="animation-delay:-0.4s" /><rect class="fl-scr flick" x="43" y="70" width="18" height="11" rx="1.5" style="animation-delay:-1.2s" /><path class="fl-desk" d="M18 85 H66" /></g><g opacity="0.45"><rect class="fl-scr flick" x="112" y="70" width="18" height="11" rx="1.5" style="animation-delay:-0.0s" /><rect class="fl-scr flick" x="133" y="70" width="18" height="11" rx="1.5" style="animation-delay:-1.2s" /><path class="fl-desk" d="M108 85 H156" /></g><g opacity="0.45"><rect class="fl-scr flick" x="202" y="70" width="18" height="11" rx="1.5" style="animation-delay:-2.4s" /><rect class="fl-scr flick" x="223" y="70" width="18" height="11" rx="1.5" style="animation-delay:-1.2s" /><path class="fl-desk" d="M198 85 H246" /></g><g opacity="0.45"><rect class="fl-scr flick" x="292" y="70" width="18" height="11" rx="1.5" style="animation-delay:-2.0s" /><rect class="fl-scr flick" x="313" y="70" width="18" height="11" rx="1.5" style="animation-delay:-1.2s" /><path class="fl-desk" d="M288 85 H336" /></g><g opacity="0.7"><rect class="fl-scr flick" x="14" y="112" width="27" height="17" rx="1.5" style="animation-delay:-0.0s" /><rect class="fl-scr flick" x="44" y="112" width="27" height="17" rx="1.5" style="animation-delay:-2.4s" /><path class="fl-desk" d="M10 133 H75" /></g><g opacity="0.7"><rect class="fl-scr flick" x="148" y="112" width="27" height="17" rx="1.5" style="animation-delay:-0.4s" /><rect class="fl-scr flick" x="178" y="112" width="27" height="17" rx="1.5" style="animation-delay:-1.8s" /><path class="fl-desk" d="M144 133 H209" /></g><g opacity="0.7"><rect class="fl-scr flick" x="282" y="112" width="27" height="17" rx="1.5" style="animation-delay:-0.8s" /><rect class="fl-scr flick" x="312" y="112" width="27" height="17" rx="1.5" style="animation-delay:-1.2s" /><path class="fl-desk" d="M278 133 H343" /></g>
+        <g class="fl-st" id="dScout" role="button" tabindex="0" aria-label="Scout: hear the news" data-role="scout">
+          <rect fill="transparent" x="18" y="150" width="166" height="148" />
+          <rect class="fl-mon" x="26" y="170" width="46" height="32" rx="2" /><rect class="fl-mon" x="76" y="170" width="46" height="32" rx="2" /><rect class="fl-mon" x="126" y="170" width="46" height="32" rx="2" /><rect class="fl-txt scroll" x="30" y="176" width="30" height="2.5" style="animation-delay:-0.0s" /><rect class="fl-txt scroll" x="30" y="182" width="26" height="2.5" style="animation-delay:-0.5s" /><rect class="fl-txt scroll" x="30" y="188" width="22" height="2.5" style="animation-delay:-1.0s" /><rect class="fl-txt scroll" x="30" y="194" width="18" height="2.5" style="animation-delay:-1.5s" /><text class="fl-tiny" x="99" y="183">BREAKING</text><rect class="fl-txt blink" x="82" y="188" width="34" height="2.5" /><rect class="fl-txt" x="82" y="194" width="26" height="2.5" /><polyline class="fl-up plot" pathLength="1" points="130,196 138,190 146,193 154,184 162,186 170,178" />
+          <path class="fl-desk" d="M20 210 H178 L186 226 H12 Z" />
+          <rect class="fl-plate" x="78" y="230" width="44" height="30" rx="4" /><g transform="translate(88 233) scale(1)"><g class="fl-ln" stroke-width="1.60"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" /><path d="M18 14h-8" /><path d="M15 18h-5" /><path d="M10 6h8v4h-8V6Z" /></g></g>
+          <g class="fl-phone"><g transform="translate(154 195) scale(0.62)"><g class="fl-ln" stroke-width="2.58"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" /></g></g></g>
+          <text class="fl-bang" x="99" y="162">!!</text>
+          <text x="100" y="276">Scout</text><text class="sub" id="dScoutT" x="100" y="290"></text>
+        </g>
+        <g class="fl-st" id="dAnalyst" role="button" tabindex="0" aria-label="Analyst: hear the news" data-role="analyst">
+          <rect fill="transparent" x="206" y="150" width="166" height="148" />
+          <rect class="fl-mon" x="214" y="170" width="46" height="32" rx="2" /><rect class="fl-mon" x="264" y="170" width="46" height="32" rx="2" /><rect class="fl-mon" x="314" y="170" width="46" height="32" rx="2" /><path class="fl-up" d="M222 180 v10" stroke-width="3" /><path class="fl-up" d="M228 178 v12" stroke-width="3" /><path class="fl-dn" d="M234 182 v8" stroke-width="3" /><path class="fl-up" d="M240 177 v13" stroke-width="3" /><path class="fl-up" d="M246 179 v11" stroke-width="3" /><text class="fl-grade" x="287" y="194">A B C</text><polyline class="fl-up plot" pathLength="1" points="318,198 326,192 334,195 342,186 350,188 358,180" style="animation-delay:-1.5s" />
+          <path class="fl-desk" d="M208 210 H366 L374 226 H200 Z" />
+          <rect class="fl-plate" x="266" y="230" width="44" height="30" rx="4" /><g transform="translate(276 233) scale(1)"><g class="fl-ln" stroke-width="1.60"><path d="M9 5v4" /><rect width="4" height="6" x="7" y="9" rx="1" /><path d="M9 15v2" /><path d="M17 3v2" /><rect width="4" height="8" x="15" y="5" rx="1" /><path d="M17 13v3" /><path d="M3 3v16a2 2 0 0 0 2 2h16" /></g></g>
+          <g class="fl-phone"><g transform="translate(342 195) scale(0.62)"><g class="fl-ln" stroke-width="2.58"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" /></g></g></g>
+          <text class="fl-bang" x="287" y="162">!!</text>
+          <text x="288" y="276">Analyst</text><text class="sub" id="dAnalystT" x="288" y="290"></text>
+        </g>
+      </svg></div>
+      <div class="lab-log" id="asLog" aria-live="polite"></div>
+    </div>
+    <div class="status"></div>
+  </section>
 
   <section class="card" data-view="arch">
     <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12.99 6.74 1.93 3.44" /><path d="M19.136 12a10 10 0 0 1-14.271 0" /><path d="m21 21-2.16-3.84" /><path d="m3 21 8.02-14.26" /><circle cx="12" cy="5" r="2" /></svg>Architects</span> <span class="small">fix and improve the bot · nothing changes until you approve</span></h2>
@@ -1215,7 +1289,8 @@ const SEATS = {
   chief: ["Chief", '<path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z" /><path d="M5 21h14" />'],
 };
 const seatIcon = role => { const box = el("span"); box.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (SEATS[role] || SEATS.chief)[1] + "</svg>"; return box.firstChild; };
-const seats = Object.keys(SEATS).map((role, i) => {
+const ASSOC = ["scout", "analyst"];
+const seats = Object.keys(SEATS).filter(r => !ASSOC.includes(r)).map((role, i) => {
   const seat = el("div", {class: "seat", title: AGENTS[role], role: "button", tabindex: "0", "aria-label": AGENTS[role]}, el("div", {class: "icon"}, seatIcon(role)), el("span", {class: "bang", text: "!!"}));
   seat.querySelector(".icon").style.animationDelay = (i * .25) + "s";
   $("stage").append(seat);
@@ -1273,11 +1348,11 @@ function showTable(list, pending) {
 }
 // Each counselor holds its latest news: reports, the next run's likely buys, the last trading run.
 // New news shows "!!" on its seat; tapping the seat makes it tell you in the chat.
-let news = {}, told = [];
+let news = {}, told = [], assocTold = [];
 const seenList = () => { try { return JSON.parse(store.get("seen") || "[]"); } catch { return []; } };
 const unread = role => (news[role] || []).filter(n => !seenList().includes(n.key));
 const idle = () => {
-  const n = Object.keys(SEATS).filter(r => unread(r).length).length;
+  const n = seats.filter(({role}) => unread(role).length).length;
   return [n ? n + (n > 1 ? " counselors have" : " counselor has") + " news · tap a !!" : "Ask away"];
 };
 function gatherNews(d) {
@@ -1300,23 +1375,51 @@ function gatherNews(d) {
   if (d.report && d.last_run) news.auditor.push({key: "t:" + d.last_run, at: d.last_run, title: "The last trading run, " + when(d.last_run), role: "auditor",
     body: () => [el("pre", {text: d.report})]});
   seats.forEach(({role, seat}) => seat.classList.toggle("news", unread(role).length > 0));
+  drawFloor(d);
   if (!talking && !document.querySelector(".seat.thinking")) center(idle());
 }
 function hear(role) {
   const items = unread(role).length ? unread(role) : (news[role] || []).slice(0, 1);
-  if (!items.length) { told.push(el("div", {class: "rt-a"}, el("div", {class: "who"}, seatIcon(role)), el("p", {text: "Nothing new from me yet."}))); }
+  const log = ASSOC.includes(role) ? assocTold : told;
+  if (!items.length) { log.push(el("div", {class: "rt-a"}, el("div", {class: "who"}, seatIcon(role)), el("p", {text: "Nothing new from me yet."}))); }
   items.forEach(n => {
     const acts = el("div", {class: "acts"});
     if (n.url) acts.append(el("a", {href: n.url, target: "_blank", rel: "noopener", text: "Open on GitHub"}));
     if (n.picks) acts.append(Object.assign(el("button", {"data-cmd": "picks", text: "Check again"}), {onclick: () => dispatch("picks")}));
     else if (n.url) acts.append(Object.assign(el("button", {text: "Get a fresh one"}), {onclick: e => runAgent(n.role, e.target)}));
-    told.push(el("div", {class: "rt-a"}, el("div", {class: "who", title: AGENTS[role]}, seatIcon(role)),
+    log.push(el("div", {class: "rt-a"}, el("div", {class: "who", title: AGENTS[role]}, seatIcon(role)),
       el("p", {class: "told-title", text: n.title}), ...n.body(), ...(acts.childNodes.length ? [acts] : [])));
   });
   store.set("seen", JSON.stringify([...seenList(), ...items.map(n => n.key)].slice(-100)));
   seats.forEach(({role: r, seat}) => seat.classList.toggle("news", unread(r).length > 0));
-  showTable(tableList, tablePending);
+  if (ASSOC.includes(role)) { drawFloor(); showFloorLog(); } else showTable(tableList, tablePending);
 }
+// The trading floor: the ticker shows your holdings; each desk says whether its associate has news.
+function drawFloor(d) {
+  ASSOC.forEach(role => {
+    const desk = $(role === "scout" ? "dScout" : "dAnalyst"), n = unread(role).length, last = (news[role] || [])[0];
+    desk.classList.toggle("news", n > 0);
+    $(desk.id + "T").textContent = n ? n + " new · tap to hear" : last ? "Last " + shortDate(last.at) : "Nothing yet";
+  });
+  if (d) {
+    const tape = (d.positions || []).map(p => p.symbol + " " + money(p.price) + " " + (p.gain >= 0 ? "▲" : "▼") + pct(Math.abs(p.gain) / (p.cost * p.shares || 1)).replace("+", ""));
+    const text = (tape.length ? tape : ["HOWIELEGACY", "MARKETS OPEN 9:30 ET"]).join("     ") + "     ";
+    const t = $("tickText"); t.textContent = text + text;
+    requestAnimationFrame(() => {
+      const len = t.getComputedTextLength() / 2;
+      if (len) { $("tick").style.setProperty("--len", -len + "px"); $("tick").style.setProperty("--dur", len / 35 + "s"); }
+    });
+  }
+}
+function showFloorLog() {
+  $("asLog").replaceChildren(...(assocTold.length ? assocTold : [el("p", {class: "rt-hint", text: "Tap a desk to hear what the Scout or the Analyst found. A ringing phone and !! mean news."})]));
+  $("asLog").scrollTop = $("asLog").scrollHeight;
+}
+showFloorLog();
+document.querySelectorAll("#floorSvg .fl-st").forEach(g => {
+  g.addEventListener("click", () => hear(g.dataset.role));
+  g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); hear(g.dataset.role); } });
+});
 const center = parts => $("rtCenter").replaceChildren(...parts);
 function spoke(entry) {
   const roles = entry.answers.map(a => a.role);
@@ -1384,7 +1487,7 @@ new MutationObserver(() => { cancelAnimationFrame(titling); titling = requestAni
 titleLabels();
 
 // Top bar picks the page: Positions, Performance, AI Team or Architects.
-let view = ["positions", "performance", "ai", "arch", "junk"].includes(store.get("view")) ? store.get("view") : "positions";
+let view = ["positions", "performance", "ai", "assoc", "arch", "junk"].includes(store.get("view")) ? store.get("view") : "positions";
 function showView() {
   document.querySelectorAll("[data-view]").forEach(e => e.classList.toggle("hidden", e.dataset.view !== view));
   document.querySelectorAll("[data-go]").forEach(b => b.classList.toggle("on", b.dataset.go === view));
