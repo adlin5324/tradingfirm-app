@@ -33,3 +33,8 @@ Leftovers from features already gone from the screen. Nothing visible changed (c
 The app's chat with the counselors was removed earlier at your request; this removed what still sat behind it
 in the `tradingfirm` repo: the `ask.yml` workflow (last present in 2e76230), the ask and save-answer steps of
 the agents' script, and their test. Old answers stay on the `answers` branch, which nothing reads now.
+
+## Final cleanup (2026-10-14, last present in 26c7c37)
+
+- Styles for the old list rows (Recent orders, team reports, the first inbox) and four unused element ids.
+  Nothing visible changed.
