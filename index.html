@@ -520,6 +520,7 @@ header { margin-bottom: 16px; }
 .rt-log { max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 4px; font-size: 14px; scrollbar-width: thin; }
 .rt-q { align-self: flex-end; max-width: 85%; background: var(--c1); color: #fff; padding: 8px 12px; border-radius: 14px 14px 4px 14px; }
 .rt-a { align-self: flex-start; max-width: 95%; background: var(--card); border: 1px solid var(--line); padding: 8px 12px; border-radius: 14px 14px 14px 4px; }
+#archLog .rt-a { align-self: stretch; max-width: 100%; }
 .rt-a .who { display: flex; align-items: center; gap: 6px; font-weight: 650; font-size: 12px; margin-bottom: 4px; }
 .rt-a .who svg { width: 16px; height: 16px; color: var(--c3); }
 .rt-a .md p { margin: 4px 0 0; } .rt-a .md > :first-child { margin-top: 0; }
@@ -529,24 +530,26 @@ header { margin-bottom: 16px; }
 .rt-ask input { flex: 1; min-width: 0; margin: 0; padding: 6px 0; border: 0; background: none; outline: none; font-size: 14px; }
 .rt-ask button { width: 34px; height: 34px; padding: 0; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--c1); color: #fff; border: 0; }
 .rt-ask button svg { width: 16px; height: 16px; margin: 0; }
-/* Architects: a building going up, in the theme's colors. Windows light up, the crane swings and lifts a beam,
-   the architects walk laps around the site. */
+/* Architects: the bot's circuit board in the theme's colors. Pulses run along the traces into the chip, the
+   core turns and glows, and the architects walk laps around the board. */
 .site { position: absolute; inset: 40px 56px; }
 .site svg { width: 100%; height: 100%; overflow: visible; }
-.site .b-top { stop-color: color-mix(in srgb, var(--c1) 35%, var(--card)); } .site .b-bot { stop-color: color-mix(in srgb, var(--c2) 50%, var(--card)); }
-.site .b-body { fill: url(#bGrad); stroke: color-mix(in srgb, var(--c3) 55%, transparent); stroke-width: 1; }
-.site .b-ln, .site .b-scaf { fill: none; stroke: color-mix(in srgb, var(--c3) 70%, transparent); stroke-width: 1.2; stroke-linejoin: round;
-  filter: drop-shadow(0 0 3px var(--c1)); }
-.site .b-scaf { stroke-dasharray: 3 3; animation: b-ants 1.4s linear infinite; }
-.site .b-win { fill: color-mix(in srgb, var(--c3) 60%, white); animation: b-win 4s steps(1) infinite; }
-.site .b-door { fill: color-mix(in srgb, var(--c1) 60%, var(--card)); }
-.site .b-beam { fill: var(--c3); filter: drop-shadow(0 0 4px var(--c1)); }
-.site .b-jib { transform-box: view-box; transform-origin: 153px 10px; animation: b-swing 7s ease-in-out infinite; }
-.site .b-hook { animation: b-lift 5s ease-in-out infinite; }
-@keyframes b-ants { to { stroke-dashoffset: -6; } }
-@keyframes b-win { 0% { opacity: .15; } 40% { opacity: .95; } 70% { opacity: .35; } }
-@keyframes b-swing { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
-@keyframes b-lift { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-26px); } }
+.site .b-top { stop-color: color-mix(in srgb, var(--c1) 40%, var(--card)); } .site .b-bot { stop-color: color-mix(in srgb, var(--c2) 55%, var(--card)); }
+.site .b-trace { fill: none; stroke: color-mix(in srgb, var(--c3) 30%, transparent); stroke-width: 1.4; stroke-linejoin: round; }
+.site .b-pulse { fill: none; stroke: var(--c3); stroke-width: 1.8; stroke-linecap: round; stroke-dasharray: 8 92;
+  filter: drop-shadow(0 0 3px var(--c1)); animation: b-flow 3s linear infinite; }
+.site .b-node { fill: var(--card); stroke: var(--c3); stroke-width: 1.2; animation: b-blink 2.5s ease-in-out infinite; }
+.site .b-pin { fill: none; stroke: color-mix(in srgb, var(--c3) 60%, transparent); stroke-width: 2.2; }
+.site .b-chip { fill: url(#bGrad); stroke: color-mix(in srgb, var(--c3) 70%, transparent); stroke-width: 1.4;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--c1) 60%, transparent)); }
+.site .b-die { fill: color-mix(in srgb, var(--c1) 25%, var(--card)); stroke: color-mix(in srgb, var(--c3) 40%, transparent); }
+.site .b-ring { fill: none; stroke: var(--c3); stroke-width: 1.5; stroke-dasharray: 6 4; transform-box: fill-box; transform-origin: center;
+  animation: b-turn 6s linear infinite; }
+.site .b-core { fill: var(--c3); filter: drop-shadow(0 0 6px var(--c1)); transform-box: fill-box; transform-origin: center; animation: b-beat 2s ease-in-out infinite; }
+@keyframes b-flow { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+@keyframes b-blink { 50% { fill: var(--c3); } }
+@keyframes b-turn { to { transform: rotate(360deg); } }
+@keyframes b-beat { 50% { transform: scale(1.35); opacity: .75; } }
 @media (prefers-reduced-motion: reduce) { .site * { animation: none !important; } }
 .seat { position: absolute; left: 0; top: 0; width: 40px; height: 40px; will-change: transform, opacity; }
 .seat .icon { display: grid; place-items: center; width: 40px; height: 40px; color: color-mix(in srgb, var(--c1) 55%, white);
@@ -700,17 +703,14 @@ header { margin-bottom: 16px; }
     <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12.99 6.74 1.93 3.44" /><path d="M19.136 12a10 10 0 0 1-14.271 0" /><path d="m21 21-2.16-3.84" /><path d="m3 21 8.02-14.26" /><circle cx="12" cy="5" r="2" /></svg>Architects</span> <span class="small">tap an architect · !! means they have something</span></h2>
     <div class="rt-split">
     <div class="stage" id="archStage">
-      <div class="site" aria-hidden="true"><svg viewBox="0 0 200 140" preserveAspectRatio="xMidYMax meet">
-        <defs><linearGradient id="bGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="b-top" /><stop offset="1" class="b-bot" /></linearGradient></defs>
-        <rect class="b-body" x="18" y="88" width="44" height="47" rx="2" />
-        <rect class="b-body" x="66" y="40" width="62" height="95" rx="2" />
-        <g class="b-scaf"><rect x="66" y="14" width="62" height="26" /><path d="M66 27 H128 M66 14 L97 40 L128 14 M97 14 V40" /></g>
-        <g><rect class="b-win" x="74" y="50" width="10" height="8" style="animation-delay:-0.00s" /><rect class="b-win" x="91" y="50" width="10" height="8" style="animation-delay:-1.37s" /><rect class="b-win" x="108" y="50" width="10" height="8" style="animation-delay:-2.74s" /><rect class="b-win" x="74" y="64" width="10" height="8" style="animation-delay:-0.11s" /><rect class="b-win" x="91" y="64" width="10" height="8" style="animation-delay:-1.48s" /><rect class="b-win" x="108" y="64" width="10" height="8" style="animation-delay:-2.85s" /><rect class="b-win" x="74" y="78" width="10" height="8" style="animation-delay:-0.22s" /><rect class="b-win" x="91" y="78" width="10" height="8" style="animation-delay:-1.59s" /><rect class="b-win" x="108" y="78" width="10" height="8" style="animation-delay:-2.96s" /><rect class="b-win" x="74" y="92" width="10" height="8" style="animation-delay:-0.33s" /><rect class="b-win" x="91" y="92" width="10" height="8" style="animation-delay:-1.70s" /><rect class="b-win" x="108" y="92" width="10" height="8" style="animation-delay:-3.07s" /><rect class="b-win" x="74" y="106" width="10" height="8" style="animation-delay:-0.44s" /><rect class="b-win" x="91" y="106" width="10" height="8" style="animation-delay:-1.81s" /><rect class="b-win" x="108" y="106" width="10" height="8" style="animation-delay:-3.18s" /><rect class="b-win" x="26" y="96" width="10" height="8" style="animation-delay:-0.55s" /><rect class="b-win" x="42" y="96" width="10" height="8" style="animation-delay:-1.92s" /><rect class="b-win" x="26" y="110" width="10" height="8" style="animation-delay:-3.29s" /><rect class="b-win" x="42" y="110" width="10" height="8" style="animation-delay:-0.66s" /></g>
-        <rect class="b-door" x="89" y="120" width="16" height="15" rx="1" />
-        <path class="b-ln" d="M150 135 V8 M156 135 V8 M150 120 L156 110 L150 100 L156 90 L150 80 L156 70 L150 60 L156 50 L150 40 L156 30 L150 20 L156 10" />
-        <g class="b-jib"><path class="b-ln" d="M120 10 H196 M120 10 L153 2 L196 10" /><rect class="b-body" x="122" y="10" width="10" height="7" />
-          <g class="b-hook"><path class="b-ln" d="M182 10 V44" /><rect class="b-beam" x="170" y="44" width="24" height="5" rx="1" /></g></g>
-        <path class="b-ln" d="M4 135 H196" />
+      <div class="site" aria-hidden="true"><svg viewBox="0 0 200 140" preserveAspectRatio="xMidYMid meet">
+        <defs><linearGradient id="bGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" class="b-top" /><stop offset="1" class="b-bot" /></linearGradient></defs>
+        <g><path class="b-trace" d="M64 50 H44 V18 H8" /><path class="b-trace" d="M136 50 H156 V122 H192" /><path class="b-trace" d="M64 62 H38 V48 H8" /><path class="b-trace" d="M136 62 H162 V92 H192" /><path class="b-trace" d="M64 74 H32 V78 H8" /><path class="b-trace" d="M136 74 H168 V62 H192" /><path class="b-trace" d="M64 86 H26 V108 H8" /><path class="b-trace" d="M136 86 H174 V32 H192" /><path class="b-trace" d="M82 34 V24 H52 V4" /><path class="b-trace" d="M82 106 V116 H112 V136" /><path class="b-trace" d="M94 34 V21 H84 V4" /><path class="b-trace" d="M94 106 V119 H104 V136" /><path class="b-trace" d="M106 34 V18 H116 V4" /><path class="b-trace" d="M106 106 V122 H96 V136" /><path class="b-trace" d="M118 34 V15 H148 V4" /><path class="b-trace" d="M118 106 V125 H88 V136" /></g><g><path class="b-pulse" pathLength="100" d="M64 50 H44 V18 H8" style="animation-delay:-0.00s; animation-duration:3.0s" /><path class="b-pulse" pathLength="100" d="M136 50 H156 V122 H192" style="animation-delay:-2.92s; animation-duration:3.0s" /><path class="b-pulse" pathLength="100" d="M64 62 H38 V48 H8" style="animation-delay:-0.73s; animation-duration:3.6s" /><path class="b-pulse" pathLength="100" d="M136 62 H162 V92 H192" style="animation-delay:-3.65s; animation-duration:3.6s" /><path class="b-pulse" pathLength="100" d="M64 74 H32 V78 H8" style="animation-delay:-1.46s; animation-duration:4.2s" /><path class="b-pulse" pathLength="100" d="M136 74 H168 V62 H192" style="animation-delay:-0.38s; animation-duration:4.2s" /><path class="b-pulse" pathLength="100" d="M64 86 H26 V108 H8" style="animation-delay:-2.19s; animation-duration:4.8s" /><path class="b-pulse" pathLength="100" d="M136 86 H174 V32 H192" style="animation-delay:-1.11s; animation-duration:4.8s" /><path class="b-pulse" pathLength="100" d="M82 34 V24 H52 V4" style="animation-delay:-1.84s; animation-duration:3.0s" /><path class="b-pulse" pathLength="100" d="M82 106 V116 H112 V136" style="animation-delay:-0.76s; animation-duration:3.0s" /><path class="b-pulse" pathLength="100" d="M94 34 V21 H84 V4" style="animation-delay:-2.57s; animation-duration:3.6s" /><path class="b-pulse" pathLength="100" d="M94 106 V119 H104 V136" style="animation-delay:-1.49s; animation-duration:3.6s" /><path class="b-pulse" pathLength="100" d="M106 34 V18 H116 V4" style="animation-delay:-3.30s; animation-duration:4.2s" /><path class="b-pulse" pathLength="100" d="M106 106 V122 H96 V136" style="animation-delay:-2.22s; animation-duration:4.2s" /><path class="b-pulse" pathLength="100" d="M118 34 V15 H148 V4" style="animation-delay:-0.03s; animation-duration:4.8s" /><path class="b-pulse" pathLength="100" d="M118 106 V125 H88 V136" style="animation-delay:-2.95s; animation-duration:4.8s" /></g><g><circle class="b-node" cx="8" cy="18" r="2.6" style="animation-delay:-0.00s" /><circle class="b-node" cx="192" cy="122" r="2.6" style="animation-delay:-1.64s" /><circle class="b-node" cx="8" cy="48" r="2.6" style="animation-delay:-0.41s" /><circle class="b-node" cx="192" cy="92" r="2.6" style="animation-delay:-2.05s" /><circle class="b-node" cx="8" cy="78" r="2.6" style="animation-delay:-0.82s" /><circle class="b-node" cx="192" cy="62" r="2.6" style="animation-delay:-2.46s" /><circle class="b-node" cx="8" cy="108" r="2.6" style="animation-delay:-1.23s" /><circle class="b-node" cx="192" cy="32" r="2.6" style="animation-delay:-0.37s" /><circle class="b-node" cx="52" cy="4" r="2.6" style="animation-delay:-0.78s" /><circle class="b-node" cx="112" cy="136" r="2.6" style="animation-delay:-2.42s" /><circle class="b-node" cx="84" cy="4" r="2.6" style="animation-delay:-1.19s" /><circle class="b-node" cx="104" cy="136" r="2.6" style="animation-delay:-0.33s" /><circle class="b-node" cx="116" cy="4" r="2.6" style="animation-delay:-1.60s" /><circle class="b-node" cx="96" cy="136" r="2.6" style="animation-delay:-0.74s" /><circle class="b-node" cx="148" cy="4" r="2.6" style="animation-delay:-2.01s" /><circle class="b-node" cx="88" cy="136" r="2.6" style="animation-delay:-1.15s" /></g>
+        <path class="b-pin" d="M70 50 H64 M130 50 H136 M70 62 H64 M130 62 H136 M70 74 H64 M130 74 H136 M70 86 H64 M130 86 H136 M82 40 V34 M82 100 V106 M94 40 V34 M94 100 V106 M106 40 V34 M106 100 V106 M118 40 V34 M118 100 V106" />
+        <rect class="b-chip" x="70" y="40" width="60" height="60" rx="7" />
+        <rect class="b-die" x="80" y="50" width="40" height="40" rx="4" />
+        <circle class="b-ring" cx="100" cy="70" r="13" />
+        <circle class="b-core" cx="100" cy="70" r="6" />
       </svg></div>
     </div>
     <div class="rt-chat">
@@ -1351,7 +1351,8 @@ function gatherNews(d) {
 function hear(role) {
   const items = unread(role).length ? unread(role) : (news[role] || []).slice(0, 1);
   const log = ASSOC.includes(role) ? assocTold : ARCHITECTS.includes(role) ? archTold : told;
-  if (!items.length) log.push(el("div", {class: "rt-a"}, el("div", {class: "who"}, seatIcon(role)), el("p", {text: "Nothing new from me yet."}),
+  const last = log[log.length - 1];
+  if (!items.length && !(last && last.dataset.empty === role)) log.push(el("div", {class: "rt-a", "data-empty": role}, el("div", {class: "who"}, seatIcon(role)), el("p", {text: "Nothing new from me yet."}),
     ...(ARCH_RUNS[role] ? [el("div", {class: "acts"}, btn("Run now", e => runArch(role, e.target)))] : [])));
   items.forEach(n => {
     const acts = el("div", {class: "acts"});
