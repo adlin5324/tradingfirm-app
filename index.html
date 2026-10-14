@@ -677,7 +677,7 @@ const pct = n => (n >= 0 ? "+" : "") + (n * 100).toFixed(2) + "%";
 const tone = (e, n) => { e.classList.toggle("good", n > 0); e.classList.toggle("bad", n < 0); return e; };
 const when = s => s ? new Date(s).toLocaleString(undefined, {month: "short", day: "numeric", hour: "numeric", minute: "2-digit"}) : "–";
 const shortDate = s => s ? new Date(String(s).slice(0, 10) + "T12:00:00").toLocaleDateString(undefined, {month: "short", day: "numeric"}) : "–";
-const COLORS = {"Bot": "var(--s1)", "S&P 500": "var(--spx)", "Nasdaq 100": "var(--ndx)"};
+const COLORS = {"HowieLegacy": "var(--s1)", "S&P 500": "var(--spx)", "Nasdaq 100": "var(--ndx)"};
 
 function el(name, attrs = {}, ...kids) {
   const e = document.createElement(name);
@@ -728,7 +728,7 @@ function show(d) {
   }
 
   if (d.scorecard) {
-    const s = d.scorecard, rows = [["Bot", s.bot], ...Object.entries(s.markets)];
+    const s = d.scorecard, rows = [["HowieLegacy", s.bot], ...Object.entries(s.markets)];
     // What the start amount made in each: the bot, or the same money in the S&P 500 or Nasdaq 100.
     $("bars").replaceChildren(...rows.map(([name, v]) => el("span", {class: "vs"},
       el("span", {class: "who"}, el("i", {style: "background:" + (COLORS[name] || "var(--s2)")}), name),
@@ -888,10 +888,10 @@ function growthLine(d) {
   return pts;
 }
 
-// The Chief of staff's "How the bot did" section from the latest weekly brief.
+// The Chief of staff's "How HowieLegacy did" section from the latest weekly brief.
 function perfNote(team) {
   const brief = team && team.reports.find(r => r.role === "chief");
-  const part = brief && (brief.body.split(/^## /m).find(p => /^How the bot did/i.test(p)) || "").replace(/^.*\n/, "").trim();
+  const part = brief && (brief.body.split(/^## /m).find(p => /^How (the bot|HowieLegacy) did/i.test(p)) || "").replace(/^.*\n/, "").trim();
   $("perfNote").replaceChildren(...(part ? [el("div", {class: "small muted", text: "Chief of Staff · " + shortDate(brief.created)}), md(part)]
     : [el("p", {class: "muted small", text: "The Chief of Staff writes a short summary here every Sunday. Press Refresh Summary to get one now."})]));
 }
@@ -901,8 +901,8 @@ function drawChart(history, base) {
   const box = $("chart");
   if (history.length < 2 || !base) { box.classList.add("hidden"); return; }
   box.classList.remove("hidden");
-  const val = (h, n) => { const g = n === "Bot" ? h.bot : h[n]; return g == null ? null : base * (1 + g); };
-  const names = ["Bot", "S&P 500", "Nasdaq 100"].filter(n => history.some(h => val(h, n) != null));
+  const val = (h, n) => { const g = n === "HowieLegacy" ? h.bot : h[n]; return g == null ? null : base * (1 + g); };
+  const names = ["HowieLegacy", "S&P 500", "Nasdaq 100"].filter(n => history.some(h => val(h, n) != null));
   const all = history.flatMap(h => names.map(n => val(h, n)).filter(v => v != null)).concat(base);
   // Round the scale to clean dollar steps ($1, $2, $5, ...) so the labels on the right read easily.
   const min = Math.min(...all), max = Math.max(...all);
@@ -922,7 +922,7 @@ function drawChart(history, base) {
   // Ticks below the start are only red when some line actually dips below it.
   names.slice().reverse().forEach(n => {
     const pts = history.map((h, i) => val(h, n) == null ? null : x(i).toFixed(1) + "," + y(val(h, n)).toFixed(1)).filter(Boolean);
-    svg.append(svgEl("polyline", {points: pts.join(" "), fill: "none", stroke: COLORS[n], "stroke-width": n === "Bot" ? 2.5 : 1.5,
+    svg.append(svgEl("polyline", {points: pts.join(" "), fill: "none", stroke: COLORS[n], "stroke-width": n === "HowieLegacy" ? 2.5 : 1.5,
       "vector-effect": "non-scaling-stroke", "stroke-linejoin": "round"}));
   });
   box.replaceChildren(el("div", {class: "plot"}, svg, axis));
