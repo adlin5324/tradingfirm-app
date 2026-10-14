@@ -898,7 +898,7 @@ async function loadRuns() {
 }
 
 function setStatus(text, busy) {
-  document.querySelectorAll(".status").forEach(e => e.replaceChildren(...(busy ? [el("span", {class: "spin"})] : []), el("span", {text})));
+  document.querySelectorAll(".status").forEach(e => e.replaceChildren(...(text ? [...(busy ? [el("span", {class: "spin"})] : []), el("span", {text})] : [])));
 }
 
 async function refresh() {
@@ -1015,7 +1015,7 @@ async function dispatch(cmd, preset = "") {
       const runs = await loadRuns();
       const mine = runs.find(r => r.event === "workflow_dispatch" && Date.parse(r.created_at) >= started);
       if (mine && mine.status === "completed") {
-        setStatus("\"" + cmd + "\" " + (mine.conclusion === "success" ? "finished." : "ended: " + mine.conclusion + ". Open it under Recent runs."));
+        setStatus(mine.conclusion === "success" ? "" : "\"" + cmd + "\" ended: " + mine.conclusion + ". Open it under Recent runs.");
         await loadDashboard();
         return;
       }
