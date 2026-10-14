@@ -478,10 +478,11 @@ header { margin-bottom: 16px; }
 .ttt { position: absolute; display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); line-height: 1; font-weight: 800; }
 .ttt .cell { display: grid; place-items: center; border: 0 solid color-mix(in srgb, var(--c3) 55%, transparent); }
 .ttt .cell:nth-child(-n+6) { border-bottom-width: 4px; } .ttt .cell:not(:nth-child(3n)) { border-right-width: 4px; }
-.ttt .cell.x, .ttt .cell.o { animation: ttt-pop .35s ease-out; }
+.ttt .cell.x, .ttt .cell.o { animation: ttt-pop .45s cubic-bezier(.2, .8, .3, 1); }
 .ttt .cell.x { color: var(--c1); text-shadow: 0 0 10px color-mix(in srgb, var(--c1) 70%, transparent); }
 .ttt .cell.o { color: var(--c3); text-shadow: 0 0 10px color-mix(in srgb, var(--c3) 70%, transparent); }
-@keyframes ttt-pop { from { transform: scale(.3); opacity: 0; } }
+/* Each mark grows from nothing to fill its square. */
+@keyframes ttt-pop { from { transform: scale(0); } to { transform: scale(1); } }
 :root[data-mode="light"] .ttt .cell.o { color: color-mix(in srgb, var(--c1) 35%, var(--text)); text-shadow: none; }
 :root[data-mode="light"] .ttt .cell { border-color: color-mix(in srgb, var(--text) 35%, transparent); }
 .ttt .strike { position: absolute; height: 6px; margin-top: -3px; border-radius: 3px; background: color-mix(in srgb, var(--c1) 60%, white);
@@ -1260,10 +1261,12 @@ const cells = Array.from({length: 9}, () => $("ttt").appendChild(el("span", {cla
 const strike = $("ttt").appendChild(el("i", {class: "strike"}));
 let grid = Array(9).fill(""), turn = "X", over = 0;
 function placeChess() {
-  const stage = $("stage"), W = stage.clientWidth, H = stage.clientHeight, size = Math.min(H - 40, W * .5), board = $("ttt");
-  Object.assign(board.style, {width: size + "px", height: size + "px", left: (W - size) / 2 + "px", top: (H - size) / 2 + 6 + "px", fontSize: size / 4 + "px"});
-  const spot = {risk: [(W - size) / 2 - 50, H / 2 + size * .2], auditor: [(W + size) / 2 + 50, H / 2 + size * .2], chief: [W / 2 + size / 2 + 46, (H - size) / 2 + 18]};
-  seats.forEach(({role, seat}) => { const [x, y] = spot[role]; seat.style.transform = `translate(${x - 20}px, ${y - 20}px) scale(${role === "chief" ? .85 : 1.15})`; });
+  const stage = $("stage"), W = stage.clientWidth, H = stage.clientHeight, size = Math.min(H - 120, W * .3), board = $("ttt");
+  Object.assign(board.style, {width: size + "px", height: size + "px", left: (W - size) / 2 + "px", top: (H - size) / 2 + 22 + "px", fontSize: size / 4 + "px"});
+  // All three counselors drawn the same size, bigger than before.
+  const big = Math.min(2.2, Math.max(1.5, size / 70)), gap = 36 * big;
+  const spot = {risk: [(W - size) / 2 - gap, H / 2 + size * .15], auditor: [(W + size) / 2 + gap, H / 2 + size * .15], chief: [W / 2, (H - size) / 2 - 4]};
+  seats.forEach(({role, seat}) => { const [x, y] = spot[role]; seat.style.transform = `translate(${x - 20}px, ${y - 20 - (role === "chief" ? 6 * big : 0)}px) scale(${big.toFixed(2)})`; });
 }
 new ResizeObserver(placeChess).observe($("stage"));
 const winner = g => LINES.find(([a, b, c]) => g[a] && g[a] === g[b] && g[a] === g[c]);
