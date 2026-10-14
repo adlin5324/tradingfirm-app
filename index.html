@@ -105,6 +105,7 @@ h1 { font-size: 18px; margin: 0; letter-spacing: -.01em; }
 .legend i { display: inline-block; width: 10px; height: 3px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
 #fillCost { margin: 12px 0 0; color: var(--muted); }
 #fillCost:empty { display: none; }
+#updated { margin: 12px 0 0; }
 
 .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .actions > button { flex: 1 1 auto; }
@@ -478,7 +479,7 @@ header { margin-bottom: 16px; }
     </table></div>
   </section>
 
-  <section class="card bar">
+  <section class="card bar" data-view="positions">
     <div class="actions">
       <button class="danger" id="sellBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" /><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" /><path d="m2 16 6 6" /><circle cx="16" cy="9" r="2.9" /><circle cx="6" cy="5" r="3" /></svg>Sell stocks…</button>
       <details class="more" id="more">
@@ -505,10 +506,11 @@ header { margin-bottom: 16px; }
 
 
   <section class="card" data-panel="performance">
-    <h2>Bot vs market <span class="small" id="since"></span></h2>
+    <h2>Performance <span class="small" id="since"></span></h2>
     <div class="bars" id="bars"><span class="muted small">Starts after the first live run.</span></div>
     <div class="chart hidden" id="chart"></div>
     <p class="small" id="fillCost"></p>
+    <p class="muted small" id="updated"></p>
   </section>
 
   <div data-panel="activity">
@@ -549,7 +551,6 @@ header { margin-bottom: 16px; }
     <div id="picksBody"><div class="empty">Open More → Preview picks to see what the next run would likely buy.</div></div>
   </section>
 
-  <p class="muted small" id="updated"></p>
 </main>
 
 <dialog id="askBox">
