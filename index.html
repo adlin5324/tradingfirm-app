@@ -818,8 +818,7 @@ function show(d) {
 }
 
 const AGENTS = {scout: "News scout", risk: "Risk officer", analyst: "Equity analyst", auditor: "Auditor",
-                chief: "Chief of staff", breakdown: "Auditor", treasurer: "Treasurer", compliance: "Compliance officer",
-                trader: "Trader", strategist: "Strategist", mechanic: "Mechanic", quant: "Quant researcher", reviewer: "Code reviewer"};
+                chief: "Chief of staff", breakdown: "Auditor", mechanic: "Mechanic", quant: "Quant researcher", reviewer: "Code reviewer"};
 
 function gradeTag(g) {
   if (!g) return el("span", {class: "muted small", text: "–"});
@@ -1198,10 +1197,6 @@ const SEATS = {
   risk: ["Risk", '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="M12 8v4" /><path d="M12 16h.01" />'],
   analyst: ["Analyst", '<path d="M9 5v4" /><rect width="4" height="6" x="7" y="9" rx="1" /><path d="M9 15v2" /><path d="M17 3v2" /><rect width="4" height="8" x="15" y="5" rx="1" /><path d="M17 13v3" /><path d="M3 3v16a2 2 0 0 0 2 2h16" />'],
   auditor: ["Auditor", '<rect width="8" height="4" x="8" y="2" rx="1" ry="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="m9 14 2 2 4-4" />'],
-  treasurer: ["Treasurer", '<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1" /><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4" />'],
-  compliance: ["Compliance", '<path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" /><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" /><path d="M7 21h10" /><path d="M12 3v18" /><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2" />'],
-  trader: ["Trader", '<path d="M8 3 4 7l4 4" /><path d="M4 7h16" /><path d="m16 21 4-4-4-4" /><path d="M20 17H4" />'],
-  strategist: ["Strategist", '<circle cx="12" cy="12" r="10" /><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z" />'],
   chief: ["Chief", '<path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z" /><path d="M5 21h14" />'],
 };
 const seatIcon = role => ARCH_ICONS[role] ? archIcon(role) : (box => (box.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (SEATS[role] || SEATS.chief)[1] + "</svg>", box.firstChild))(el("span"));
@@ -1209,7 +1204,7 @@ const ASSOC = ["scout", "analyst"];
 // The pit is 800 wide; show a band as wide as the stage's shape needs, so icons keep their size and fill it.
 new ResizeObserver(([e]) => { const w = Math.min(800, 220 * e.contentRect.width / (e.contentRect.height || 1));
   $("crowdSvg").setAttribute("viewBox", `${400 - w / 2} 0 ${w} 220`); }).observe($("assocStage"));
-const seats = Object.keys(SEATS).filter(r => !ASSOC.includes(r)).map((role, i) => {
+const seats = Array.from({length: 9}, (_, i) => ["risk", "auditor", "chief"][i % 3]).map((role, i) => {
   const seat = el("div", {class: "seat still", title: AGENTS[role]}, el("div", {class: "chair"}), el("div", {class: "icon"}, seatIcon(role)));
   seat.querySelector(".icon").style.animationDelay = (i * .25) + "s";
   $("stage").append(seat);
@@ -1225,7 +1220,7 @@ function placeSeats() {
   seats.forEach(({seat}, i) => {
     const deg = 90 + GAP + (i + .5) * (360 - 2 * GAP) / seats.length, a = deg * Math.PI / 180;
     const y = ry * Math.sin(a), near = DEPTH / (DEPTH - y * Math.sin(TILT));
-    seat.style.transform = `translate(${cx + rx * Math.cos(a) * near - 20}px, ${cy + y * Math.cos(TILT) * near - 20}px) scale(${near.toFixed(3)})`;
+    seat.style.transform = `translate(${cx + rx * Math.cos(a) * near - 20}px, ${cy + y * Math.cos(TILT) * near - 20}px) scale(${(near * (stage.clientWidth < 500 ? .78 : 1)).toFixed(3)})`;
     seat.style.setProperty("--rot", deg + 90 + "deg");
   });
 }
@@ -1255,27 +1250,6 @@ function gatherNews(d) {
     title: "Buys I'd have skipped", role: "analyst", body: () => [el("p", {text: d.shadow.slice(-5).reverse().map(x => x.symbol + " on " + shortDate(x.date) + ": " + x.why).join(". ") + "."})]});
   if (d.report && d.last_run) news.auditor.push({key: "t:" + d.last_run, at: d.last_run, title: "The last trading run, " + when(d.last_run), role: "auditor",
     body: () => [el("pre", {text: d.report})]});
-  const a = d.account || {}, today = new Date().toLocaleDateString("en-CA"), card = d.scorecard;
-  if (d.account) news.treasurer = [{key: "cash:" + a.cash + ":" + (card ? card.deposits : 0), at: d.updated, title: "Cash and deposits", role: "treasurer",
-    body: () => [el("p", {text: "Cash: " + money(a.cash) + " of " + money(a.total) + ". Settled and ready to spend: " + money(a.settled_cash ?? a.cash) + "."
-      + (card && card.deposits ? " Deposits since the start: " + signed(card.deposits) + "." : "")
-      + (d.fill_cost != null ? " Orders filled about " + pct(Math.abs(d.fill_cost)).replace("+", "") + " from the mid price." : "")})]}];
-  const settling = (d.positions || []).filter(p => p.free_to_sell && p.free_to_sell > today);
-  news.compliance = [{key: "gf:" + settling.map(p => p.symbol + p.free_to_sell).join() + (d.halt ? "h" : "") + (d.buy_block ? "b" : ""), at: d.updated,
-    title: settling.length ? settling.length + " still settling" : "All clear", role: "compliance",
-    body: () => [el("p", {text: (settling.length ? "Not safe to sell yet (good-faith rule): " + settling.map(p => p.symbol + " until " + shortDate(p.free_to_sell)).join(", ") + "."
-      : "Everything we hold has settled, so any of it can be sold without a good-faith violation.")
-      + (d.halt ? " Trading is halted: " + (d.halt.reason || "no reason given") + "." : "") + (d.buy_block ? " New buys are paused." : "")})]}];
-  const orders = d.orders || [], lastDay = orders.length ? orders[0].date : null, day = orders.filter(o => o.date === lastDay);
-  if (lastDay) news.trader = [{key: "o:" + lastDay + day.length, at: lastDay, title: "Orders on " + shortDate(lastDay), role: "trader",
-    body: () => [el("p", {text: day.map(o => (o.side === "BUY" ? "Bought " : "Sold ") + o.shares + " " + o.symbol + " at " + money(o.price || 0)
-      + ((o.state || "").toUpperCase() === "FILLED" ? "" : " (" + (o.state || "").toLowerCase().replace("_", " ") + ")")).join(". ") + "."})]}];
-  if (card) {
-    const lead = Object.entries(card.markets).filter(([, v]) => v > card.bot).map(([n]) => n);
-    news.strategist = [{key: "sc:" + (d.updated || "").slice(0, 10), at: d.updated, title: "Where we stand", role: "strategist",
-      body: () => [el("p", {text: "Since " + shortDate(card.start) + ": HowieLegacy " + pct(card.bot) + ", " + Object.entries(card.markets).map(([n, v]) => n + " " + pct(v)).join(", ") + ". "
-        + (lead.length ? lead.join(" and ") + (lead.length > 1 ? " are" : " is") + " ahead of us." : "We're ahead of both markets.")})]}];
-  }
   // The associates hand their news to the counselors: the Scout's to the Risk officer, the Analyst's to the Auditor.
   news.risk.push(...news.scout.map(n => ({...n, title: "From the Scout: " + n.title})));
   news.auditor.push(...news.analyst.map(n => ({...n, title: "From the Analyst: " + n.title})));
