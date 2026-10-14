@@ -100,7 +100,10 @@ h1 { font-size: 18px; margin: 0; letter-spacing: -.01em; }
 .vs i { width: 8px; height: 8px; border-radius: 50%; }
 .vs b { font-weight: 650; }
 .chart { margin-top: 12px; }
-.chart svg { width: 100%; height: 130px; display: block; }
+.chart svg { width: 100%; height: 160px; display: block; }
+.plot { position: relative; padding-right: 56px; }
+.axis span { position: absolute; right: 0; transform: translateY(-50%); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.axis span.bad { color: var(--bad); }
 .legend { display: flex; gap: 16px; font-size: 12px; color: var(--muted); margin-top: 8px; flex-wrap: wrap; }
 .legend i { display: inline-block; width: 10px; height: 3px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
 #fillCost { margin: 12px 0 0; color: var(--muted); }
@@ -507,7 +510,7 @@ header { margin-bottom: 16px; }
 
 
   <section class="card" data-view="performance">
-    <h2>Performance <span class="small" id="since"></span></h2>
+    <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16" /><path d="m19 9-5 5-4-4-3 3" /></svg>Performance</span> <span class="small" id="since"></span></h2>
     <div class="bars" id="bars"><span class="muted small">Starts after the first live run.</span></div>
     <div class="chart hidden" id="chart"></div>
     <div class="perf-note" id="perfNote"></div>
@@ -804,13 +807,21 @@ function drawChart(history) {
   const val = (h, n) => n === "Bot" ? h.bot : h[n];
   const names = ["Bot", "S&P 500", "Nasdaq 100"].filter(n => history.some(h => val(h, n) != null));
   const all = history.flatMap(h => names.map(n => val(h, n)).filter(v => v != null)).concat(0);
-  const lo = Math.min(...all), hi = Math.max(...all), span = (hi - lo) || 0.01;
+  // Round the scale to clean steps (0.25%, 0.50%, 1.00%, ...) so the labels on the right read easily.
+  const min = Math.min(...all), max = Math.max(...all);
+  const step = [0.0025, 0.005, 0.01, 0.02, 0.025, 0.05, 0.1, 0.2, 0.25, 0.5, 1].find(t => (max - min) / t <= 4) || 1;
+  const lo = Math.floor(min / step + 1e-9) * step, hi = Math.max(Math.ceil(max / step - 1e-9) * step, lo + step), span = hi - lo;
+  const ticks = Array.from({length: Math.round(span / step) + 1}, (_, i) => lo + i * step);
   const W = 600, H = 150, pad = 6, ns = "http://www.w3.org/2000/svg";
   const x = i => pad + i * (W - 2 * pad) / (history.length - 1);
   const y = v => pad + (hi - v) * (H - 2 * pad) / span;
   const svgEl = (name, attrs) => { const e = document.createElementNS(ns, name); Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v)); return e; };
   const svg = svgEl("svg", {viewBox: `0 0 ${W} ${H}`, preserveAspectRatio: "none", role: "img", "aria-label": "Growth since start"});
-  svg.append(svgEl("line", {x1: 0, x2: W, y1: y(0), y2: y(0), stroke: "var(--line)", "stroke-dasharray": "4 4", "vector-effect": "non-scaling-stroke"}));
+  if (lo < 0) svg.append(svgEl("rect", {x: 0, width: W, y: y(0), height: H - y(0), fill: "var(--bad)", opacity: 0.07}));
+  ticks.forEach(t => svg.append(svgEl("line", {x1: 0, x2: W, y1: y(t), y2: y(t), stroke: "var(--line)",
+    ...(Math.abs(t) < 1e-9 ? {"stroke-dasharray": "4 4"} : {opacity: 0.5}), "vector-effect": "non-scaling-stroke"})));
+  const axis = el("div", {class: "axis"}, ticks.map(t => el("span", {class: t < -1e-9 ? "bad" : "",
+    style: "top:" + (y(t) / H * 100).toFixed(2) + "%", text: (t < -1e-9 ? "−" : "") + Math.abs(t * 100).toFixed(2) + "%"})));
   names.slice().reverse().forEach(n => {
     const pts = history.map((h, i) => val(h, n) == null ? null : x(i).toFixed(1) + "," + y(val(h, n)).toFixed(1)).filter(Boolean);
     svg.append(svgEl("polyline", {points: pts.join(" "), fill: "none", stroke: COLORS[n], "stroke-width": n === "Bot" ? 2.5 : 1.5,
@@ -818,7 +829,7 @@ function drawChart(history) {
   });
   const legend = el("div", {class: "legend"}, names.map(n => el("span", {}, el("i", {style: "background:" + COLORS[n]}), n)),
     el("span", {text: shortDate(history[0].date) + " – " + shortDate(history[history.length - 1].date)}));
-  box.replaceChildren(svg, legend);
+  box.replaceChildren(el("div", {class: "plot"}, svg, axis), legend);
 }
 
 async function loadRuns() {
