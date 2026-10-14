@@ -491,7 +491,7 @@ header { margin-bottom: 16px; }
       <nav class="topnav" aria-label="Sections">
         <button data-go="positions">Positions</button>
         <button data-go="performance">Performance</button>
-        <button data-go="ai">AI Team</button>
+        <button data-go="ai">Counselors</button>
         <button data-go="arch">Architects</button>
       </nav>
       <button class="ghost" id="settingsBtn" title="Settings" aria-label="Settings"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg></button>
@@ -567,13 +567,13 @@ header { margin-bottom: 16px; }
   </section>
 
   <section class="card" data-view="ai">
-    <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3" /><path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z" /><path d="M5 18v2" /><path d="M19 18v2" /></svg>Round Table</span> <span class="small">ask the team · whoever fits answers</span></h2>
+    <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3" /><path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z" /><path d="M5 18v2" /><path d="M19 18v2" /></svg>Counselors</span> <span class="small">ask anything · whoever fits answers</span></h2>
     <div class="stage" id="stage">
       <div class="rt-table"></div>
       <div class="rt-chat">
         <div class="rt-log" id="rtLog" aria-live="polite"></div>
         <form class="rt-ask" id="askForm" autocomplete="off">
-          <input id="askQ" maxlength="1000" placeholder="Ask the team…" aria-label="Ask the AI team a question">
+          <input id="askQ" maxlength="1000" placeholder="Ask the counselors…" aria-label="Ask the counselors a question">
           <button type="submit" id="askSend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z" /><path d="M6 12h16" /></svg></button>
         </form>
       </div>
@@ -1080,8 +1080,8 @@ function showTable(list, pending) {
       el("div", {class: "who", title: AGENTS[a.role] || a.role}, seatIcon(a.role)), md(a.answer))));
   });
   if (pending) log.push(el("div", {class: "rt-q", text: pending}),
-    el("div", {class: "rt-a"}, el("div", {class: "status", style: "margin:0"}, el("span", {class: "spin"}), el("span", {text: "The team is thinking. Usually 1 to 3 minutes."}))));
-  if (!log.length) log.push(el("p", {class: "rt-hint", text: "Ask anything, like \"Why did the bot buy KDP?\" or \"Are we beating the S&P 500?\" The team members whose jobs fit will answer here."}));
+    el("div", {class: "rt-a"}, el("div", {class: "status", style: "margin:0"}, el("span", {class: "spin"}), el("span", {text: "The counselors are thinking. Usually 1 to 3 minutes."}))));
+  if (!log.length) log.push(el("p", {class: "rt-hint", text: "Ask anything, like \"Why did the bot buy KDP?\" or \"Are we beating the S&P 500?\" The counselors whose jobs fit will answer here."}));
   $("rtLog").replaceChildren(...log);
   $("rtLog").scrollTop = $("rtLog").scrollHeight;
   seats.forEach(({seat}) => seat.classList.toggle("thinking", !!pending));
@@ -1117,7 +1117,7 @@ $("askForm").addEventListener("submit", async e => {
       if (mine) { showTable(list); spoke(mine); return; }
     }
     showTable(await loadAnswers());
-    setStatus("The team is taking long. The answer will show at the table once it's ready.");
+    setStatus("The counselors are taking long. The answer will show at the table once it's ready.");
   } catch (err) { setStatus(err.message); }
   finally { $("askSend").disabled = false; }
 });
