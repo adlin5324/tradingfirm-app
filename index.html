@@ -544,6 +544,7 @@ header { margin-bottom: 16px; }
 .inbox .mail { display: flex; gap: 12px; width: 100%; text-align: left; padding: 12px 4px; border: 0; border-bottom: 1px solid var(--line);
   border-radius: 0; background: transparent; color: var(--muted); font: inherit; cursor: pointer; }
 .inbox .mail:hover { background: var(--faint); opacity: 1; }
+.inbox .mail.quiet { cursor: default; opacity: .65; } .inbox .mail.quiet:hover { background: transparent; opacity: .65; }
 .inbox .mail.unread { color: var(--text); box-shadow: inset 3px 0 0 var(--c1); }
 .mail-avatar { width: 36px; height: 36px; flex: none; border-radius: 50%; display: grid; place-items: center;
   background: color-mix(in srgb, var(--c1) 18%, transparent); color: var(--c1); }
@@ -1246,6 +1247,11 @@ function gatherNews(d) {
     body: () => [md(r.body)]}] : []; };
   // Only the Chief of staff, Mechanic, Quant and Code reviewer write to you; the rest report through them.
   news = {chief: report("chief")};
+  // A halt by the Risk officer or the bot's own loss limit reaches you as a message from the Chief.
+  const h = d.halt;
+  if (h && (h.by === "risk" || /^Risk officer/.test(h.reason || ""))) news.chief.unshift({key: "h:" + h.reason, at: h.at, role: "chief",
+    title: "Trading is halted", body: () => [el("p", {text: h.reason + ". Nothing will be bought or sold until you resume. "
+      + "Check what happened, then tap the trading switch at the top to turn trading back on."})], acts: () => []});
   archNews();
 }
 // The office inbox: everything the agents have for you, newest first, with what waits on you at the top.
@@ -1259,6 +1265,8 @@ function actsFor(n) {
 }
 // Email style: a list of messages (sender, subject, first line, date); tap one to read it, back to return.
 let reading = null;
+const WRITES = {chief: "Your brief every Sunday, and right away if trading is halted.", reviewer: "Changes to the bot waiting for your approval.",
+  mechanic: "Anything in the app or a trading run that fails.", quant: "The result of each Saturday's test."};
 const mailDate = s => !s ? "" : /^\d{4}-\d\d-\d\d$/.test(s) || new Date(s).toDateString() !== new Date().toDateString() ? shortDate(s)
   : new Date(s).toLocaleTimeString(undefined, {hour: "numeric", minute: "2-digit"});
 const sender = n => AGENTS[n.role] || n.role;
@@ -1296,7 +1304,12 @@ function showOffice() {
         showOffice();
       };
       return row;
-    }) : [empty("Nothing from the team yet")]));
+    }) : []),
+    // Everyone who writes to you is listed, even with nothing to say yet.
+    ...Object.entries(WRITES).filter(([role]) => !all.some(n => n.role === role)).map(([role, what]) =>
+      el("div", {class: "mail quiet"}, el("span", {class: "mail-avatar"}, seatIcon(role)), el("span", {class: "mail-text"},
+        el("span", {class: "mail-top"}, el("span", {class: "mail-sender", text: AGENTS[role]})),
+        el("span", {class: "mail-subj", text: "No messages yet"}), el("span", {class: "mail-snip", text: what})))));
 }
 // The trading floor: the ticker shows your holdings; each desk says whether its associate has news.
 
