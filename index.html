@@ -420,7 +420,6 @@ header { margin-bottom: 16px; }
   .topnav { order: 3; flex-basis: 100%; justify-content: space-between; }
 }
 .topnav button.on { color: var(--text); background: var(--faint); }
-#positionsCard, [data-panel] { scroll-margin-top: 16px; }
 </style>
 </head>
 <body>
@@ -469,7 +468,7 @@ header { margin-bottom: 16px; }
     </div>
   </section>
 
-  <section class="card" id="positionsCard">
+  <section class="card" id="positionsCard" data-view="positions">
     <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /><rect width="20" height="14" x="2" y="6" rx="2" /></svg>Positions</span> <span class="small" id="posCount"></span></h2>
     <div class="table-wrap"><table>
       <thead><tr><th>Stock</th><th class="num opt">Shares</th><th class="num opt">Price</th><th class="num">Value</th>
@@ -499,7 +498,7 @@ header { margin-bottom: 16px; }
     <div class="status" id="status"></div>
   </section>
 
-  <nav class="tabs" role="tablist">
+  <nav class="tabs" role="tablist" data-view="positions">
     <button role="tab" data-tab="activity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" /></svg>Activity</button>
     <button role="tab" data-tab="picks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg>Picks</button>
   </nav>
@@ -918,21 +917,20 @@ async function dispatch(cmd, preset = "") {
 }
 
 document.querySelectorAll("[data-cmd]").forEach(b => b.addEventListener("click", () => dispatch(b.dataset.cmd)));
-function showTab(name) {
-  if (!document.querySelector(`[data-panel="${name}"]`)) name = "activity";
-  document.querySelectorAll("[data-tab]").forEach(t => t.setAttribute("aria-selected", t.dataset.tab === name));
-  document.querySelectorAll("[data-panel]").forEach(p => p.classList.toggle("hidden", p.dataset.panel !== name));
-  document.querySelectorAll("[data-go]").forEach(b => b.classList.toggle("on", b.dataset.go === name));
-  store.set("tab", name);
+// Top bar picks the page: Positions (with Activity / Picks tabs), Performance or AI Team.
+let view = ["positions", "performance", "ai"].includes(store.get("view")) ? store.get("view") : "positions";
+let tab = ["activity", "picks"].includes(store.get("tab")) ? store.get("tab") : "activity";
+function show() {
+  const panel = view === "positions" ? tab : view;
+  document.querySelectorAll("[data-tab]").forEach(t => t.setAttribute("aria-selected", t.dataset.tab === tab));
+  document.querySelectorAll("[data-panel]").forEach(p => p.classList.toggle("hidden", p.dataset.panel !== panel));
+  document.querySelectorAll("[data-view]").forEach(e => e.classList.toggle("hidden", e.dataset.view !== view));
+  document.querySelectorAll("[data-go]").forEach(b => b.classList.toggle("on", b.dataset.go === view));
+  store.set("view", view); store.set("tab", tab);
 }
-document.querySelectorAll("[data-tab]").forEach(t => t.addEventListener("click", () => showTab(t.dataset.tab)));
-// Top bar: Positions jumps to the positions card; Performance and AI Team open their panels.
-document.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => {
-  if (b.dataset.go === "positions") { $("positionsCard").scrollIntoView({behavior: "smooth", block: "start"}); return; }
-  showTab(b.dataset.go);
-  document.querySelector(`[data-panel="${b.dataset.go}"]`).scrollIntoView({behavior: "smooth", block: "start"});
-}));
-showTab(store.get("tab"));
+document.querySelectorAll("[data-tab]").forEach(t => t.addEventListener("click", () => { tab = t.dataset.tab; show(); }));
+document.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => { view = b.dataset.go; show(); }));
+show();
 // Looks: fade-in on scroll, and a soft glow that follows the cursor over cards.
 if ("IntersectionObserver" in window) {
   document.documentElement.classList.add("js-anim");
