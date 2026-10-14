@@ -821,7 +821,22 @@ async function loadDashboard() {
   const res = await api("/contents/dashboard.json?ref=dashboard", {headers: {Accept: "application/vnd.github.raw+json"}});
   if (res.status === 404) { $("updated").textContent = "No dashboard yet. Press Refresh account."; return; }
   if (!res.ok) throw new Error("Couldn't load the dashboard (" + res.status + ").");
-  show(await res.json());
+  const d = await res.json();
+  if (d.team) d.team = {...d.team, ...await liveTeam()};
+  show(d);
+}
+
+// The dashboard only updates when the trading bot runs, so read the agents' reports and pull requests straight
+// from GitHub (same shape as the bot's advice.team). Keeps the dashboard's copy if the token can't read them.
+async function liveTeam() {
+  try {
+    const [issues, prs] = await Promise.all(["/issues?labels=agent&state=open&per_page=30", "/pulls?state=open&per_page=20"]
+      .map(async path => { const r = await api(path); if (!r.ok) throw 0; return r.json(); }));
+    return {prs: prs.map(p => ({number: p.number, title: p.title, url: p.html_url})),
+      reports: issues.filter(i => !i.pull_request).map(i => { const labels = i.labels.map(l => l.name);
+        return {role: labels.find(n => n !== "agent" && n !== "urgent") || "agent", title: i.title, url: i.html_url,
+          created: i.created_at, urgent: labels.includes("urgent"), body: (i.body || "").replace(/<!-- agent-data [\s\S]*? -->/g, "").trim()}; })};
+  } catch { return {}; }
 }
 
 function show(d) {
