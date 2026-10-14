@@ -709,7 +709,7 @@ async function loadDashboard() {
 }
 
 function show(d) {
-  $("updated").textContent = "Data from " + when(d.updated) + (d.last_run ? " · last bot run " + when(d.last_run) : "");
+  $("updated").textContent = "Updated " + when(d.updated) + (d.last_run ? " · Last Trading Run " + when(d.last_run) : "");
   const halted = !!d.halt;
   $("tradeSwitch").setAttribute("aria-checked", String(!halted));
   $("tradeSwitch").dataset.ready = "1";
@@ -789,7 +789,7 @@ function show(d) {
 }
 
 const AGENTS = {scout: "News scout", risk: "Risk officer", analyst: "Equity analyst", auditor: "Auditor",
-                chief: "Chief of staff", mechanic: "Mechanic", quant: "Quant researcher", reviewer: "Code reviewer"};
+                chief: "Chief of staff", breakdown: "Auditor", mechanic: "Mechanic", quant: "Quant researcher", reviewer: "Code reviewer"};
 
 function gradeTag(g) {
   if (!g) return el("span", {class: "muted small", text: "–"});
