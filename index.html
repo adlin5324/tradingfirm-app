@@ -1237,17 +1237,15 @@ setInterval(() => {
   turn = turn === "X" ? "O" : "X";
 }, 1100);
 
-// Each agent's latest news: reports and the last trading run.
+// The news that reaches your Office.
 let news = {};
 const seenList = () => { try { return JSON.parse(store.get("seen") || "[]"); } catch { return []; } };
 function gatherNews(d) {
   const reports = (d.team && d.team.reports) || [], newest = role => reports.filter(r => r.role === role).sort((a, b) => a.created < b.created ? 1 : -1)[0];
-  const report = (role, as = role) => { const r = newest(role); return r ? [{key: "r:" + r.url + r.created, at: r.created, title: r.title, role: as, url: r.url,
+  const report = role => { const r = newest(role); return r ? [{key: "r:" + r.url + r.created, at: r.created, title: r.title, role, url: r.url,
     body: () => [md(r.body)]}] : []; };
-  // The Scout and the Analyst (the Associates) report to the counselors and the Chief, not to you.
-  news = {risk: report("risk"), auditor: [...report("auditor"), ...report("breakdown", "auditor")], chief: report("chief")};
-  if (d.report && d.last_run) news.auditor.push({key: "t:" + d.last_run, at: d.last_run, title: "The last trading run, " + when(d.last_run), role: "auditor",
-    body: () => [el("pre", {text: d.report})]});
+  // Only the Chief of staff, Mechanic, Quant and Code reviewer write to you; the rest report through them.
+  news = {chief: report("chief")};
   archNews();
 }
 // The office inbox: everything the agents have for you, newest first, with what waits on you at the top.
