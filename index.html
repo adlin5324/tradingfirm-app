@@ -473,19 +473,18 @@ header { margin-bottom: 16px; }
 .topnav button.on { color: var(--text); background: var(--faint); }
 /* Round table: the AI team circles the table; your seat is the gap at the bottom. */
 .stage { position: relative; height: 260px; margin-top: 8px; overflow: hidden; }
-/* A polished wood table: grain, a soft highlight, and a darker edge showing its thickness. */
 #stage { height: 320px; } @media (max-width: 640px) { #stage { height: 230px; } }
-.rt-edge { position: absolute; inset: 0; background: color-mix(in srgb, var(--c2) 70%, black); z-index: 1; }
-.rt-table { position: absolute; inset: 0; z-index: 1;
-  background: radial-gradient(ellipse at 45% 30%, rgba(255, 255, 255, .22), transparent 45%),
-    repeating-linear-gradient(100deg, rgba(0, 0, 0, 0) 0 9px, rgba(0, 0, 0, .06) 9px 11px, rgba(0, 0, 0, 0) 11px 23px, rgba(255, 255, 255, .04) 23px 24px),
-    linear-gradient(170deg, color-mix(in srgb, var(--c1) 45%, var(--card)), color-mix(in srgb, var(--c2) 60%, var(--card)) 60%);
-}
-.rt-paper { position: absolute; left: 0; top: 0; z-index: 2; width: 22px; height: 28px; border-radius: 2px; background: color-mix(in srgb, white 88%, var(--c3));
-  box-shadow: 0 1px 2px rgba(0, 0, 0, .35); background-image: repeating-linear-gradient(transparent 0 6px, rgba(0, 0, 0, .18) 6px 7px); background-size: 14px 100%;
-  background-position: 4px 5px; background-repeat: no-repeat; }
-.rt-paper.pen::after { content: ""; position: absolute; right: -9px; top: 4px; width: 3px; height: 22px; border-radius: 2px; background: var(--c3);
-  transform: rotate(18deg); }
+/* The chessboard, in the theme's colors. */
+.chess { position: absolute; border-radius: 6px; overflow: hidden; border: 3px solid color-mix(in srgb, var(--c2) 70%, black);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .35);
+  background: repeating-conic-gradient(color-mix(in srgb, var(--c1) 50%, var(--card)) 0 25%, color-mix(in srgb, var(--c2) 85%, black) 0 50%) 0 0 / 25% 25%; }
+.chess .pc { position: absolute; left: 0; top: 0; width: 12.5%; height: 12.5%; display: grid; place-items: center; line-height: 1;
+  transition: transform .6s cubic-bezier(.3, .7, .3, 1), opacity .5s; }
+.chess .pc.w { color: color-mix(in srgb, white 85%, var(--c3)); text-shadow: 0 1px 2px rgba(0, 0, 0, .6); }
+.chess .pc.b { color: color-mix(in srgb, var(--c1) 85%, black); text-shadow: 0 0 2px rgba(255, 255, 255, .7), 0 0 6px color-mix(in srgb, var(--c3) 60%, transparent); }
+.chess .pc.taken { opacity: 0; }
+#stage .seat.think .icon { animation: meet-think 1.8s ease-in-out infinite; }
+@keyframes meet-think { 50% { transform: translateY(-2px) rotate(-8deg); } }
 .rt-chat { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
 .rt-log { max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 4px; font-size: 14px; scrollbar-width: thin; }
 .rt-a { align-self: flex-start; max-width: 95%; background: var(--card); border: 1px solid var(--line); padding: 8px 12px; border-radius: 14px 14px 14px 4px; }
@@ -551,15 +550,6 @@ header { margin-bottom: 16px; }
 @keyframes mc-flick { 50% { transform: scaleY(.6); } }
 @keyframes mc-lift { 0% { transform: translateY(0); } 15% { transform: translate(.6px, 0); } 25% { transform: translate(-.6px, -1px); } 75% { opacity: 1; } 100% { transform: translateY(-24px); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .site *, #archStage .icon svg, #stage .icon { animation: none !important; } }
-/* Each counselor sits in a chair turned toward the table: seat cushion, arms, and the backrest on the far side. */
-.rt-chair { position: absolute; left: 0; top: 0; width: 48px; height: 48px; }
-.rt-chair > i { position: absolute; inset: 0; transform: rotate(var(--rot, 0deg)); }
-:root[data-mode="light"] .rt-chair { filter: saturate(.35) brightness(1.35); }
-.rt-chair > i::before { content: ""; position: absolute; inset: 8px 6px 4px; border-radius: 9px; background: color-mix(in srgb, var(--c2) 55%, var(--card));
-  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--c3) 25%, transparent), 0 3px 6px rgba(0, 0, 0, .3); }
-.rt-chair > i::after { content: ""; position: absolute; left: 2px; right: 2px; top: -2px; height: 11px; border-radius: 8px 8px 4px 4px;
-  background: color-mix(in srgb, var(--c2) 80%, var(--card)); --arm: color-mix(in srgb, var(--c2) 80%, var(--card));
-  box-shadow: 0 2px 4px rgba(0, 0, 0, .35), -1px 18px 0 -3px var(--arm), 1px 18px 0 -3px var(--arm); }
 .seat { position: absolute; left: 0; top: 0; width: 40px; height: 40px; will-change: transform, opacity; }
 .seat .icon { display: grid; place-items: center; width: 40px; height: 40px; color: color-mix(in srgb, var(--c1) 55%, white);
   filter: drop-shadow(0 0 3px var(--c1)) drop-shadow(0 0 10px var(--c1)); }
@@ -689,8 +679,7 @@ header { margin-bottom: 16px; }
   <section class="card" data-view="firm" id="aiCard">
     <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3" /><path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z" /><path d="M5 18v2" /><path d="M19 18v2" /></svg>Counselors</span></h2>
     <div class="stage" id="stage">
-      <div class="rt-edge"></div>
-      <div class="rt-table"></div>
+      <div class="chess" id="chess"></div>
     </div>
 
   </section>
@@ -1246,64 +1235,53 @@ const ASSOC = ["scout", "analyst"];
 // The pit is 800 wide; show a band as wide as the stage's shape needs, so icons keep their size and fill it.
 new ResizeObserver(([e]) => { const w = Math.min(800, 220 * e.contentRect.width / (e.contentRect.height || 1));
   $("crowdSvg").setAttribute("viewBox", `${400 - w / 2} 0 ${w} 220`); }).observe($("assocStage"));
-const seats = Array.from({length: 9}, (_, i) => ["risk", "auditor", "chief"][i % 3]).map((role, i) => {
+// Counselors: the Risk officer and the Auditor play chess while the Chief of staff watches. Moves are for show,
+// not real chess: each turn a piece hops one or two squares, often taking one of the other side's pieces.
+const players = {risk: "w", auditor: "b"}, seats = ["risk", "auditor", "chief"].map(role => {
   const seat = el("div", {class: "seat still", title: AGENTS[role]}, el("div", {class: "icon"}, seatIcon(role)));
-  seat.querySelector(".icon").style.animationDelay = (i * .25) + "s";
   $("stage").append(seat);
   return {role, seat};
 });
-// Seats sit still around the table, evenly spaced, leaving the gap at the bottom where you sit.
-// The table is tilted in 3D, so each seat is projected the same way: far seats sit higher and smaller.
-// Seen from a little behind and above your empty seat at the bottom: the table is a flat oval centered in the
-// card, seats sit on its rim, and the near ones (lower) are drawn bigger than the far ones (higher).
-const GAP = 34;
-const chairs = seats.map(() => $("stage").appendChild(el("div", {class: "rt-chair"}, el("i"))));
-const papers = seats.map((_, i) => $("stage").appendChild(el("div", {class: "rt-paper" + (i % 3 === 1 ? " pen" : "")})));
-// You sit at the near end of the table: a camera at seated eye height looking down its length. World units: the
-// table is an oval A wide and B long; Z is distance from your eyes, Y height above the tabletop.
-function placeSeats() {
-  const stage = $("stage"), W = stage.clientWidth, H = stage.clientHeight, A = 1.5, B = 1.9, Z0 = .8 + B, EYE = .85;
-  const raw = (X, Z, Y = 0) => [X / Z, (EYE - Y) / Z, 1 / Z];
-  const rim = (t, out = 0) => [(A + out) * Math.cos(t), Z0 + (B + out) * Math.sin(t)];
-  const top = Array.from({length: 72}, (_, k) => raw(...rim(k / 72 * 2 * Math.PI)));
-  const ts = seats.map((_, i) => (-90 + GAP + (i + .5) * (360 - 2 * GAP) / seats.length) * Math.PI / 180);
-  const heads = ts.map(t => raw(...rim(t, .16), .22));
-  // Fit everything into the stage, cropping the near corners of the table off the bottom like a real view would.
-  const pts = [...top, ...heads], xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
-  const sc = Math.min((W - 70) / (Math.max(...xs) - Math.min(...xs)), (H - 50) / (Math.max(...ys) - Math.min(...ys)));
-  const ox = W / 2, oy = 30 - Math.min(...ys) * sc, px = p => [ox + p[0] * sc, oy + p[1] * sc];
-  const poly = top.map(p => px(p).map(v => v.toFixed(1) + "px").join(" ")).join(", ");
-  stage.querySelector(".rt-table").style.clipPath = `polygon(${poly})`;
-  stage.querySelector(".rt-edge").style.clipPath = `polygon(${top.map(p => { const [x, y] = px(p); return x.toFixed(1) + "px " + (y + 9).toFixed(1) + "px"; }).join(", ")})`;
-  const kFar = Math.min(...heads.map(p => p[2]));
-  seats.forEach(({seat}, i) => {
-    const t = ts[i], deg = t * 180 / Math.PI, [hx, hy] = px(heads[i]), k = heads[i][2] / kFar;
-    const size = Math.min(1.7, .7 * Math.sqrt(k)), behind = Math.sin(t) > .6;
-    seat.style.zIndex = 3;
-    seat.style.transform = `translate(${hx - 20}px, ${hy - 20}px) scale(${size.toFixed(3)})`;
-    const [chx, chy] = px(raw(...rim(t, .26), .12));
-    chairs[i].style.zIndex = behind ? 0 : 2;
-    chairs[i].style.transform = `translate(${chx - 24}px, ${chy - 24}px) scale(${(size * 1.05).toFixed(3)}, ${(size * .7).toFixed(3)})`;
-    chairs[i].style.setProperty("--rot", deg + 90 + "deg");
-    const [qx, qy] = px(raw(...rim(t, -.32)));
-    papers[i].style.transform = `translate(${qx - 11}px, ${qy - 14}px) rotate(${(i % 3 - 1) * 14}deg) scale(${(size * .8).toFixed(3)}, ${(size * .45).toFixed(3)})`;
-  });
+const BACK = "♜♞♝♛♚♝♞♜";
+let pieces = [];
+const placePiece = p => p.node.style.transform = `translate(${p.x * 100}%, ${p.y * 100}%)`;
+function setBoard() {
+  pieces.forEach(p => p.node.remove());
+  pieces = [];
+  for (let x = 0; x < 8; x++) for (const [y, side, glyph] of [[0, "b", BACK[x]], [1, "b", "♟"], [6, "w", "♟"], [7, "w", BACK[x]]])
+    pieces.push({x, y, side, node: $("chess").appendChild(el("span", {class: "pc " + side, text: glyph}))});
+  pieces.forEach(placePiece);
 }
-new ResizeObserver(placeSeats).observe($("stage"));
-// The meeting: every few seconds the floor passes to someone else; the others turn toward them and nod.
+function placeChess() {
+  const stage = $("stage"), W = stage.clientWidth, H = stage.clientHeight, size = Math.min(H - 40, W * .5), board = $("chess");
+  Object.assign(board.style, {width: size + "px", height: size + "px", left: (W - size) / 2 + "px", top: (H - size) / 2 + 6 + "px",
+    fontSize: size / 11 + "px"});
+  const spot = {risk: [(W - size) / 2 - 44, H / 2 + size * .2], auditor: [(W + size) / 2 + 44, H / 2 - size * .2], chief: [(W - size) / 2 - 40, (H - size) / 2 + 20]};
+  seats.forEach(({role, seat}) => { const [x, y] = spot[role]; seat.style.transform = `translate(${x - 20}px, ${y - 20}px) scale(${role === "chief" ? .85 : 1.15})`; });
+}
+setBoard();
+new ResizeObserver(placeChess).observe($("stage"));
+let turn = "w", moves = 0;
 setInterval(() => {
   if (!$("stage").offsetParent || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  const pick = Math.random() < .3 ? -1 : Math.floor(Math.random() * seats.length), st = $("stage").getBoundingClientRect();
-  const sp = pick < 0 ? {left: st.left + st.width / 2} : seats[pick].seat.getBoundingClientRect();
-  seats.forEach(({seat}, i) => {
-    const r = seat.getBoundingClientRect(), look = Math.max(-25, Math.min(25, (sp.left - r.left) / 12));
-    seat.classList.toggle("speak", i === pick);
-    seat.classList.toggle("nod", i !== pick && Math.random() < .5);
-    seat.classList.remove("note");
-    if (i !== pick && Math.random() < .15) seat.classList.add("note");
-    seat.style.setProperty("--look", i === pick ? "0deg" : look.toFixed(1) + "deg");
+  if (++moves > 40 || pieces.filter(p => p.side === turn).length < 4) { moves = 0; turn = "w"; return setBoard(); }
+  const at = (x, y) => pieces.find(p => p.x === x && p.y === y);
+  const options = pieces.filter(p => p.side === turn).flatMap(p => [-2, -1, 0, 1, 2].flatMap(dx => [-2, -1, 0, 1, 2].map(dy => ({p, x: p.x + dx, y: p.y + dy}))))
+    .filter(({p, x, y}) => (x !== p.x || y !== p.y) && x >= 0 && x < 8 && y >= 0 && y < 8 && (!at(x, y) || at(x, y).side !== turn));
+  const takes = options.filter(o => at(o.x, o.y)), pool = takes.length && Math.random() < .6 ? takes : options;
+  const {p, x, y} = pool[Math.floor(Math.random() * pool.length)] || {};
+  if (!p) return;
+  const victim = at(x, y);
+  if (victim) { victim.node.classList.add("taken"); setTimeout(() => victim.node.remove(), 500); pieces = pieces.filter(q => q !== victim); }
+  Object.assign(p, {x, y}); placePiece(p);
+  // The mover reaches for the board, the other player thinks, the Chief nods at every capture.
+  seats.forEach(({role, seat}) => {
+    seat.classList.toggle("speak", players[role] === turn);
+    seat.classList.toggle("think", role !== "chief" && players[role] !== turn);
+    seat.classList.toggle("nod", role === "chief" && !!victim);
   });
-}, 3200);
+  turn = turn === "w" ? "b" : "w";
+}, 1800);
 
 // Each counselor holds its latest news: reports, the next run's likely buys, the last trading run.
 // New news shows "!!" on its seat; tapping the seat makes it tell you in the chat.
