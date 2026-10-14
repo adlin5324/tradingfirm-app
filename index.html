@@ -515,7 +515,7 @@ header { margin-bottom: 16px; }
 .seat.thinking .icon { animation: rt-think 1.6s ease-in-out infinite; }
 .seat.spoke .icon { animation: rt-bob 2.4s ease-in-out infinite; }
 .seat.spoke .bang, .seat.news .bang { display: block; animation: rt-bang .8s ease-in-out infinite alternate; }
-.seat { cursor: pointer; outline: none; } .seat:focus-visible .icon { outline: 2px solid var(--c3); border-radius: 50%; }
+.seat { cursor: pointer; outline: none; } .seat.still { cursor: default; } .seat:focus-visible .icon { outline: 2px solid var(--c3); border-radius: 50%; }
 .rt-a .told-title { font-weight: 650; margin: 0 0 4px; }
 .rt-a pre { white-space: pre-wrap; font-size: 12px; margin: 0; max-height: 260px; overflow: auto; }
 .rt-a .acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; font-size: 13px; }
@@ -645,15 +645,9 @@ header { margin-bottom: 16px; }
 
   <section class="card" data-view="ai">
     <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3" /><path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z" /><path d="M5 18v2" /><path d="M19 18v2" /></svg>Counselors</span></h2>
-    <div class="rt-split">
     <div class="stage" id="stage">
       <div class="rt-table"></div>
     </div>
-    <div class="rt-chat">
-      <div class="rt-log" id="rtLog" aria-live="polite"></div>
-    </div>
-    </div>
-    <div class="status"></div>
 
   </section>
 
@@ -1194,12 +1188,9 @@ const ASSOC = ["scout", "analyst"];
 new ResizeObserver(([e]) => { const w = Math.min(800, 220 * e.contentRect.width / (e.contentRect.height || 1));
   $("crowdSvg").setAttribute("viewBox", `${400 - w / 2} 0 ${w} 220`); }).observe($("assocStage"));
 const seats = Object.keys(SEATS).filter(r => !ASSOC.includes(r)).map((role, i) => {
-  const seat = el("div", {class: "seat", title: AGENTS[role], role: "button", tabindex: "0", "aria-label": AGENTS[role]},
-    el("div", {class: "chair"}), el("div", {class: "icon"}, seatIcon(role)), el("span", {class: "bang", text: "!!"}));
+  const seat = el("div", {class: "seat still", title: AGENTS[role]}, el("div", {class: "chair"}), el("div", {class: "icon"}, seatIcon(role)));
   seat.querySelector(".icon").style.animationDelay = (i * .25) + "s";
   $("stage").append(seat);
-  seat.addEventListener("click", () => hear(role));
-  seat.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); hear(role); } });
   return {role, seat};
 });
 // Seats sit still around the table, evenly spaced, leaving the gap at the bottom where you sit.
@@ -1218,10 +1209,6 @@ function placeSeats() {
 }
 new ResizeObserver(placeSeats).observe($("stage"));
 
-function showTold() {
-  $("rtLog").replaceChildren(...(told.length ? told : [el("p", {class: "rt-hint", text: "Tap a counselor with !! to hear their news."})]));
-  $("rtLog").scrollTop = $("rtLog").scrollHeight;
-}
 // Each counselor holds its latest news: reports, the next run's likely buys, the last trading run.
 // New news shows "!!" on its seat; tapping the seat makes it tell you in the chat.
 let news = {}, told = [];
@@ -1271,7 +1258,6 @@ function gatherNews(d) {
   news.risk.push(...news.scout.map(n => ({...n, title: "From the Scout: " + n.title})));
   news.auditor.push(...news.analyst.map(n => ({...n, title: "From the Analyst: " + n.title})));
   news.scout = news.analyst = [];
-  seats.forEach(({role, seat}) => seat.classList.toggle("news", unread(role).length > 0));
   archNews();
 }
 function hear(role) {
@@ -1290,13 +1276,12 @@ function hear(role) {
       el("p", {class: "told-title", text: n.title}), ...n.body(), ...(acts.childNodes.length ? [acts] : [])));
   });
   store.set("seen", JSON.stringify([...seenList(), ...items.map(n => n.key)].slice(-100)));
-  seats.forEach(({role: r, seat}) => seat.classList.toggle("news", unread(r).length > 0));
   if (ARCHITECTS.includes(role)) {
     archNews(); showArchLog();
     const seat = archSeats.find(s => s.role === role).seat;
     seat.classList.add("spoke"); archTalking = true;
     setTimeout(() => { seat.classList.remove("spoke"); archTalking = archSeats.some(s => s.seat.classList.contains("spoke")); }, 6000);
-  } else showTold();
+  }
 }
 // The trading floor: the ticker shows your holdings; each desk says whether its associate has news.
 
@@ -1370,7 +1355,6 @@ $("modePick").value = store.get("mode") === "light" ? "light" : "dark";
 $("modePick").addEventListener("change", () => { store.set("mode", $("modePick").value); applyMode($("modePick").value); });
 $("themePick").addEventListener("change", () => { store.set("theme", $("themePick").value); applyTheme($("themePick").value); showSchools(); });
 showProblems();
-showTold();
 showArchLog();
 refresh();
 if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js");
