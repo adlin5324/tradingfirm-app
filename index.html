@@ -552,6 +552,7 @@ header { margin-bottom: 16px; }
 @media (prefers-reduced-motion: reduce) { .site *, #archStage .icon svg, #stage .icon { animation: none !important; } }
 /* Each counselor sits in a chair turned toward the table: seat cushion, arms, and the backrest on the far side. */
 .rt-chair { position: absolute; left: 0; top: 0; width: 48px; height: 48px; }
+#stage .seat.you .icon { color: var(--c3); } :root[data-mode="light"] #stage .seat.you .icon { color: var(--c1); }
 .rt-chair > i { position: absolute; inset: 0; transform: rotate(var(--rot, 0deg)); }
 :root[data-mode="light"] .rt-chair { filter: saturate(.35) brightness(1.35); }
 .rt-chair > i::before { content: ""; position: absolute; inset: 8px 6px 4px; border-radius: 9px; background: color-mix(in srgb, var(--c2) 55%, var(--card));
@@ -1255,16 +1256,19 @@ const seats = Array.from({length: 9}, (_, i) => ["risk", "auditor", "chief"][i %
 // Seen from a little behind and above your empty seat at the bottom: the table is a flat oval centered in the
 // card, seats sit on its rim, and the near ones (lower) are drawn bigger than the far ones (higher).
 const GAP = 34;
-const chairs = seats.map(() => $("stage").appendChild(el("div", {class: "rt-chair"}, el("i"))));
-const papers = seats.map((_, i) => $("stage").appendChild(el("div", {class: "rt-paper" + (i % 3 === 1 ? " pen" : "")})));
+// Your seat: the gap at the near end of the table, facing the counselors.
+const you = $("stage").appendChild(el("div", {class: "seat still you", title: "You"}, el("div", {class: "icon"})));
+you.firstChild.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>';
+const chairs = [...seats, 0].map(() => $("stage").appendChild(el("div", {class: "rt-chair"}, el("i"))));
+const papers = [...seats, 0].map((_, i) => $("stage").appendChild(el("div", {class: "rt-paper" + (i % 3 === 1 ? " pen" : "")})));
 function placeSeats() {
   const stage = $("stage"), table = stage.querySelector(".rt-table"), W = stage.clientWidth, H = stage.clientHeight;
   // Seen from further back and lower down: a smaller, flatter table.
   const small = W < 500 ? .72 : .85, rx = Math.min(W / 2 - 60 * small, 340), ry = Math.min(rx * .24, H / 2 - 50 * small);
   const cx = W / 2, cy = H / 2 + 10;
   Object.assign(table.style, {left: cx - rx + "px", top: cy - ry + "px", width: 2 * rx + "px", height: 2 * ry + "px"});
-  seats.forEach(({seat}, i) => {
-    const deg = 90 + GAP + (i + .5) * (360 - 2 * GAP) / seats.length, a = deg * Math.PI / 180;
+  [...seats, {seat: you}].forEach(({seat}, i) => {
+    const deg = seat === you ? 90 : 90 + GAP + (i + .5) * (360 - 2 * GAP) / seats.length, a = deg * Math.PI / 180;
     // Far seats sit behind the table (it hides their chairs' fronts); near seats sit in front of it.
     const far = Math.sin(a) < -.15, near = (.86 + .16 * (Math.sin(a) + 1) / 2) * small;
     const x = cx + (rx + 4) * Math.cos(a), y = cy + (ry + 4) * Math.sin(a) - (far ? 10 : 0);
@@ -1273,7 +1277,7 @@ function placeSeats() {
     chairs[i].style.transform = `translate(${x - 24}px, ${y + (far ? 6 : 0) - 24}px) scale(${near.toFixed(3)})`;
     chairs[i].style.setProperty("--rot", deg + 90 + "deg");
     seat.style.transform = `translate(${x - 20}px, ${y - 20}px) scale(${near.toFixed(3)})`;
-    const px = cx + rx * .62 * Math.cos(a), py = cy + ry * .55 * Math.sin(a);
+    const px = cx + rx * .62 * Math.cos(a), py = cy + ry * (seat === you ? .3 : .55) * Math.sin(a);
     papers[i].style.transform = `translate(${px - 11}px, ${py - 14}px) rotate(${deg + 90 + (i % 3 - 1) * 12}deg) scale(${(near * .9).toFixed(3)})`;
   });
 }
@@ -1281,7 +1285,8 @@ new ResizeObserver(placeSeats).observe($("stage"));
 // The meeting: every few seconds the floor passes to someone else; the others turn toward them and nod.
 setInterval(() => {
   if (!$("stage").offsetParent || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  const pick = Math.floor(Math.random() * seats.length), sp = seats[pick].seat.getBoundingClientRect();
+  const pick = Math.random() < .3 ? -1 : Math.floor(Math.random() * seats.length), sp = (pick < 0 ? you : seats[pick].seat).getBoundingClientRect();
+  you.classList.toggle("speak", pick < 0);
   seats.forEach(({seat}, i) => {
     const r = seat.getBoundingClientRect(), look = Math.max(-25, Math.min(25, (sp.left - r.left) / 12));
     seat.classList.toggle("speak", i === pick);
