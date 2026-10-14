@@ -772,7 +772,7 @@ async function liveTeam() {
   try {
     const [issues, prs] = await Promise.all(["/issues?labels=agent&state=open&per_page=30", "/pulls?state=open&per_page=20"]
       .map(async path => { const r = await api(path); if (!r.ok) throw 0; return r.json(); }));
-    return {prs: prs.map(p => ({number: p.number, title: p.title, url: p.html_url})),
+    return {prs: prs.map(p => ({number: p.number, title: p.title, url: p.html_url, branch: p.head && p.head.ref})),
       reports: issues.filter(i => !i.pull_request).map(i => { const labels = i.labels.map(l => l.name);
         return {role: labels.find(n => n !== "agent" && n !== "urgent") || "agent", title: i.title, url: i.html_url,
           created: i.created_at, urgent: labels.includes("urgent"), body: (i.body || "").replace(/<!-- agent-data [\s\S]*? -->/g, "").trim()}; })};
@@ -909,8 +909,12 @@ function archNews() {
     body: () => [el("p", {text: p.error})], acts: () => [...(p.url ? [link("Open the run", p.url)] : []), btn("Clear problems", () => { store.del("problems"); archNews(); })]})),
     ...reports("mechanic")];
   news.quant = reports("quant");
-  news.reviewer = [...t.prs.map(p => ({key: "pr:" + p.number, title: "Waiting on you: #" + p.number + " " + p.title, role: "reviewer",
-    body: () => [el("p", {text: "A change to the bot is ready. Nothing changes until you approve it on GitHub."})], acts: () => [link("Open it", p.url)]})), ...report("reviewer")];
+  // A proposal sits in the conversation of the agent that made it (its agent/quant-… or agent/mechanic-… branch).
+  const author = p => (/quant|mechanic/.exec(p.branch || p.title.toLowerCase()) || ["reviewer"])[0];
+  const prs = t.prs.map(p => ({key: "pr:" + p.number, title: "Waiting on you: #" + p.number + " " + p.title, role: author(p),
+    body: () => [el("p", {text: "A change to the bot is ready. Nothing changes until you approve it on GitHub."})], acts: () => [link("Open it", p.url)]}));
+  news.reviewer = [...report("reviewer")];
+  prs.forEach(p => news[p.role].push(p));
   showOffice();
 }
 async function runArch(role, from) {
@@ -1267,7 +1271,7 @@ function actsFor(n) {
 // Messaging style: one conversation per agent (newest message, time, unread count); tap one to read the whole
 // conversation as chat bubbles, oldest first. "← Inbox" goes back.
 let reading = null;
-const WRITES = {chief: "Your brief every Sunday, and right away if trading is halted.", reviewer: "Changes to the bot waiting for your approval.",
+const WRITES = {chief: "Your brief every Sunday, and right away if trading is halted.", reviewer: "Its checks on each proposal before you approve it (posted on the proposal on GitHub).",
   mechanic: "Anything in the app or a trading run that fails.", quant: "The result of each Saturday's test."};
 const mailDate = s => !s ? "" : /^\d{4}-\d\d-\d\d$/.test(s) || new Date(s).toDateString() !== new Date().toDateString() ? shortDate(s)
   : new Date(s).toLocaleTimeString(undefined, {hour: "numeric", minute: "2-digit"});
