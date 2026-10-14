@@ -526,6 +526,7 @@ header { margin-bottom: 16px; }
       <button class="primary" id="save">Save and connect</button>
       <button id="forget">Forget token</button>
     </div>
+    <div class="status"></div>
   </section>
 
   <div class="banner hidden" id="banner"></div>
@@ -594,6 +595,7 @@ header { margin-bottom: 16px; }
         </form>
       </div>
     </div>
+    <div class="status"></div>
   </section>
 
   <section class="card" data-view="ai">
@@ -852,13 +854,14 @@ function showProblems() {
         ...(p.url ? [el("a", {href: p.url, target: "_blank", rel: "noopener", text: "Open the run"})] : [])),
       tag("failed", "bad"))))] : []));
 }
-function reportProblem(source, error, url) {
+function reportProblem(source, error, url, from) {
   const list = problemList(), last = list[list.length - 1];
   if (last && last.source === source && last.error === error) list.pop();
   list.push({source, error, url: url || "", at: new Date().toISOString()});
   store.set("problems", JSON.stringify(list.slice(-8)));
   showProblems();
-  setStatus("Failed. Details on the Architects page.");
+  setStatus("Logged and sent to the Architects.", from);
+  if (from) setTimeout(() => setStatus("", from), 10000);
 }
 showProblems();
 
@@ -869,8 +872,8 @@ async function runAgent() {
       method: "POST", body: JSON.stringify({ref: "main", inputs: {role}}), headers: {"Content-Type": "application/json"},
     });
     if (res.status !== 204) throw new Error("GitHub didn't start it (" + res.status + ").");
-    setStatus(AGENTS[role] + " started. Its report shows here in a few minutes, after the next data update.");
-  } catch (e) { reportProblem("Run Agent: " + AGENTS[role], e.message); }
+    setStatus(AGENTS[role] + " started. Its report shows here in a few minutes, after the next data update.", $("agentRun"));
+  } catch (e) { reportProblem("Run Agent: " + AGENTS[role], e.message, "", $("agentRun")); }
 }
 
 // The chart runs from the start (everything at 0%) to today's live numbers.
@@ -936,8 +939,10 @@ async function loadRuns() {
   return runs;
 }
 
-function setStatus(text, busy) {
-  document.querySelectorAll(".status").forEach(e => e.replaceChildren(...(text ? [...(busy ? [el("span", {class: "spin"})] : []), el("span", {text})] : [])));
+// Status lines belong to one card: the one holding the button that was pressed.
+function setStatus(text, from) {
+  const box = from && from.closest(".card") && from.closest(".card").querySelector(".status");
+  if (box) box.replaceChildren(...(text ? [el("span", {text})] : []));
 }
 
 async function refresh() {
@@ -1026,12 +1031,12 @@ $("summaryBtn").addEventListener("click", async () => {
       const runs = (await (await api("/actions/workflows/agents.yml/runs?per_page=5")).json()).workflow_runs || [];
       const mine = runs.find(r => Date.parse(r.created_at) >= started);
       if (!mine || mine.status !== "completed") continue;
-      if (mine.conclusion !== "success") { reportProblem("Refresh Summary", await failedAt(mine), mine.html_url); return; }
+      if (mine.conclusion !== "success") { reportProblem("Refresh Summary", await failedAt(mine), mine.html_url, btn); return; }
       const [brief] = await (await api("/issues?labels=agent,chief&state=open&per_page=1")).json();
       if (brief) perfNote({reports: [{role: "chief", body: brief.body || "", created: brief.created_at}]});
       return;
     }
-  } catch (e) { reportProblem("Refresh Summary", e.message); }
+  } catch (e) { reportProblem("Refresh Summary", e.message, "", btn); }
   finally { btn.disabled = false; spinner.remove(); }
 });
 $("archRun").addEventListener("click", async () => {
@@ -1041,8 +1046,8 @@ $("archRun").addEventListener("click", async () => {
       method: "POST", body: JSON.stringify({ref: "main"}), headers: {"Content-Type": "application/json"},
     });
     if (res.status !== 204) throw new Error("GitHub didn't start it (" + res.status + ").");
-    setStatus(pick.selectedOptions[0].text + " started. Its work shows here when it's done.");
-  } catch (e) { reportProblem("Run: " + pick.selectedOptions[0].text, e.message); }
+    setStatus(pick.selectedOptions[0].text + " started. Its work shows here when it's done.", $("archRun"));
+  } catch (e) { reportProblem("Run: " + pick.selectedOptions[0].text, e.message, "", $("archRun")); }
 });
 $("sellCancel").addEventListener("click", () => $("sellBox").close());
 $("sellGo").addEventListener("click", async () => {
@@ -1087,20 +1092,20 @@ async function dispatch(cmd, preset = "") {
       headers: {"Content-Type": "application/json"},
     });
     if (res.status !== 204) throw new Error("GitHub didn't start it (" + res.status + ").");
-    setStatus("");
+    setStatus("", pressed);
     pressed.append(spinner);
     for (let i = 0; i < 60; i++) {
       await new Promise(r => setTimeout(r, 8000));
       const runs = await loadRuns();
       const mine = runs.find(r => r.event === "workflow_dispatch" && Date.parse(r.created_at) >= started);
       if (mine && mine.status === "completed") {
-        if (mine.conclusion !== "success") reportProblem(label, await failedAt(mine), mine.html_url);
+        if (mine.conclusion !== "success") reportProblem(label, await failedAt(mine), mine.html_url, pressed);
         await loadDashboard();
         return;
       }
     }
   } catch (e) {
-    reportProblem(label, e.message);
+    reportProblem(label, e.message, "", pressed);
   } finally {
     buttons.forEach(b => b.disabled = false);
     spinner.remove();
@@ -1196,8 +1201,8 @@ $("askForm").addEventListener("submit", async e => {
       if (mine) { showTable(list); spoke(mine); return; }
     }
     showTable(await loadAnswers());
-    setStatus("The counselors are taking long. The answer will show at the table once it's ready.");
-  } catch (err) { reportProblem("Question to the counselors", err.message); }
+    setStatus("The counselors are taking long. The answer will show at the table once it's ready.", $("askSend"));
+  } catch (err) { reportProblem("Question to the counselors", err.message, "", $("askSend")); }
   finally { $("askSend").disabled = false; }
 });
 
@@ -1262,7 +1267,7 @@ $("save").addEventListener("click", () => {
   $("setup").classList.add("hidden");
   refresh();
 });
-$("forget").addEventListener("click", () => { store.del("token"); setStatus("Token removed from this browser."); });
+$("forget").addEventListener("click", () => { store.del("token"); setStatus("Token removed from this browser.", $("forget")); });
 $("repo").value = store.get("repo") || "adlin5324/tradingfirm";
 $("themePick").replaceChildren(...Object.entries(THEMES).map(([k, t]) => el("option", {value: k, text: t[0]})));
 $("themePick").value = THEMES[store.get("theme")] ? store.get("theme") : "crimson";
