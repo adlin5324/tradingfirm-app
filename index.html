@@ -101,10 +101,11 @@ h1 { font-size: 18px; margin: 0; letter-spacing: -.01em; }
 .vs b { font-weight: 650; }
 .bars:has(.vs) { display: grid; grid-template-columns: repeat(3, 1fr); }
 .bars .vs { flex-direction: column; justify-content: center; gap: 2px; padding: 8px 10px; border-radius: 14px; }
-.vs .amt { display: inline-flex; align-items: baseline; gap: 6px; white-space: nowrap; }
+.vs .amt { display: inline-flex; align-items: baseline; gap: 6px; white-space: nowrap; font-size: 12px; }
+.vs .worth { font-size: 16px; }
 .vs .who { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
 .vs small { font-size: 12px; opacity: .85; }
-@media (max-width: 640px) { .bars:has(.vs) { grid-template-columns: 1fr; } .bars .vs { flex-direction: row; justify-content: space-between; border-radius: 99px; } }
+@media (max-width: 640px) { .bars:has(.vs) { grid-template-columns: 1fr; } .bars .vs { flex-direction: row; gap: 10px; border-radius: 99px; } .vs .who { margin-right: auto; } }
 .chart { margin-top: 12px; }
 .chart svg { width: 100%; height: 160px; display: block; }
 .plot { position: relative; padding-right: 56px; }
@@ -731,8 +732,9 @@ function show(d) {
     // What the start amount made in each: the bot, or the same money in the S&P 500 or Nasdaq 100.
     $("bars").replaceChildren(...rows.map(([name, v]) => el("span", {class: "vs"},
       el("span", {class: "who"}, el("i", {style: "background:" + (COLORS[name] || "var(--s2)")}), name),
-      el("span", {class: "amt"}, tone(el("b", {class: "num", text: signed(s.start_value * v)}), v), tone(el("small", {class: "num", text: pct(v)}), v)))));
-    $("since").textContent = "since " + shortDate(s.start) +
+      el("b", {class: "num worth", text: money(s.start_value * (1 + v))}),
+      el("span", {class: "amt"}, tone(el("span", {class: "num", text: signed(s.start_value * v)}), v), tone(el("small", {class: "num", text: pct(v)}), v)))));
+    $("since").textContent = "Since " + shortDate(s.start) +
       (s.deposits ? " · deposits " + signed(s.deposits) : "");
   }
   const fc = d.fill_cost;
