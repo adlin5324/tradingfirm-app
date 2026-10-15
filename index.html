@@ -892,8 +892,8 @@ function archNews() {
   t.prs.forEach(p => {
     const role = (/quant|mechanic/.exec(p.branch || p.title.toLowerCase()) || [])[0];
     if (role) news[role].push({key: "pr:" + p.number, title: "Waiting on you: #" + p.number + " " + p.title, role,
-      body: () => [el("p", {text: "A change to the bot is ready, with the Code reviewer's verdict on it. Nothing changes until you approve it on GitHub."})],
-      acts: () => [link("Open it", p.url)]});
+      body: () => [el("p", {text: "A change to the bot is ready. The Code reviewer's verdict is on it (Open it). Nothing changes until you say yes."})],
+      acts: () => [answerButton(p.number, "yes", "Yes, make the change"), answerButton(p.number, "no", "No"), link("Open it", p.url)]});
   });
   showOffice();
 }
@@ -1090,6 +1090,41 @@ $("sellGo").addEventListener("click", async () => {
 });
 
 // Which job and step of a failed run broke, for the Architects page.
+// Your Yes or No on a proposal. A GitHub workflow does the merge or close, so the app's token never needs
+// permission to change code. It merges only if the proposal's tests passed. Tap twice to confirm.
+const answerButton = (number, answer, text) => Object.assign(el("button", {text}), {onclick: e => decide(number, answer, e.currentTarget)});
+async function decide(number, answer, button) {
+  if (button.dataset.armed !== "1") {
+    const text = button.textContent;
+    Object.assign(button, {textContent: "Tap again to confirm"}).dataset.armed = "1";
+    setTimeout(() => { button.textContent = text; button.dataset.armed = ""; }, 5000);
+    return;
+  }
+  const box = $("inbox"), label = answer === "yes" ? "Your yes on #" + number : "Your no on #" + number;
+  const spinner = el("span", {class: "spin btn-spin"});
+  button.disabled = true;
+  button.append(spinner);
+  const started = Date.now() - 5000;
+  try {
+    const res = await api("/actions/workflows/decide.yml/dispatches", {
+      method: "POST", body: JSON.stringify({ref: "main", inputs: {pr: String(number), answer}}), headers: {"Content-Type": "application/json"},
+    });
+    if (res.status !== 204) throw new Error("GitHub didn't start it (" + res.status + ").");
+    for (let i = 0; i < 30; i++) {
+      await new Promise(r => setTimeout(r, 6000));
+      const runs = (await (await api("/actions/workflows/decide.yml/runs?per_page=5")).json()).workflow_runs || [];
+      const mine = runs.find(r => r.event === "workflow_dispatch" && Date.parse(r.created_at) >= started);
+      if (!mine || mine.status !== "completed") continue;
+      if (mine.conclusion !== "success") { reportProblem(label, await failedAt(mine), mine.html_url, box); return; }
+      setStatus(answer === "yes" ? "Done. The change is in the bot." : "Done. The proposal is closed.", box);
+      await loadDashboard();
+      return;
+    }
+    setStatus("Still running. Check GitHub.", box);
+  } catch (e) { reportProblem(label, e.message, "", box); }
+  finally { button.disabled = false; spinner.remove(); }
+}
+
 async function failedAt(run) {
   const outcome = run.conclusion === "failure" ? "Failed" : "Ended (" + run.conclusion + ")";
   try {
