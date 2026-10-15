@@ -500,12 +500,11 @@ header { margin-bottom: 16px; }
 @keyframes meet-speak { 0%, 100% { transform: rotate(var(--look, 0deg)) scale(1); } 30% { transform: rotate(calc(var(--look, 0deg) - 6deg)) scale(1.06); } 60% { transform: rotate(calc(var(--look, 0deg) + 5deg)) scale(1.04); } }
 
 .seat { cursor: pointer; outline: none; } .seat.still { cursor: default; } .seat:focus-visible .icon { outline: 2px solid var(--c3); border-radius: 50%; }
-/* Map: one trading day drawn as a neural network, layer by layer in the order things happen. */
+/* Map: the agents and buying strategies drawn as a neural network, with the specialists to the side. */
 .net-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 8px 0 4px; }
 .net-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; border: 2px solid; }
 .net-legend .ai, .net .ai circle { border-color: var(--c1); stroke: var(--c1); }
 .net-legend .rule, .net .rule circle { border-color: var(--c3); stroke: var(--c3); }
-.net-legend .data, .net .data circle { border-color: var(--muted); stroke: var(--muted); border-style: dashed; }
 .net-wrap { overflow-x: auto; }
 .net { display: block; width: 100%; max-width: 560px; margin: 0 auto; }
 .net .edge { fill: none; stroke: var(--line); stroke-width: 1.4; transition: stroke .2s, opacity .2s; }
@@ -514,7 +513,7 @@ header { margin-bottom: 16px; }
 @keyframes net-flow { to { stroke-dashoffset: -10; } }
 .net .node { cursor: pointer; outline: none; }
 .net .node circle { fill: var(--card); stroke-width: 2.2; transition: r .2s; }
-.net .data circle { stroke-dasharray: 3 2; }
+.net .side-line { stroke: var(--line); stroke-dasharray: 3 4; }
 .net .node.on circle, .net .node:focus-visible circle { filter: drop-shadow(0 0 6px var(--c1)); }
 .net.focus .node:not(.on):not(.near) { opacity: .4; }
 .net text { fill: var(--text); font-size: 10px; text-anchor: middle; }
@@ -707,9 +706,9 @@ header { margin-bottom: 16px; }
 
   <section class="card" data-view="map">
     <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="16" y="16" width="6" height="6" rx="1" /><rect x="2" y="16" width="6" height="6" rx="1" /><rect x="9" y="2" width="6" height="6" rx="1" /><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3" /><path d="M12 12V8" /></svg>Map</span></h2>
-    <p class="small muted">One trading day as a network, top to bottom in the order it happens. Tap any node.</p>
-    <div class="net-legend small muted"><span><i class="ai"></i>AI agent</span><span><i class="rule"></i>Fixed rules</span><span><i class="data"></i>Data and money</span></div>
-    <div class="net-wrap"><svg id="net" role="group" aria-label="Map of a trading day"></svg></div>
+    <p class="small muted">The agents and the 10 buying strategies as a network. The specialists work to the side. Tap any node.</p>
+    <div class="net-legend small muted"><span><i class="ai"></i>AI agent</span><span><i class="rule"></i>Buying strategy (fixed rules)</span></div>
+    <div class="net-wrap"><svg id="net" role="group" aria-label="Map of the agents and strategies"></svg></div>
     <div class="net-info" id="netInfo" aria-live="polite"></div>
   </section>
 
@@ -1348,42 +1347,43 @@ new MutationObserver(() => { cancelAnimationFrame(titling); titling = requestAni
   .observe(document.body, {childList: true, subtree: true, characterData: true});
 titleLabels();
 
-// Map: one trading day as a neural network, layer by layer in the order things happen.
+// Map: the agents and the 10 buying strategies as a neural network; the specialists stand to the side.
 const NET = [
-  ["Data", [["news", "News", "data", "Market and company news from the web.", "Overnight and early morning."],
-            ["prices", "Prices", "data", "Daily prices for about 277 stocks, from Webull.", "Fetched at the trading run."],
-            ["account", "Account", "data", "Your Webull cash account: cash, settled cash and holdings.", "Read at the trading run."]]],
-  ["8:30 AM", [["scout", "Scout", "ai", "News scout: sums up the news that matters for your stocks and passes it to the Risk officer.", "Weekdays 8:30 AM."]]],
-  ["9:15 AM", [["risk", "Risk", "ai", "Risk officer: reads the news and can halt trading until it is resumed. It can never buy or sell.", "Weekdays 9:15 AM, before trading."]]],
-  ["9:45 AM · 10 strategies", ["trend", "mean reversion", "momentum", "breakout", "volume surge", "pullback", "low volatility", "near 1-year high", "Bollinger bounce", "MACD"]
-    .map((n, i) => ["s" + i, "", "rule", "Strategy: " + n + ". One of 10 fixed stock-picking methods; each votes for the stocks it likes.", "The trading run, about 9:45 AM."])],
-  ["Decision", [["vote", "Vote", "rule", "A stock is bought only when at least 5 of the 10 strategies agree.", "The trading run."],
-                ["rules", "Risk rules", "rule", "Fixed limits on every order: 7% daily loss, max 6 stocks, 25% each, 50% per sector, $200 per order, no ETFs, cash only, no good-faith violations.", "Checked on every single order."]]],
-  ["Orders", [["webull", "Webull", "data", "Orders that pass every check go to your real Webull account. Then prices and your account update in the app every 10 minutes.", "One trading decision a day; live updates until the close."]]],
-  ["After the close", [["auditor", "Auditor", "ai", "If the S&P 500 or Nasdaq 100 beat the bot or came close, explains why, stock by stock.", "Weekdays 5:15 PM, only when needed."]]],
+  ["Associates", [["scout", "Scout", "ai", "News scout: sums up the news that matters for your stocks.", "Weekdays 8:30 AM."],
+                  ["analyst", "Analyst", "ai", "Equity analyst: grades the stocks you hold and might buy.", "Monday and Thursday."]]],
+  ["Counselors", [["risk", "Risk", "ai", "Risk officer: reads the news and grades, and can halt every strategy until trading is resumed. It can never buy or sell.", "Weekdays 9:15 AM, before trading."],
+                  ["auditor", "Auditor", "ai", "Checks the books monthly, and explains why a market beat the bot after the close.", "1st of the month; weekdays 5:15 PM when needed."],
+                  ["chief", "Chief", "ai", "Chief of staff: gathers everyone's reports into your Sunday brief.", "Sunday 9:00 AM; right away on a halt."]]],
+  ["10 buying strategies", ["trend", "mean reversion", "momentum", "breakout", "volume surge", "pullback", "low volatility", "near 1-year high", "Bollinger bounce", "MACD"]
+    .map((n, i) => ["s" + i, "", "rule", "Strategy: " + n + ". One of 10 fixed stock-picking methods; a stock is bought when at least 5 agree.", "Every trading run, about 9:45 AM."])],
 ];
-const NET_EDGES = [["news", "scout"], ["scout", "risk"], ["risk", "rules"], ["account", "rules"],
-  ...Array.from({length: 10}, (_, i) => [["prices", "s" + i], ["s" + i, "vote"]]).flat(),
-  ["vote", "rules"], ["rules", "webull"], ["webull", "auditor"]];
+const SIDE = [["quant", "Quant", "ai", "Specialist in research: tests ideas on past prices, then on an unseen year, and proposes only what passes.", "Saturday 11:00 AM."],
+  ["reviewer", "Reviewer", "ai", "Specialist in checking: reviews every proposal from the Quant and the Mechanic before you decide.", "On every proposal."],
+  ["mechanic", "Mechanic", "ai", "Specialist in repairs: when a trading run fails, finds the cause and proposes a fix.", "After any failed run."]];
+const NET_EDGES = [["scout", "risk"], ["scout", "chief"], ["analyst", "risk"], ["analyst", "chief"], ["auditor", "chief"],
+  ...Array.from({length: 10}, (_, i) => ["risk", "s" + i]), ["quant", "reviewer"], ["mechanic", "reviewer"]];
 (function drawNet() {
-  const svg = $("net"), W = 340, gap = 66, top = 36, pos = {}, info = {};
-  svg.setAttribute("viewBox", `0 0 ${W} ${top + gap * (NET.length - 1) + 30}`);
+  const svg = $("net"), MW = 262, SX = 306, gap = 90, top = 40, pos = {}, info = {};
+  const H = top + gap * (NET.length - 1) + 34;
+  svg.setAttribute("viewBox", `0 0 340 ${H}`);
   svg.classList.add("net");
   const edges = svgEl("g", {}), nodes = svgEl("g", {});
-  svg.append(edges, nodes);
+  svg.append(svgEl("path", {class: "side-line", d: `M${MW + 10} 8 V${H - 8}`}), edges, nodes);
+  const node = (id, name, kind, what, when, x, y, r) => {
+    pos[id] = [x, y, r];
+    info[id] = {name: name || what.split(".")[0].replace("Strategy: ", ""), what, when};
+    const g = svgEl("g", {class: "node " + kind, tabindex: 0, role: "button", "aria-label": info[id].name, "data-id": id});
+    g.append(svgEl("circle", {cx: x, cy: y, r}));
+    if (name) g.append(Object.assign(svgEl("text", {x, y: y + r + 13}), {textContent: name}));
+    nodes.append(g);
+  };
   NET.forEach(([layer, list], li) => {
     const y = top + li * gap, small = list.length > 5;
-    nodes.append(Object.assign(svgEl("text", {class: "layer", x: 2, y: y - (small ? 14 : 20)}), {textContent: layer}));
-    list.forEach(([id, name, kind, what, when], i) => {
-      const x = W * (i + 1) / (list.length + 1);
-      pos[id] = [x, y, small ? 7 : 13];
-      info[id] = {name: name || what.split(".")[0].replace("Strategy: ", ""), what, when};
-      const g = svgEl("g", {class: "node " + kind, tabindex: 0, role: "button", "aria-label": info[id].name, "data-id": id});
-      g.append(svgEl("circle", {cx: x, cy: y, r: pos[id][2]}));
-      if (name) g.append(Object.assign(svgEl("text", {x, y: y + 26}), {textContent: name}));
-      nodes.append(g);
-    });
+    nodes.append(Object.assign(svgEl("text", {class: "layer", x: 2, y: y - (small ? 16 : 22)}), {textContent: layer}));
+    list.forEach(([id, name, kind, what, when], i) => node(id, name, kind, what, when, MW * (i + 1) / (list.length + 1), y, small ? 7 : 13));
   });
+  nodes.append(Object.assign(svgEl("text", {class: "layer", x: SX, y: top - 22, style: "text-anchor: middle"}), {textContent: "Specialists"}));
+  SIDE.forEach(([id, name, kind, what, when], i) => node(id, name, kind, what, when, SX, top + i * gap, 13));
   const lines = NET_EDGES.map(([a, b]) => {
     const [x1, y1, r1] = pos[a], [x2, y2, r2] = pos[b], down = y2 > y1, s = down ? 1 : -1;
     const ya = y1 + s * r1, yb = y2 - s * r2, mid = (ya + yb) / 2, side = Math.sign(x2 - x1);
@@ -1402,7 +1402,7 @@ const NET_EDGES = [["news", "scout"], ["scout", "risk"], ["risk", "rules"], ["ac
   };
   nodes.addEventListener("click", e => { const n = e.target.closest(".node"); if (n) pick(n.dataset.id); });
   nodes.addEventListener("keydown", e => { const n = e.target.closest(".node"); if (n && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); pick(n.dataset.id); } });
-  pick("vote");
+  pick("risk");
 })();
 
 // Top bar picks the page: Positions, Performance, The Firm (every AI team), The Desk or the Map.
