@@ -38,3 +38,13 @@ the agents' script, and their test. Old answers were on the `answers` branch, wh
 
 - Styles for the old list rows (Recent orders, team reports, the first inbox) and four unused element ids.
   Nothing visible changed.
+
+## The Desk shows only approvals (2026-10-15, last present in b196b20)
+
+The Office became The Desk, which now shows only changes waiting for your approval. Removed from it:
+
+- The Chief of staff's weekly brief and its halt message. The brief still shows on Performance, and a halt
+  still shows in the red banner at the top.
+- The Quant's and Mechanic's reports (test results, failed-run checks), the Code reviewer's reports, and
+  their "Run again" and "Get a fresh one" buttons. Reports are still on GitHub as issues.
+- The list of app problems. A problem now shows on the card where it happened instead.

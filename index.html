@@ -495,7 +495,6 @@ header { margin-bottom: 16px; }
   filter: drop-shadow(0 0 3px var(--c1)) drop-shadow(0 0 10px var(--c1)); }
 .seat .icon svg { width: 30px; height: 30px; }
 :root[data-mode="light"] .seat .icon { color: var(--c1); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--c1) 45%, transparent)); }
-.seat.thinking .icon { animation: rt-think 1.6s ease-in-out infinite; }
 #stage .seat.speak .icon { animation: meet-speak 1.4s ease-in-out infinite; }
 #stage .seat .icon { transition: transform .6s ease; transform: rotate(var(--look, 0deg)); }
 @keyframes meet-speak { 0%, 100% { transform: rotate(var(--look, 0deg)) scale(1); } 30% { transform: rotate(calc(var(--look, 0deg) - 6deg)) scale(1.06); } 60% { transform: rotate(calc(var(--look, 0deg) + 5deg)) scale(1.04); } }
@@ -553,7 +552,6 @@ header { margin-bottom: 16px; }
 .inbox .acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; font-size: 13px; }
 .inbox .acts button { padding: 4px 10px; font-size: 12px; }
 #officeCount:not(:empty) { margin-left: 6px; padding: 1px 7px; border-radius: 99px; font-size: 11px; background: var(--c1); color: #fff; }
-@keyframes rt-think { 50% { opacity: .45; } }
 
 @media (max-width: 640px) {
   .stage { height: 200px; margin-left: -8px; margin-right: -8px; }
@@ -575,7 +573,7 @@ header { margin-bottom: 16px; }
         <button data-go="positions">Positions</button>
         <button data-go="performance">Performance</button>
         <button data-go="firm">The Firm</button>
-        <button data-go="office">Office<span id="officeCount"></span></button>
+        <button data-go="office">The Desk<span id="officeCount"></span></button>
       </nav>
       <button class="ghost" id="settingsBtn" title="Settings" aria-label="Settings"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg></button>
     </div>
@@ -684,7 +682,7 @@ header { margin-bottom: 16px; }
   </section>
 
   <section class="card" data-view="office">
-    <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 4h3a2 2 0 0 1 2 2v14" /><path d="M2 20h3" /><path d="M13 20h9" /><path d="M10 12v.01" /><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z" /></svg>Office</span></h2>
+    <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 4h3a2 2 0 0 1 2 2v14" /><path d="M2 20h3" /><path d="M13 20h9" /><path d="M10 12v.01" /><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z" /></svg>The Desk</span></h2>
     <div class="inbox" id="inbox"></div>
     <div class="status"></div>
   </section>
@@ -823,7 +821,7 @@ function show(d) {
     tone(td(signed(gain), "num"), gain), td("", "opt"), td(""), td("", "opt"))] : []));
 
   if (d.team) lastTeam = d.team;
-  gatherNews(d);
+  archNews();
 }
 
 const AGENTS = {scout: "News scout", risk: "Risk officer", analyst: "Equity analyst", auditor: "Auditor",
@@ -862,16 +860,11 @@ function md(text) {
   return out;
 }
 
-// Anything that fails in the app goes to the Mechanic in your Office, with where it failed. Kept in this browser only.
-function problemList() { try { return JSON.parse(store.get("problems") || "[]"); } catch { return []; } }
 
-// Architects' news: the Mechanic the app's problems, the Quant its research, the Code Reviewer its reviews and the
-// plans waiting for your approval.
 let lastTeam = null;
 const ARCH_ICONS = {mechanic: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />',
   quant: '<path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" /><path d="M6.453 15h11.094" /><path d="M8.5 2h7" />',
   reviewer: '<circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /><path d="m8 11 2 2 4-4" />'};
-const ARCH_RUNS = {quant: "quant.yml", reviewer: "reviewer.yml"};
 const archIcon = role => { const box = el("span"); box.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ARCH_ICONS[role] + "</svg>"; return box.firstChild; };
 const archSeats = ["mechanic", "quant"].map(role => {
   const seat = el("div", {class: "seat still job-" + role, title: AGENTS[role]}, el("div", {class: "icon"}, archIcon(role)),
@@ -891,36 +884,18 @@ setInterval(() => {
   mcCount--;
 }, 1000);
 const link = (text, href) => el("a", {href, target: "_blank", rel: "noopener", text});
-const btn = (text, onclick) => Object.assign(el("button", {text}), {onclick});
+// The Desk: only changes waiting for your approval, each in the conversation of the agent that proposed it
+// (its agent/quant-… or agent/mechanic-… branch). The Code reviewer's verdict is posted on the proposal.
 function archNews() {
-  const t = lastTeam || {reports: [], prs: []};
-  // Every open report, newest first: each Quant test and each Mechanic check is its own message.
-  const reports = role => t.reports.filter(r => r.role === role).sort((a, b) => a.created < b.created ? 1 : -1).map(r => ({key: "r:" + r.url + r.created,
-    at: r.created, title: r.title, role, body: () => [md(r.body)],
-    acts: () => [link("Open on GitHub", r.url), ...(ARCH_RUNS[role] ? [btn("Run again", e => runArch(role, e.target))] : [])]}));
-  const report = role => reports(role).slice(0, 1);
-  news.mechanic = [...problemList().slice().reverse().map(p => ({key: "pb:" + p.at + p.source, at: p.at, title: p.source + " failed", role: "mechanic",
-    body: () => [el("p", {text: p.error})], acts: () => [...(p.url ? [link("Open the run", p.url)] : []), btn("Clear problems", () => { store.del("problems"); archNews(); })]})),
-    ...reports("mechanic")];
-  news.quant = reports("quant");
-  // A proposal sits in the conversation of the agent that made it (its agent/quant-… or agent/mechanic-… branch).
-  const author = p => (/quant|mechanic/.exec(p.branch || p.title.toLowerCase()) || ["reviewer"])[0];
-  const prs = t.prs.map(p => ({key: "pr:" + p.number, title: "Waiting on you: #" + p.number + " " + p.title, role: author(p),
-    body: () => [el("p", {text: "A change to the bot is ready. Nothing changes until you approve it on GitHub."})], acts: () => [link("Open it", p.url)]}));
-  news.reviewer = [...report("reviewer")];
-  prs.forEach(p => news[p.role].push(p));
+  const t = lastTeam || {prs: []};
+  news = {mechanic: [], quant: []};
+  t.prs.forEach(p => {
+    const role = (/quant|mechanic/.exec(p.branch || p.title.toLowerCase()) || [])[0];
+    if (role) news[role].push({key: "pr:" + p.number, title: "Waiting on you: #" + p.number + " " + p.title, role,
+      body: () => [el("p", {text: "A change to the bot is ready, with the Code reviewer's verdict on it. Nothing changes until you approve it on GitHub."})],
+      acts: () => [link("Open it", p.url)]});
+  });
   showOffice();
-}
-async function runArch(role, from) {
-  const seat = (archSeats.find(s => s.role === role) || {seat: from}).seat;
-  try {
-    const res = await api("/actions/workflows/" + ARCH_RUNS[role] + "/dispatches", {
-      method: "POST", body: JSON.stringify({ref: "main"}), headers: {"Content-Type": "application/json"},
-    });
-    if (res.status !== 204) throw new Error("GitHub didn't start it (" + res.status + ").");
-    seat.classList.add("thinking");
-    setTimeout(() => seat.classList.remove("thinking"), 180000);
-  } catch (e) { reportProblem("Run: " + AGENTS[role], e.message, "", from); }
 }
 // Each architect works at a station by the console: the Mechanic on the left, the Quant on the right.
 const STATIONS = {mechanic: [.1, .62], quant: [.9, .62]};
@@ -939,23 +914,10 @@ setInterval(() => {
   q.classList.remove("flip-ok", "flip-fail"); void q.offsetWidth;
   q.classList.add(Math.random() < .5 ? "flip-ok" : "flip-fail");
 }, 3000);
+// Anything that fails in the app shows on the card where it happened.
 function reportProblem(source, error, url, from) {
-  const list = problemList(), last = list[list.length - 1];
-  if (last && last.source === source && last.error === error) list.pop();
-  list.push({source, error, url: url || "", at: new Date().toISOString()});
-  store.set("problems", JSON.stringify(list.slice(-8)));
-  archNews();
-  setStatus("Logged and sent to the Architects.", from);
-  if (from) setTimeout(() => setStatus("", from), 10000);
-}
-
-async function runAgent(role, from) {
-  try {
-    const res = await api("/actions/workflows/agents.yml/dispatches", {
-      method: "POST", body: JSON.stringify({ref: "main", inputs: {role}}), headers: {"Content-Type": "application/json"},
-    });
-    if (res.status !== 204) throw new Error("GitHub didn't start it (" + res.status + ").");
-  } catch (e) { reportProblem("Run Agent: " + AGENTS[role], e.message, "", from); }
+  setStatus(source + " failed: " + error, from);
+  if (from) setTimeout(() => setStatus("", from), 15000);
 }
 
 // The chart runs from the start (everything at 0%) to today's live numbers.
@@ -1239,39 +1201,16 @@ setInterval(() => {
   turn = turn === "X" ? "O" : "X";
 }, 1100);
 
-// The news that reaches your Office.
 let news = {};
 const seenList = () => { try { return JSON.parse(store.get("seen") || "[]"); } catch { return []; } };
-function gatherNews(d) {
-  const reports = (d.team && d.team.reports) || [], newest = role => reports.filter(r => r.role === role).sort((a, b) => a.created < b.created ? 1 : -1)[0];
-  const report = role => { const r = newest(role); return r ? [{key: "r:" + r.url + r.created, at: r.created, title: r.title, role, url: r.url,
-    body: () => [md(r.body)]}] : []; };
-  // Only the Chief of staff, Mechanic, Quant and Code reviewer write to you; the rest report through them.
-  news = {chief: report("chief")};
-  // A halt by the Risk officer or the bot's own loss limit reaches you as a message from the Chief.
-  const h = d.halt;
-  if (h && (h.by === "risk" || /^Risk officer/.test(h.reason || ""))) news.chief.unshift({key: "h:" + h.reason, at: h.at, role: "chief",
-    title: "Trading is halted", body: () => [el("p", {text: h.reason + ". Nothing will be bought or sold until you resume. "
-      + "Check what happened, then tap the trading switch at the top to turn trading back on."})], acts: () => []});
-  archNews();
-}
-// The office inbox: everything the agents have for you, newest first, with what waits on you at the top.
-// Opening a message marks it read. The top bar shows how many are unread.
-function actsFor(n) {
-  if (n.acts) return n.acts();
-  const acts = [];
-  if (n.url) acts.push(link("Open on GitHub", n.url));
-  if (n.url) acts.push(btn("Get a fresh one", e => runAgent(n.role, e.target)));
-  return acts;
-}
+// Opening a conversation marks it read. The top bar shows how many are unread.
 // Messaging style: one conversation per agent (newest message, time, unread count); tap one to read the whole
 // conversation as chat bubbles, oldest first. "← Inbox" goes back.
 let reading = null;
-const WRITES = {chief: "Your brief every Sunday, and right away if trading is halted.", reviewer: "Its checks on each proposal before you approve it (posted on the proposal on GitHub).",
-  mechanic: "Anything in the app or a trading run that fails.", quant: "The result of each Saturday's test."};
+const WRITES = {mechanic: "A fix for something that failed, when it needs your approval.",
+  quant: "An improvement that passed its tests, when it needs your approval."};
 const mailDate = s => !s ? "" : /^\d{4}-\d\d-\d\d$/.test(s) || new Date(s).toDateString() !== new Date().toDateString() ? shortDate(s)
   : new Date(s).toLocaleTimeString(undefined, {hour: "numeric", minute: "2-digit"});
-const sender = n => AGENTS[n.role] || n.role;
 // The message's text on one line, with a space between headings, bullets and cells so words don't run together.
 const textOf = box => { const w = document.createTreeWalker(box, NodeFilter.SHOW_TEXT), out = [];
   for (let t; (t = w.nextNode());) out.push(t.data); return out.join(" ").replace(/\s+/g, " ").trim(); };
@@ -1287,14 +1226,13 @@ function showOffice() {
     $("inbox").replaceChildren(el("div", {class: "chat"}, back,
       el("div", {class: "mail-from"}, el("span", {class: "mail-avatar"}, seatIcon(reading)), el("b", {text: AGENTS[reading]})),
       ...(msgs.length ? msgs.map(n => el("div", {class: "bubble"}, el("b", {class: "bubble-title", text: n.title}),
-        el("div", {class: "mail-body"}, ...n.body()), el("div", {class: "acts"}, ...actsFor(n)),
+        el("div", {class: "mail-body"}, ...n.body()), el("div", {class: "acts"}, ...n.acts()),
         el("div", {class: "bubble-time", text: n.at ? when(n.at) : "Waiting on you"})))
         : [el("div", {class: "bubble quiet", text: "No messages yet. Writes to you about: " + WRITES[reading]})])));
     return;
   }
   const last = role => thread(role).slice(-1)[0];
-  const roles = Object.keys(WRITES).sort((a, b) => (a === "chief" ? -1 : b === "chief" ? 1 : 0)
-    || !last(a) - !last(b) || String((last(b) || {}).at || "9").localeCompare(String((last(a) || {}).at || "9")));
+  const roles = Object.keys(WRITES).sort((a, b) => !last(a) - !last(b) || String((last(b) || {}).at || "9").localeCompare(String((last(a) || {}).at || "9")));
   $("inbox").replaceChildren(el("div", {class: "mail-folder"}, el("b", {text: "Inbox"}), el("span", {class: "sub", text: fresh ? fresh + " unread" : "All read"})),
     ...roles.map(role => {
       const n = last(role), unread = thread(role).filter(m => !seen.includes(m.key)).length;
@@ -1343,7 +1281,7 @@ new MutationObserver(() => { cancelAnimationFrame(titling); titling = requestAni
   .observe(document.body, {childList: true, subtree: true, characterData: true});
 titleLabels();
 
-// Top bar picks the page: Positions, Performance, The Firm (every AI team) or your Office.
+// Top bar picks the page: Positions, Performance, The Firm (every AI team) or The Desk.
 let view = ({ai: "firm", assoc: "firm", arch: "firm"})[store.get("view")] || store.get("view");
 if (!["positions", "performance", "firm", "office"].includes(view)) view = "positions";
 function showView() {
