@@ -893,7 +893,7 @@ function archNews() {
     const role = (/quant|mechanic/.exec(p.branch || p.title.toLowerCase()) || [])[0];
     if (role) news[role].push({key: "pr:" + p.number, title: "Waiting on you: #" + p.number + " " + p.title, role,
       body: () => [el("p", {text: "A change to the bot is ready. The Code reviewer's verdict is on it (Open it). Nothing changes until you say yes."})],
-      acts: () => [answerButton(p.number, "yes", "Yes, make the change"), answerButton(p.number, "no", "No"), link("Open it", p.url)]});
+      acts: () => [answerButton(p.number, "yes", "Yes"), answerButton(p.number, "no", "No"), link("Open it", p.url)]});
   });
   showOffice();
 }
