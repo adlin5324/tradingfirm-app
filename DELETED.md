@@ -48,3 +48,8 @@ The Office became The Desk, which now shows only changes waiting for your approv
 - The Quant's and Mechanic's reports (test results, failed-run checks), the Code reviewer's reports, and
   their "Run again" and "Get a fresh one" buttons. Reports are still on GitHub as issues.
 - The list of app problems. A problem now shows on the card where it happened instead.
+
+## Firm map page (2026-10-15)
+
+The separate "HowieLegacy Firm Map" page (a private claude.ai link) was deleted at the owner's request. Its
+content lives on as the Map tab in this app.
