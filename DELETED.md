@@ -59,3 +59,13 @@ content lives on as the Map tab in this app.
 The "Live data" workflow no longer runs by itself every 10 minutes during market hours. It now runs only
 when you press **Refresh live numbers** on Positions (or start it by hand on GitHub). The market-hours
 check stays. The daily trading runs still update the numbers as before.
+
+## Three bot commands (2026-10-16, last present in tradingfirm 0cdd5ca)
+
+Removed from the Trading bot's Run workflow menu, with their code and tests, because the app already shows
+the same things:
+
+- `prices`: a setup-time check that Webull sends good prices. The daily run still reports bad data.
+- `scorecard`: a printed scorecard. The app's Performance card shows it; the daily report keeps its one-line
+  scorecard.
+- `status`: what the bot remembers (holdings, orders, halt). The app shows all of it.
