@@ -53,3 +53,9 @@ The Office became The Desk, which now shows only changes waiting for your approv
 
 The separate "HowieLegacy Firm Map" page (a private claude.ai link) was deleted at the owner's request. Its
 content lives on as the Map tab in this app.
+
+## Live data schedule (2026-10-16, last present in tradingfirm cd0a8ae)
+
+The "Live data" workflow no longer runs by itself every 10 minutes during market hours. It now runs only
+when you press **Refresh live numbers** on Positions (or start it by hand on GitHub). The market-hours
+check stays. The daily trading runs still update the numbers as before.
