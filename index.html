@@ -786,8 +786,9 @@ async function liveTeam() {
     const [issues, prs] = await Promise.all(["/issues?labels=agent&state=open&per_page=30", "/pulls?state=open&per_page=20"]
       .map(async path => { const r = await api(path); if (!r.ok) throw 0; return r.json(); }));
     // An evolution card says whether its tests passed: Yes stays off until every check on its last commit succeeded.
-    const tests = async p => { try { const r = await api("/commits/" + p.head.sha + "/check-runs"); if (!r.ok) return false;
-      const runs = (await r.json()).check_runs || []; return runs.length > 0 && runs.every(c => c.conclusion === "success"); } catch { return false; } };
+    const tests = async p => { try { const r = await api("/actions/runs?head_sha=" + p.head.sha + "&per_page=20"); if (!r.ok) return false;
+      const runs = ((await r.json()).workflow_runs || []).filter(w => w.name === "Checks");
+      return runs.length > 0 && runs.every(w => w.status === "completed" && w.conclusion === "success"); } catch { return false; } };
     return {prs: await Promise.all(prs.map(async p => ({number: p.number, title: p.title, url: p.html_url, branch: p.head && p.head.ref,
         body: (p.body || "").replace(/<!-- proposal [\s\S]*? -->/g, "").trim(),
         tests: /agent\/evolve-/.test(p.head && p.head.ref || "") ? await tests(p) : null}))),
