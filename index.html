@@ -630,7 +630,7 @@ header { margin-bottom: 16px; }
       <tbody id="positions"></tbody>
       <tfoot id="posTotal"></tfoot>
     </table></div>
-    <div class="row" style="margin-top:16px"><button class="danger" id="sellBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" /><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" /><path d="m2 16 6 6" /><circle cx="16" cy="9" r="2.9" /><circle cx="6" cy="5" r="3" /></svg>Sell stocks…</button><button id="liveBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" /></svg>Refresh live numbers</button><button data-cmd="account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /><path d="M8 16H3v5" /></svg>Refresh account</button></div>
+    <div class="row" style="margin-top:16px"><button class="danger" id="sellBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" /><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" /><path d="m2 16 6 6" /><circle cx="16" cy="9" r="2.9" /><circle cx="6" cy="5" r="3" /></svg>Sell stocks…</button><button id="liveBtn" data-cmd="account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" /></svg>Refresh</button></div>
     <div class="status"></div>
   </section>
 
@@ -797,8 +797,13 @@ function show(d) {
               td(shortDate(p.free_to_sell), "muted small opt"));
   }) : [el("tr", {}, el("td", {colspan: "8", class: "empty", text: "No positions"}))]));
   const value = pos.reduce((a, p) => a + p.value, 0), gain = pos.reduce((a, p) => a + p.gain, 0);
-  $("posTotal").replaceChildren(...(pos.length ? [el("tr", {}, td("Total"), td("", "opt"), td("", "opt"), td(money(value), "num"),
-    tone(td(signed(gain), "num"), gain), td("", "opt"), td(""), td("", "opt"))] : []));
+  const cash = d.account ? d.account.cash : null;
+  $("posTotal").replaceChildren(...(pos.length ? [
+    el("tr", {}, td(cash == null ? "Total" : "Stocks"), td("", "opt"), td("", "opt"), td(money(value), "num"),
+      tone(td(signed(gain), "num"), gain), td("", "opt"), td(""), td("", "opt")),
+    ...(cash == null ? [] : [
+      el("tr", {}, td("Cash"), td("", "opt"), td("", "opt"), td(money(cash), "num"), td(""), td("", "opt"), td(""), td("", "opt")),
+      el("tr", {}, td("Total"), td("", "opt"), td("", "opt"), td(money(value + cash), "num"), td(""), td("", "opt"), td(""), td("", "opt"))])] : []));
 
   if (d.team) lastTeam = d.team;
   archNews();
@@ -1147,7 +1152,8 @@ async function dispatch(cmd, preset = "") {
   }
 }
 
-document.querySelectorAll("[data-cmd]").forEach(b => b.addEventListener("click", () => dispatch(b.dataset.cmd)));
+// One Refresh button: during market hours the quick live update runs (below); otherwise the bot reads the account.
+document.querySelectorAll("[data-cmd]").forEach(b => b.addEventListener("click", () => { if (b.id === "liveBtn" && marketOpen()) return; dispatch(b.dataset.cmd); }));
 // Live numbers on demand: starts the "Live data" workflow the same way Yes/No starts decide.yml, so the
 // token needs no new permission. Market hours match the workflow's own check (weekdays 9:25 AM-4:10 PM New York).
 function marketOpen() {
@@ -1159,7 +1165,7 @@ function marketOpen() {
 $("liveBtn").addEventListener("click", async () => {
   const btn = $("liveBtn");
   if (btn.disabled) return;
-  if (!marketOpen()) { setStatus("Market closed. The numbers update again when it opens (weekdays 9:25 AM-4:10 PM New York).", btn); return; }
+  if (!marketOpen()) return;  // closed: the data-cmd handler reads the account instead
   const spinner = el("span", {class: "spin btn-spin"}), started = Date.now() - 5000;
   btn.disabled = true; btn.append(spinner); setStatus("", btn);
   try {
