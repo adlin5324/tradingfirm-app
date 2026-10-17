@@ -788,7 +788,9 @@ async function liveTeam() {
     // An evolution card says whether its tests passed: Yes stays off until every check on its last commit succeeded.
     const tests = async p => { try { const r = await api("/actions/runs?head_sha=" + p.head.sha + "&per_page=20"); if (!r.ok) return false;
       const runs = ((await r.json()).workflow_runs || []).filter(w => w.name === "Checks");
-      return runs.length > 0 && runs.every(w => w.status === "completed" && w.conclusion === "success"); } catch { return false; } };
+      // A run stuck at "action required" never ran (GitHub holds workflows started by a bot), so it is ignored.
+      const ran = runs.filter(w => w.conclusion !== "action_required");
+      return ran.length > 0 && ran.every(w => w.status === "completed" && w.conclusion === "success"); } catch { return false; } };
     return {prs: await Promise.all(prs.map(async p => ({number: p.number, title: p.title, url: p.html_url, branch: p.head && p.head.ref,
         body: (p.body || "").replace(/<!-- proposal [\s\S]*? -->/g, "").trim(),
         tests: /agent\/evolve-/.test(p.head && p.head.ref || "") ? await tests(p) : null}))),
