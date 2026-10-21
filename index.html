@@ -614,7 +614,7 @@ header { margin-bottom: 16px; }
     <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /><rect width="20" height="14" x="2" y="6" rx="2" /></svg>Positions<span id="posCount"></span></span></h2>
     <div class="table-wrap"><table>
       <thead><tr><th style="width:10%">Stock</th><th class="num opt" style="width:9%">Shares</th><th class="num opt" style="width:13%">Bought @</th><th class="num" style="width:13%">Value</th>
-        <th class="num" style="width:13%">Gain/Loss</th><th class="opt" style="width:18%">Picked By</th><th style="width:10%">Rating</th><th class="opt" style="width:14%">Settled By</th></tr></thead>
+        <th class="num" style="width:13%">Gain/Loss</th><th class="opt" style="width:18%">Rated By</th><th style="width:10%">Rating</th><th class="opt" style="width:14%">Settled By</th></tr></thead>
       <tbody id="positions"></tbody>
       <tfoot id="posTotal"></tfoot>
     </table></div>
@@ -771,8 +771,8 @@ function show(d) {
   $("posCount").textContent = pos.length ? " · " + pos.length + (pos.length > 1 ? " stocks held" : " stock held") : "";
   $("positions").replaceChildren(...(pos.length ? pos.map(p => {
     const cost = p.cost * p.shares, gp = cost ? p.gain / cost : 0;
-    const names = (p.strategy || "").split("+").filter(Boolean);
-    const who = p.strategy === "owner" ? tag("you") : tag(names.length + " strategies", "blue");
+    const names = (p.strategy || "").split("+").filter(n => n && n !== "owner");
+    const who = tag(names.length + " strategies", "blue");
     who.title = names.join(", ");
     const gain = tone(el("td", {class: "num"}, signed(p.gain), el("span", {class: "sub", text: pct(gp)})), p.gain);
     return el("tr", {}, td(p.symbol, "sym"), td(String(p.shares), "num opt"), td(money(p.cost), "num opt"),
