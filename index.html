@@ -630,7 +630,8 @@ header { margin-bottom: 16px; }
       <tbody id="positions"></tbody>
       <tfoot id="posTotal"></tfoot>
     </table></div>
-    <div class="row" style="margin-top:16px"><button class="danger" id="sellBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" /><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" /><path d="m2 16 6 6" /><circle cx="16" cy="9" r="2.9" /><circle cx="6" cy="5" r="3" /></svg>Sell stocks…</button><button id="liveBtn" data-cmd="account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" /></svg>Refresh</button></div>
+    <div class="row" style="margin-top:16px"><button class="danger" id="sellBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" /><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" /><path d="m2 16 6 6" /><circle cx="16" cy="9" r="2.9" /><circle cx="6" cy="5" r="3" /></svg>Sell stocks…</button><button id="liveBtn" data-cmd="account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" /></svg>Refresh</button><button id="loginBtn" data-cmd="login"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="m9 12 2 2 4-4" /></svg>Verify login</button></div>
+    <p class="muted small" id="loginInfo"></p>
     <div class="status"></div>
   </section>
 
@@ -758,6 +759,9 @@ function show(d) {
   $("tradeSwitch").dataset.ready = "1";
   $("chip").textContent = halted ? "Halted" : "Active";
   $("tradeSwitch").title = halted ? "Trading is halted. Click to resume." : "Trading is on. Click to halt.";
+  const login = d.login, left = login && Math.max(0, Math.floor(login.days_left));
+  $("loginInfo").textContent = login ? "Webull login: " + (login.days_left <= 0 ? "expired. Press Verify login."
+    : left + (left === 1 ? " day" : " days") + " left" + (left <= 3 ? ". Press Verify login soon." : "")) : "";
   const banner = $("banner");
   banner.className = "banner" + (halted ? " halted" : "") + (halted || d.buy_block ? "" : " hidden");
   banner.textContent = halted ? "Trading is halted: " + d.halt.reason : d.buy_block ? "No buys today: " + d.buy_block.reason : "";
@@ -972,6 +976,8 @@ const ASK = {
          input: "Paused from the app", ok: "Halt", check: needed},
   resume: {title: "Resume trading?", text: "The bot trades again at its next scheduled run. Reason:",
            input: "Resumed from the app", ok: "Resume", check: needed},
+  login: {title: "Verify Webull login?", text: "Webull will show a popup in its app. Approve it within 5 minutes to restart the 15-day login timer. Nothing is bought or sold.",
+          input: null, ok: "Send popup"},
   deposit: {title: "Record a deposit", text: "Amount you added. Use a minus sign for a withdrawal, like -50.",
             input: "", ok: "Record", check: v => /^-?\$?[\d,]+(\.\d+)?$/.test(v) ? "" : "Enter a number, like 100 or -50."},
 };
