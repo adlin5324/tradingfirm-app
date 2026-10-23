@@ -87,7 +87,7 @@ h1 { font-size: 18px; margin: 0; letter-spacing: -.01em; }
 .bars { display: flex; gap: 8px; flex-wrap: wrap; }
 .day { display: grid; grid-template-columns: 96px 1fr; gap: 8px 12px; font-size: 13px; margin-bottom: 16px; }
 .day:empty { display: none; }
-.day b { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); padding-top: 2px; }
+.day b { font-size: 12px; font-weight: 600; color: var(--muted); padding-top: 1px; }
 @media (max-width: 640px) { .day { grid-template-columns: 1fr; gap: 2px; } .day span { margin-bottom: 8px; } }
 .vs { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 99px; background: var(--faint); font-size: 13px; }
 .vs i { width: 8px; height: 8px; border-radius: 50%; }
@@ -1243,7 +1243,7 @@ function showOffice() {
 }
 // Labels in Title Case ("Chief of Staff"); sentences, reports and data stay as written.
 const SMALL = new Set(["a", "an", "the", "and", "or", "of", "for", "to", "in", "on", "at", "by", "vs"]);
-const LABELS = "button, option, label, summary, h2, h3, .tag, .acct-head, .stats";
+const LABELS = "button, option, label, summary, h2, h3, .tag, .acct-head, .stats, .day b";
 function titleCase(text, first) {
   return text.split(/(\s+)/).map(w => {
     if (!/\S/.test(w)) return w;
