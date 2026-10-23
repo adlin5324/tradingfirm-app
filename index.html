@@ -961,7 +961,7 @@ const ASK = {
            input: "Resumed from the app", ok: "Resume", check: needed},
   login: {title: "Verify Webull login?", text: "Webull will show a popup in its app. Approve it within 5 minutes to restart the 15-day login timer. Nothing is bought or sold.",
           input: null, ok: "Send popup"},
-  deposit: {title: "Record a deposit", text: "Amount you added. Use a minus sign for a withdrawal, like -50.",
+  deposit: {title: "Record a deposit", text: "Amount you added. Record it only after Webull shows the cash; the bot refuses earlier. Use a minus sign for a withdrawal, like -50.",
             input: "", ok: "Record", check: v => /^-?\$?[\d,]+(\.\d+)?$/.test(v) ? "" : "Enter a number, like 100 or -50."},
 };
 
