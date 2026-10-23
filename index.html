@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ADLIN Investments</title>
+<title>Adlin Investments</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -347,7 +347,7 @@ body::after { opacity: var(--topo); transform-origin: 50% 100%; animation: drift
 }
 :root[data-mode="light"] button.danger { background: var(--c1); border-color: var(--c1); color: #fff; }
 :root[data-mode="light"] .banner, :root[data-mode="light"] .banner.halted { background: var(--accent-soft); color: var(--c1); border-color: color-mix(in srgb, var(--c1) 30%, #e2ded9); }
-/* Neon title: ADLIN glows in the main theme color, Investments in the second. Dim when halted. */
+/* Neon title: Adlin glows in the main theme color, Investments in the second. Dim when halted. */
 .switch .hl, .switch em { transition: color .4s, text-shadow .4s; }
 .switch[aria-checked="true"] .hl { color: color-mix(in srgb, var(--c1) 55%, white);
   text-shadow: 0 0 4px var(--c1), 0 0 12px var(--c1), 0 0 26px color-mix(in srgb, var(--c1) 70%, transparent); }
@@ -576,7 +576,7 @@ header { margin-bottom: 16px; }
   <header>
     <div class="topbar">
       <h1><button class="switch" id="tradeSwitch" role="switch" aria-checked="false" title="Trading on or off: click to change">
-        <span class="name"><span class="hl">ADLIN</span> <em>Investments</em></span><span class="sr" id="chip">Loading</span></button></h1>
+        <span class="name"><span class="hl">Adlin</span> <em>Investments</em></span><span class="sr" id="chip">Loading</span></button></h1>
       <nav class="topnav" aria-label="Sections">
         <button data-go="positions">Positions</button>
         <button data-go="performance">Performance</button>
@@ -687,7 +687,7 @@ const pct = n => (n >= 0 ? "+" : "") + (n * 100).toFixed(2) + "%";
 const tone = (e, n) => { e.classList.toggle("good", n > 0); e.classList.toggle("bad", n < 0); return e; };
 const when = s => s ? new Date(s).toLocaleString(undefined, {month: "short", day: "numeric", hour: "numeric", minute: "2-digit"}) : "–";
 const shortDate = s => s ? new Date(String(s).slice(0, 10) + "T12:00:00").toLocaleDateString(undefined, {month: "short", day: "numeric"}) : "–";
-const COLORS = {"ADLIN": "var(--s1)", "S&P 500": "var(--spx)", "Nasdaq 100": "var(--ndx)"};
+const COLORS = {"Adlin": "var(--s1)", "S&P 500": "var(--spx)", "Nasdaq 100": "var(--ndx)"};
 
 function el(name, attrs = {}, ...kids) {
   const e = document.createElement(name);
@@ -763,7 +763,7 @@ function show(d) {
   }
 
   if (d.scorecard) {
-    const s = d.scorecard, rows = [["ADLIN", s.bot], ...Object.entries(s.markets)];
+    const s = d.scorecard, rows = [["Adlin", s.bot], ...Object.entries(s.markets)];
     // What the start amount made in each: the bot, or the same money in the S&P 500 or Nasdaq 100.
     $("bars").replaceChildren(...rows.map(([name, v]) => el("span", {class: "vs"},
       el("span", {class: "who"}, el("i", {style: "background:" + (COLORS[name] || "var(--s2)")}), name),
@@ -897,10 +897,10 @@ function growthLine(d) {
   return pts;
 }
 
-// The Chief of staff's "How ADLIN did" section from the latest weekly brief.
+// The Chief of staff's "How Adlin did" section from the latest weekly brief.
 function perfNote(team) {
   const brief = team && team.reports.find(r => r.role === "chief");
-  const part = brief && (brief.body.split(/^## /m).find(p => /^How (the bot|HowieLegacy|ADLIN) did/i.test(p)) || "").replace(/^.*\n/, "").trim();
+  const part = brief && (brief.body.split(/^## /m).find(p => /^How (the bot|HowieLegacy|Adlin) did/i.test(p)) || "").replace(/^.*\n/, "").trim();
   $("perfNote").replaceChildren(...(part ? [el("div", {class: "small muted", text: "Chief of Staff · " + shortDate(brief.created)}), md(part)]
     : [el("p", {class: "muted small", text: "The Chief of Staff writes a short summary here every Sunday. Press Refresh Summary to get one now."})]));
 }
@@ -910,8 +910,8 @@ function drawChart(history, base) {
   const box = $("chart");
   if (history.length < 2 || !base) { box.classList.add("hidden"); return; }
   box.classList.remove("hidden");
-  const val = (h, n) => { const g = n === "ADLIN" ? h.bot : h[n]; return g == null ? null : base * (1 + g); };
-  const names = ["ADLIN", "S&P 500", "Nasdaq 100"].filter(n => history.some(h => val(h, n) != null));
+  const val = (h, n) => { const g = n === "Adlin" ? h.bot : h[n]; return g == null ? null : base * (1 + g); };
+  const names = ["Adlin", "S&P 500", "Nasdaq 100"].filter(n => history.some(h => val(h, n) != null));
   const all = history.flatMap(h => names.map(n => val(h, n)).filter(v => v != null)).concat(base);
   // Round the scale to clean dollar steps ($1, $2, $5, ...) so the labels on the right read easily.
   const min = Math.min(...all), max = Math.max(...all);
@@ -932,7 +932,7 @@ function drawChart(history, base) {
   // Ticks below the start are only red when some line actually dips below it.
   names.slice().reverse().forEach(n => {
     const pts = history.map((h, i) => val(h, n) == null ? null : x(i).toFixed(1) + "," + y(val(h, n)).toFixed(1)).filter(Boolean);
-    svg.append(svgEl("polyline", {points: pts.join(" "), fill: "none", stroke: COLORS[n], "stroke-width": n === "ADLIN" ? 2.5 : 1.5,
+    svg.append(svgEl("polyline", {points: pts.join(" "), fill: "none", stroke: COLORS[n], "stroke-width": n === "Adlin" ? 2.5 : 1.5,
       "vector-effect": "non-scaling-stroke", "stroke-linejoin": "round"}));
   });
   const date = t => new Date(t).toLocaleDateString(undefined, {month: "short", day: "numeric"});
