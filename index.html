@@ -553,7 +553,7 @@ header { margin-bottom: 16px; }
 .bubble.quiet { color: var(--muted); }
 .bubble-title { display: block; margin-bottom: 4px; } .bubble .mail-body { padding: 0; }
 .bubble-time { font-size: 11px; color: var(--muted); margin-top: 6px; }
-.desk-status { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-weight: 600; }
+.desk-status { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; }
 .desk-status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); } .desk-status .dot.good { background: var(--good); } .desk-status .dot.warn { background: var(--warn); }
 .crew { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
 .crew .mate { display: grid; gap: 10px; text-align: left; padding: 14px; border: 1px solid var(--line); border-radius: 14px;
@@ -665,7 +665,7 @@ header { margin-bottom: 16px; }
   </section>
 
   <section class="card" data-view="office">
-    <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 4h3a2 2 0 0 1 2 2v14" /><path d="M2 20h3" /><path d="M13 20h9" /><path d="M10 12v.01" /><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z" /></svg>The Desk</span></h2>
+    <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 4h3a2 2 0 0 1 2 2v14" /><path d="M2 20h3" /><path d="M13 20h9" /><path d="M10 12v.01" /><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z" /></svg>The Desk</span><span class="desk-status" id="deskStatus"></span></h2>
     <div class="inbox" id="inbox"></div>
     <div class="status"></div>
     <div id="genome" class="small"></div>
@@ -832,8 +832,8 @@ function showGenome(d) {
       ...[[dist.genes_changed + " / " + dist.genes_total, "Genes Changed"], [dist.original_strategies + " + " + dist.new_strategies, "Original + New Strategies"],
         ["Stage " + dist.stage, "Evolution"]].map(([v, l]) => el("div", {}, el("b", {text: v}), el("span", {text: l}))))] : []),
     ...rows.slice().reverse().map(e => el("div", {class: "li"},
-      tag(e.answer === "yes" ? "Approved" : "Declined", e.answer === "yes" ? "good" : "bad"), " " + shortDate(e.date) + " · " + e.gene + ": "
-      + e.old + " → " + e.new + (e.watch ? " (watch: " + e.watch + ")" : "")))] : []));
+      tag(e.answer === "yes" ? "Approved" : "Declined", e.answer === "yes" ? "good" : "bad"), " " + shortDate(e.date) + " · " + cap(e.what || e.gene) + ": "
+      + (e.from || e.old) + " → " + (e.to || e.new)))] : []));
 }
 
 const AGENTS = {scout: "News scout", risk: "Risk officer", analyst: "Equity analyst", historian: "Trade historian", auditor: "Auditor",
@@ -1254,6 +1254,7 @@ function showOffice() {
   const seen = seenList(), all = Object.values(news).flat().filter(Boolean);
   const fresh = all.filter(n => !seen.includes(n.key)).length;
   $("officeCount").textContent = fresh ? fresh : "";
+  $("deskStatus").replaceChildren(el("i", {class: "dot " + (fresh ? "warn" : "good")}), fresh ? fresh + " New for You" : "Nothing New for You");
   // Oldest first inside a conversation; changes waiting on you (no date) count as newest.
   const thread = role => all.filter(n => n.role === role).sort((a, b) => String(a.at || "9").localeCompare(String(b.at || "9")));
   if (reading) {
@@ -1270,8 +1271,6 @@ function showOffice() {
   const last = role => thread(role).slice(-1)[0];
   const roles = Object.keys(WRITES).sort((a, b) => !last(a) - !last(b) || String((last(b) || {}).at || "9").localeCompare(String((last(a) || {}).at || "9")));
   $("inbox").replaceChildren(
-    el("div", {class: "desk-status"}, el("i", {class: "dot " + (fresh ? "warn" : "good")}),
-      el("span", {text: fresh ? fresh + " New for You" : "Nothing New for You"})),
     el("div", {class: "crew"}, ...roles.map(role => {
       const n = last(role), unread = thread(role).filter(m => !seen.includes(m.key)).length;
       const card = el("button", {class: "mate" + (unread ? " unread" : ""), "aria-label": AGENTS[role]},
