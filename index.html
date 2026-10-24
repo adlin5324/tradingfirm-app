@@ -877,6 +877,7 @@ function md(text) {
 let lastTeam = null;
 const ARCH_ICONS = {mechanic: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />',
   quant: '<path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" /><path d="M6.453 15h11.094" /><path d="M8.5 2h7" />',
+  market: '<path d="M22 7 13.5 15.5 8.5 10.5 2 17" /><path d="M16 7h6v6" />',
   reviewer: '<circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /><path d="m8 11 2 2 4-4" />',
   evolve: '<path d="M7 20h10" /><path d="M10 20c5.5-2.5.8-6.4 3-10" /><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z" /><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z" />'};
 const archIcon = role => { const box = el("span"); box.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ARCH_ICONS[role] + "</svg>"; return box.firstChild; };
@@ -886,7 +887,10 @@ const link = (text, href) => el("a", {href, target: "_blank", rel: "noopener", t
 // (its agent/quant-… or agent/mechanic-… branch). The Code reviewer's verdict is posted on the proposal.
 function archNews() {
   const t = lastTeam || {prs: []};
-  news = {mechanic: [], quant: [], evolve: []};
+  news = {mechanic: [], quant: [], evolve: [], market: []};
+  // The Market Watcher's daily reads, newest last like the other conversations.
+  (t.reports || []).filter(r => r.role === "market").slice(0, 5).reverse().forEach(r => news.market.push({key: "report:" + r.url, title: r.title, role: "market", at: r.created,
+    body: () => [md(r.body || "")], acts: () => [link("Open it", r.url)]}));
   t.prs.forEach(p => {
     const role = (/quant|mechanic|evolve/.exec(p.branch || p.title.toLowerCase()) || [])[0];
     if (role === "evolve") {
@@ -1244,6 +1248,7 @@ const seenList = () => { try { return JSON.parse(store.get("seen") || "[]"); } c
 let reading = null;
 const WRITES = {mechanic: "A fix for something that failed, when it needs your approval.",
   quant: "An improvement that passed its tests, when it needs your approval.",
+  market: "A read on the market's mood, when it has something new.",
   evolve: "A change to the bot's settings, when it needs your approval."};
 const mailDate = s => !s ? "" : /^\d{4}-\d\d-\d\d$/.test(s) || new Date(s).toDateString() !== new Date().toDateString() ? shortDate(s)
   : new Date(s).toLocaleTimeString(undefined, {hour: "numeric", minute: "2-digit"});
