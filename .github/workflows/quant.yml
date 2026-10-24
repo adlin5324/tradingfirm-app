@@ -28,7 +28,16 @@ jobs:
       ok: ${{ steps.check.outputs.ok }}
     steps:
       - id: check
-        run: echo "ok=${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' && secrets.PRIVATE_REPO_READ_TOKEN != '' && secrets.PRIVATE_REPO_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          PRIVATE_REPO_READ_TOKEN: ${{ secrets.PRIVATE_REPO_READ_TOKEN }}
+          PRIVATE_REPO_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
+        run: |
+          ok=true
+          for name in CLAUDE_CODE_OAUTH_TOKEN PRIVATE_REPO_READ_TOKEN PRIVATE_REPO_TOKEN; do
+            if [ -z "${!name}" ]; then echo "::error::The $name secret is missing or empty in this repository (Settings > Secrets and variables > Actions > Repository secrets)."; ok=false; fi
+          done
+          echo "ok=$ok" >> "$GITHUB_OUTPUT"
 
   # The AI gets a read-only token and no Webull login: it can only edit files here and run backtests.
   research:
