@@ -1271,7 +1271,7 @@ function showOffice() {
   const roles = Object.keys(WRITES).sort((a, b) => !last(a) - !last(b) || String((last(b) || {}).at || "9").localeCompare(String((last(a) || {}).at || "9")));
   $("inbox").replaceChildren(
     el("div", {class: "desk-status"}, el("i", {class: "dot " + (fresh ? "warn" : "good")}),
-      el("span", {text: fresh ? fresh + " new for you" : "Nothing new for you"})),
+      el("span", {text: fresh ? fresh + " New for You" : "Nothing New for You"})),
     el("div", {class: "crew"}, ...roles.map(role => {
       const n = last(role), unread = thread(role).filter(m => !seen.includes(m.key)).length;
       const card = el("button", {class: "mate" + (unread ? " unread" : ""), "aria-label": AGENTS[role]},
