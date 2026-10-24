@@ -883,7 +883,7 @@ function showGenome(d) {
       ...[[dist.genes_changed + " / " + dist.genes_total, "Genes Changed"], [dist.original_strategies + " + " + dist.new_strategies, "Original + New Strategies"],
         ["Stage " + dist.stage, "Evolution"]].map(([v, l]) => el("div", {}, el("b", {text: v}), el("span", {text: l}))))] : []),
     ...rows.slice().reverse().map(e => el("div", {class: "li"},
-      tag(e.answer === "yes" ? "Approved" : "Declined", e.answer === "yes" ? "good" : "bad"), " " + shortDate(e.date) + " · " + cap(e.what || e.gene) + ": "
+      tag(e.answer === "yes" ? "Approved" : "Declined", e.answer === "yes" ? "good" : "bad"), " " + shortDate(e.decided || e.date) + " · " + cap(e.what || e.gene) + ": "
       + (e.from || e.old) + " → " + (e.to || e.new)))] : []));
 }
 
