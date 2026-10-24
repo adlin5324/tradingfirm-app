@@ -6,8 +6,9 @@ run-name: "AI quant: research"
 # sensitive is printed (results go to files, the Claude step's report is off, and the AI's hand-off is encrypted
 # because artifacts in a public repo can be downloaded by anyone).
 #
-# Secrets in THIS repo: PRIVATE_REPO_READ_TOKEN (read-only on the private repo: contents, issues, pull requests),
-# PRIVATE_REPO_TOKEN (write: contents, issues, pull requests; only the publish job sees it) and CLAUDE_CODE_OAUTH_TOKEN.
+# Secrets in THIS repo: PRIVATE_REPO_READ_TOKEN (despite the name, ONE token for everything: it needs read and write on
+# contents, issues and pull requests of the private repo, so the AI step can in principle write to it; the owner chose this
+# over a second, read-only token) and CLAUDE_CODE_OAUTH_TOKEN.
 # The private repo's "Save past prices" workflow puts the prices on its "prices" release first.
 on:
   schedule:
@@ -31,15 +32,14 @@ jobs:
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           PRIVATE_REPO_READ_TOKEN: ${{ secrets.PRIVATE_REPO_READ_TOKEN }}
-          PRIVATE_REPO_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
         run: |
           ok=true
-          for name in CLAUDE_CODE_OAUTH_TOKEN PRIVATE_REPO_READ_TOKEN PRIVATE_REPO_TOKEN; do
+          for name in CLAUDE_CODE_OAUTH_TOKEN PRIVATE_REPO_READ_TOKEN; do
             if [ -z "${!name}" ]; then echo "::error::The $name secret is missing or empty in this repository (Settings > Secrets and variables > Actions > Repository secrets)."; ok=false; fi
           done
           echo "ok=$ok" >> "$GITHUB_OUTPUT"
 
-  # The AI gets a read-only token and no Webull login: it can only edit files here and run backtests.
+  # The AI gets no Webull login and no memory password: it can edit files here and run backtests.
   research:
     needs: key
     if: needs.key.outputs.ok == 'true'
@@ -107,14 +107,14 @@ jobs:
           name: agent-work
           path: handoff/work.enc
 
-  # Plain code, no AI, and the only job that sees the write token: puts the change on a new agent/ branch of the
+  # Plain code, no AI: puts the change on a new agent/ branch of the
   # private repo and opens a pull request, or opens an issue if there is no change.
   publish:
     needs: research
     if: always() && needs.research.result != 'skipped'
     runs-on: ubuntu-latest
     env:
-      GH_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
+      GH_TOKEN: ${{ secrets.PRIVATE_REPO_READ_TOKEN }}
       GH_REPO: adlin5324/tradingfirm
       ROLE: quant
       RUN_ID: ${{ github.run_id }}
@@ -122,7 +122,7 @@ jobs:
       - uses: actions/checkout@v5
         with:
           repository: adlin5324/tradingfirm
-          token: ${{ secrets.PRIVATE_REPO_TOKEN }}
+          token: ${{ secrets.PRIVATE_REPO_READ_TOKEN }}
       - uses: actions/download-artifact@v7
         with:
           name: agent-work
