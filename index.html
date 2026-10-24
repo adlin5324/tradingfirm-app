@@ -110,7 +110,7 @@ h1 { font-size: 18px; margin: 0; letter-spacing: -.01em; }
 .chart { margin-top: 12px; }
 .chart svg { width: 100%; height: 160px; display: block; }
 .plot { position: relative; padding-right: 56px; }
-.axis span { position: absolute; right: 0; transform: translateY(-50%); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.axis span { position: absolute; right: 0; transform: translateY(-50%); font-size: 12px; color: var(--good); font-variant-numeric: tabular-nums; }
 .axis span.bad { color: var(--bad); }
 .xaxis { display: flex; justify-content: space-between; margin: 4px 56px 0 0; font-size: 12px; color: var(--muted); }
 #fillCost { margin: 12px 0 0; color: var(--muted); }
@@ -574,9 +574,9 @@ header { margin-bottom: 16px; }
   .site { inset: 46px 44px 28px; }
 }
 @media (prefers-reduced-motion: reduce) { .seat .icon { animation: none !important; } }
-/* Market lines: teal and pink, colors no theme uses. */
-:root { --spx: #2dd4bf; --ndx: #f472b6; --brk: #fbbf24; --hf: #a78bfa; }
-:root[data-mode="light"] { --spx: #0d9488; --ndx: #db2777; --brk: #b45309; --hf: #7c3aed; }
+/* Market lines: teal, blue, gold and violet, all apart from the crimson Adlin line. */
+:root { --spx: #2dd4bf; --ndx: #4da3ff; --brk: #f5c542; --hf: #a78bfa; }
+:root[data-mode="light"] { --spx: #0d9488; --ndx: #2563eb; --brk: #c9930a; --hf: #7c3aed; }
 </style>
 </head>
 <body>
@@ -771,7 +771,7 @@ function show(d) {
   }
 
   if (d.scorecard) {
-    const s = d.scorecard, rows = [["Adlin Investments", s.bot], ...Object.entries(s.markets)];
+    const s = d.scorecard, rows = [["Adlin Investments", s.bot], ...Object.entries(s.markets)].sort((a, b) => b[1] - a[1]);
     // What the start amount made in each: the bot, or the same money in the S&P 500 or Nasdaq 100.
     $("bars").replaceChildren(...rows.map(([name, v]) => el("span", {class: "vs"},
       el("span", {class: "who"}, el("i", {style: "background:" + (COLORS[name] || "var(--s2)")}), name),
@@ -912,7 +912,7 @@ function daySummary(rows) {
   const pill = (name, text, v) => tone(el("span", {class: "vs"}, el("span", {class: "who", text: name}), el("b", {class: "num", text})), v);
   const pills = [];
   done.add("Today");  // the account card above already shows today's change
-  if (by["Since start"] && by["Since start"].parts) { by["Since start"].parts.forEach(p => pills.push(pill(p.name, pct(p.value), p.value))); done.add("Since start"); }
+  if (by["Since start"] && by["Since start"].parts) { by["Since start"].parts.slice().sort((a, b) => b.value - a.value).forEach(p => pills.push(pill(p.name, pct(p.value), p.value))); done.add("Since start"); }
   if (pills.length) out.push(el("div", {class: "pills"}, ...pills));
   const v = by.Verdict;
   if (v && v.days != null) {
