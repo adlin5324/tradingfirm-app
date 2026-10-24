@@ -1,0 +1,170 @@
+name: AI quant
+run-name: "AI quant: research"
+
+# Runs the AI quant for the private adlin5324/tradingfirm repo here, because public repos get free Actions minutes.
+# The strategy code is checked out from the private repo for the run; nothing in this repo is secret and nothing
+# sensitive is printed (results go to files, the Claude step's report is off, and the AI's hand-off is encrypted
+# because artifacts in a public repo can be downloaded by anyone).
+#
+# Secrets in THIS repo: PRIVATE_REPO_READ_TOKEN (read-only on the private repo: contents, issues, pull requests),
+# PRIVATE_REPO_TOKEN (write: contents, issues, pull requests; only the publish job sees it) and CLAUDE_CODE_OAUTH_TOKEN.
+# The private repo's "Save past prices" workflow puts the prices on its "prices" release first.
+on:
+  schedule:
+    - cron: "0 15 * * 2,4,6"   # Tuesday, Thursday, Saturday
+  workflow_dispatch:
+
+concurrency:
+  group: ai-quant
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  key:
+    runs-on: ubuntu-latest
+    outputs:
+      ok: ${{ steps.check.outputs.ok }}
+    steps:
+      - id: check
+        run: echo "ok=${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' && secrets.PRIVATE_REPO_READ_TOKEN != '' && secrets.PRIVATE_REPO_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
+
+  # The AI gets a read-only token and no Webull login: it can only edit files here and run backtests.
+  research:
+    needs: key
+    if: needs.key.outputs.ok == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    env:
+      GH_TOKEN: ${{ secrets.PRIVATE_REPO_READ_TOKEN }}
+      GH_REPO: adlin5324/tradingfirm
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          repository: adlin5324/tradingfirm
+          token: ${{ secrets.PRIVATE_REPO_READ_TOKEN }}
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt pytest
+      - name: Get the saved prices
+        run: |
+          mkdir -p out
+          gh release download prices --pattern bars.pkl --dir out --clobber
+      # Results go to files, not the (public) log.
+      - run: python agents/lab.py run > out/baseline.txt
+      - run: python agents/lab.py check > out/baseline_check.txt
+      - run: |
+          cp out/curve_research.csv out/baseline_curve_research.csv
+          cp out/curve_holdout.csv out/baseline_curve_holdout.csv
+          python agents/quant_tools.py signals > out/signals.txt
+      # The newest 60 days are sealed: the AI is told never to run or open them. Plain code runs them before and after
+      # it works, and the publish job puts both results on the pull request for the owner.
+      - run: python agents/lab.py sealed > "$RUNNER_TEMP/sealed_before.txt" || echo "Sealed run failed" > "$RUNNER_TEMP/sealed_before.txt"
+      - uses: anthropics/claude-code-action@v1
+        env:
+          BASH_DEFAULT_TIMEOUT_MS: "1800000"
+          BASH_MAX_TIMEOUT_MS: "2400000"
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ github.token }}
+          display_report: "false"
+          prompt: Read agents/roles/quant.md and do exactly what it says.
+          claude_args: >-
+            --model sonnet --max-turns 200
+            --allowedTools "Read,Edit,Write,Glob,Grep,Bash(python:*),Bash(git diff:*),Bash(git status:*),Bash(git restore:*),Bash(gh issue list:*),Bash(gh issue view:*),Bash(gh pr list:*),Bash(gh pr view:*)"
+      - name: Sealed check of the finished work
+        if: always()
+        run: |
+          mkdir -p out
+          python agents/lab.py sealed > "$RUNNER_TEMP/sealed_after.txt" || echo "Sealed run failed" > "$RUNNER_TEMP/sealed_after.txt"
+          { echo "Before the change:"; cat "$RUNNER_TEMP/sealed_before.txt"; echo; echo "After the change:"; cat "$RUNNER_TEMP/sealed_after.txt"; } > out/sealed.txt
+      - name: Hand the work to the publish job (encrypted)
+        if: always()
+        env:
+          HANDOFF_KEY: ${{ secrets.PRIVATE_REPO_READ_TOKEN }}
+        run: |
+          mkdir -p out handoff && touch out/report.md
+          for f in out/candidate/*.py; do [ -e "$f" ] && rm -f "graduated/$(basename "$f")"; done
+          git add -A && git diff --cached --binary > out/change.patch
+          tar -czf handoff/work.tgz out/change.patch out/report.md out/sealed.txt $( [ -d out/candidate ] && echo out/candidate )
+          openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -pass env:HANDOFF_KEY -in handoff/work.tgz -out handoff/work.enc
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: agent-work
+          path: handoff/work.enc
+
+  # Plain code, no AI, and the only job that sees the write token: puts the change on a new agent/ branch of the
+  # private repo and opens a pull request, or opens an issue if there is no change.
+  publish:
+    needs: research
+    if: always() && needs.research.result != 'skipped'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
+      GH_REPO: adlin5324/tradingfirm
+      ROLE: quant
+      RUN_ID: ${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          repository: adlin5324/tradingfirm
+          token: ${{ secrets.PRIVATE_REPO_TOKEN }}
+      - uses: actions/download-artifact@v7
+        with:
+          name: agent-work
+          path: handoff
+      - name: Open the encrypted hand-off
+        env:
+          HANDOFF_KEY: ${{ secrets.PRIVATE_REPO_READ_TOKEN }}
+        run: |
+          openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -pass env:HANDOFF_KEY -in handoff/work.enc -out handoff/work.tgz
+          mkdir -p work && tar -xzf handoff/work.tgz -C work --strip-components=1
+      # New strategies from the Quant go straight to the paper lane (the paper-lab branch), not to the bot.
+      - name: Send new strategies to the paper lane
+        run: |
+          shopt -s nullglob
+          files=(work/candidate/*.py)
+          [ ${#files[@]} -gt 0 ] || exit 0
+          lane="$(mktemp -d)"
+          git clone -q --depth 1 --branch paper-lab "https://x-access-token:${GH_TOKEN}@github.com/${GH_REPO}.git" "$lane"
+          mkdir -p "$lane/candidates"
+          for f in "${files[@]}"; do
+            name="$(basename "$f" .py)"
+            if [[ ! "$name" =~ ^[a-z][a-z0-9_]{2,39}$ ]] || [ -e "$lane/candidates/$name.py" ] || [ -e "graduated/$name.py" ]; then
+              echo "Skipped $name: bad or taken name"; continue
+            fi
+            cp "$f" "$lane/candidates/$name.py"
+          done
+          git -C "$lane" add candidates
+          git -C "$lane" diff --cached --quiet && exit 0
+          git -C "$lane" -c user.name="ai-quant" -c user.email="ai-quant@users.noreply.github.com" commit -q -m "Quant: new strategies on paper"
+          git -C "$lane" push -q origin HEAD:paper-lab
+      - name: Open a pull request or an issue
+        run: |
+          gh label create agent --force && gh label create "$ROLE" --force
+          [ -s work/report.md ] || echo "The agent finished without writing a report. Check the run log." > work/report.md
+          title="$(head -n 1 work/report.md | sed 's/^#* *//' | cut -c1-100)"
+          if [ -s work/sealed.txt ]; then
+            { echo; echo "## Sealed last 60 days (the Quant never saw these)"; echo '```'; cat work/sealed.txt; echo '```'; } >> work/report.md
+          fi
+          if [ ! -s work/change.patch ]; then
+            gh issue create --title "$title" --body-file work/report.md --label agent --label "$ROLE"
+            exit 0
+          fi
+          branch="agent/$ROLE-$RUN_ID"
+          git checkout -b "$branch"
+          git apply --index work/change.patch
+          # Plain code, not the AI's word: a patch that touches safety or trading code gets the red banner.
+          touched="$(git diff --cached --name-only | grep -E '^bot\.py$|^firm/(trading/(risk|trading|portfolio)|core/(broker|compliance)|research/strategy)\.py$|^rules\.toml$|^memory\.sh$|^graduated/|^\.github/' || true)"
+          if [ -n "$touched" ]; then
+            { echo; echo "**RED BANNER: this changes safety or trading code:** $(echo $touched | sed 's/ /, /g')"; } >> work/report.md
+          fi
+          git -c user.name="ai-$ROLE" -c user.email="ai-$ROLE@users.noreply.github.com" commit -q -m "$title"
+          git push -q origin "$branch"
+          # A push and a pull request opened with this token start the private repo's tests and AI review on their own.
+          gh pr create --head "$branch" --title "$title" --body-file work/report.md --label agent --label "$ROLE"
