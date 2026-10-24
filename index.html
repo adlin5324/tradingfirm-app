@@ -695,7 +695,7 @@ const pct = n => (n >= 0 ? "+" : "") + (n * 100).toFixed(2) + "%";
 const tone = (e, n) => { e.classList.toggle("good", n > 0); e.classList.toggle("bad", n < 0); return e; };
 const when = s => s ? new Date(s).toLocaleString(undefined, {month: "short", day: "numeric", hour: "numeric", minute: "2-digit"}) : "–";
 const shortDate = s => s ? new Date(String(s).slice(0, 10) + "T12:00:00").toLocaleDateString(undefined, {month: "short", day: "numeric"}) : "–";
-const COLORS = {"Adlin Investments": "var(--s1)", "S&P 500": "var(--spx)", "Nasdaq 100": "var(--ndx)", "Berkshire Hathaway": "var(--brk)", "Hedge Fund ETF": "var(--hf)"};
+const COLORS = {"Adlin Investments": "var(--s1)", "S&P 500": "var(--spx)", "Nasdaq 100": "var(--ndx)", "Berkshire Hathaway": "var(--brk)", "Guru ETF": "var(--hf)"};
 
 function el(name, attrs = {}, ...kids) {
   const e = document.createElement(name);
