@@ -564,9 +564,17 @@ header { margin-bottom: 16px; }
 .mate-state { font-size: 11px; padding: 2px 8px; border-radius: 99px; color: var(--muted); border: 1px solid var(--line); }
 .mate-state.on { color: #fff; background: var(--c1); border-color: var(--c1); }
 .mate-job { font-size: 13px; color: var(--muted); white-space: normal; } .mate-last { font-size: 13px; }
-.genome-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin: 0 0 16px; }
-.genome-tiles div { padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--faint); display: grid; gap: 2px; }
-.genome-tiles b { font-size: 18px; } .genome-tiles span { font-size: 12px; color: var(--muted); }
+.genome-tiles, .trade-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin: 0 0 16px; }
+.genome-tiles div, .trade-tiles div { padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--faint); display: grid; gap: 2px; }
+.genome-tiles b, .trade-tiles b { font-size: 18px; } .genome-tiles span, .trade-tiles span { font-size: 12px; color: var(--muted); }
+.trades .tr { display: grid; grid-template-columns: 56px 1fr auto; gap: 12px; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--line); }
+.trades .tr:last-child { border-bottom: 0; }
+.trades .tr .when { font-size: 13px; color: var(--muted); }
+.trades .tr .what { display: grid; gap: 3px; min-width: 0; }
+.trades .tr .what span { display: flex; align-items: center; gap: 8px; }
+.trades .tr .what small { color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+.trades .tr .amt { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+.trades .tr .amt small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
 .inbox .mail.unread { color: var(--text); box-shadow: inset 3px 0 0 var(--c1); }
 .mail-avatar { width: 36px; height: 36px; flex: none; border-radius: 50%; display: grid; place-items: center;
   background: color-mix(in srgb, var(--c1) 18%, transparent); color: var(--c1); }
@@ -602,6 +610,7 @@ header { margin-bottom: 16px; }
       <nav class="topnav" aria-label="Sections">
         <button data-go="positions">Positions</button>
         <button data-go="performance">Performance</button>
+        <button data-go="trades">Trades</button>
         <button data-go="office">The Desk<span id="officeCount"></span></button>
       </nav>
       <button class="ghost" id="settingsBtn" title="Settings" aria-label="Settings"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg></button>
@@ -662,6 +671,12 @@ header { margin-bottom: 16px; }
     <p class="muted small" id="updated"></p>
     <div class="row" style="margin-top:16px"><button class="danger" id="summaryBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" /><path d="M20 3v4" /><path d="M22 5h-4" /><path d="M4 17v2" /><path d="M5 18H3" /></svg>Refresh summary</button><button data-cmd="deposit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="12" x="2" y="6" rx="2" /><circle cx="12" cy="12" r="2" /><path d="M6 12h.01M18 12h.01" /></svg>Record deposit</button></div>
     <div class="status"></div>
+  </section>
+
+  <section class="card" data-view="trades">
+    <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z" /><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" /><path d="M12 17.5v-11" /></svg>Trades</span><span id="tradesCount"></span></h2>
+    <div class="trade-tiles" id="tradeTiles"></div>
+    <div class="trades" id="trades"></div>
   </section>
 
   <section class="card" data-view="office">
@@ -823,8 +838,44 @@ function show(d) {
   if (d.team) lastTeam = d.team;
   archNews();
   showGenome(d);
+  showTrades(d);
 }
 // The organism: how far it has travelled from the original, and the last 20 answered changes (the lineage log).
+// Everything the bot (or you) did, newest first: buys, closed sales with their profit, income, and orders the risk rules blocked.
+function showTrades(d) {
+  const sales = d.sales || [], sold = new Set(sales.map(x => x.date + "|" + x.symbol)), rows = [];
+  const shares = n => (+n).toLocaleString(undefined, {maximumFractionDigits: 4});
+  (d.orders || []).forEach(o => {
+    if (o.side === "SELL" && sold.has(o.date + "|" + o.symbol)) return;  // shown below with its profit
+    const buy = o.side === "BUY", fee = o.fees > 0 ? " · Fee " + money(o.fees) : "";
+    rows.push({date: o.date, label: buy ? "Bought" : "Sold", cls: buy ? "blue" : "", sym: o.symbol,
+      detail: shares(o.shares) + " @ " + money(o.price) + (o.hand ? " · By You" : "") + (o.state && o.state !== "FILLED" ? " · " + cap(String(o.state).toLowerCase()) : "") + fee,
+      amount: money(o.shares * o.price), value: 0});
+  });
+  sales.forEach(x => rows.push({date: x.date, label: "Sold", cls: "", sym: x.symbol,
+    detail: shares(x.shares) + " @ " + money(x.price) + (x.hand ? " · By You" : ""),
+    amount: signed(x.profit), sub: "Profit", value: x.profit}));
+  (d.income || []).forEach(x => rows.push({date: x.date, label: x.kind || "Income", cls: "good", sym: x.symbol || "Account",
+    detail: "Paid Into Your Account", amount: signed(x.amount), value: x.amount}));
+  (d.blocked || []).forEach(x => rows.push({date: x.date, label: "Blocked", cls: "bad", sym: x.symbol,
+    detail: cap(String(x.side).toLowerCase()) + " " + shares(x.shares) + " · " + cap(x.why || "Stopped by a risk rule"), amount: "–", value: 0}));
+  rows.reverse();  // later entries first within a day, then newest day first
+  rows.sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  const profit = sales.reduce((t, x) => t + x.profit, 0), income = (d.income || []).reduce((t, x) => t + x.amount, 0);
+  $("tradesCount").textContent = rows.length ? rows.length + (rows.length > 1 ? " Entries" : " Entry") : "";
+  $("tradeTiles").replaceChildren(...[
+    [String((d.orders || []).filter(o => o.state === "FILLED").length), "Orders Filled", 0],
+    [sales.length ? signed(profit) : "–", "Closed Trades (" + sales.length + ")", profit],
+    [income ? signed(income) : "–", "Income", income],
+    [String((d.blocked || []).length), "Blocked", 0]].map(([v, l, n]) =>
+      el("div", {}, tone(el("b", {text: v}), n), el("span", {text: l}))));
+  $("trades").replaceChildren(...(rows.length ? rows.map(r => el("div", {class: "tr"},
+    el("span", {class: "when", text: shortDate(r.date)}),
+    el("div", {class: "what"}, el("span", {}, tag(r.label, r.cls), el("b", {text: r.sym})), el("small", {text: r.detail})),
+    tone(el("div", {class: "amt"}, r.amount, ...(r.sub ? [el("small", {text: r.sub})] : [])), r.value)))
+    : [empty("No trades yet. They show here once the bot buys or sells.")]));
+}
+
 function showGenome(d) {
   const box = $("genome"), dist = d.distance, rows = d.lineage || [];
   box.replaceChildren(...(dist || rows.length ? [el("h3", {text: "Genome"}),
@@ -1320,9 +1371,9 @@ new MutationObserver(() => { cancelAnimationFrame(titling); titling = requestAni
   .observe(document.body, {childList: true, subtree: true, characterData: true});
 titleLabels();
 
-// Top bar picks the page: Positions, Performance, The Firm (every AI team) or The Desk.
+// Top bar picks the page: Positions, Performance, Trades, The Firm (every AI team) or The Desk.
 let view = store.get("view");
-if (!["positions", "performance", "office"].includes(view)) view = "positions";
+if (!["positions", "performance", "trades", "office"].includes(view)) view = "positions";
 function showView() {
   document.querySelectorAll("[data-view]").forEach(e => e.classList.toggle("hidden", e.dataset.view !== view));
   document.querySelectorAll("[data-go]").forEach(b => b.classList.toggle("on", b.dataset.go === view));
