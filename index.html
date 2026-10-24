@@ -553,6 +553,20 @@ header { margin-bottom: 16px; }
 .bubble.quiet { color: var(--muted); }
 .bubble-title { display: block; margin-bottom: 4px; } .bubble .mail-body { padding: 0; }
 .bubble-time { font-size: 11px; color: var(--muted); margin-top: 6px; }
+.desk-status { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-weight: 600; }
+.desk-status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); } .desk-status .dot.good { background: var(--good); } .desk-status .dot.warn { background: var(--warn); }
+.crew { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.crew .mate { display: grid; gap: 10px; text-align: left; padding: 14px; border: 1px solid var(--line); border-radius: 14px;
+  background: var(--faint); color: var(--text); font: inherit; cursor: pointer; }
+.crew .mate:hover { border-color: var(--c1); }
+.crew .mate.unread { border-color: var(--c1); box-shadow: inset 0 0 0 1px var(--c1); }
+.mate-head { display: flex; align-items: center; gap: 10px; } .mate-head .mail-text { flex: 1; }
+.mate-state { font-size: 11px; padding: 2px 8px; border-radius: 99px; color: var(--muted); border: 1px solid var(--line); }
+.mate-state.on { color: #fff; background: var(--c1); border-color: var(--c1); }
+.mate-job { font-size: 13px; color: var(--muted); white-space: normal; } .mate-last { font-size: 13px; }
+.genome-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin: 0 0 16px; }
+.genome-tiles div { padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--faint); display: grid; gap: 2px; }
+.genome-tiles b { font-size: 18px; } .genome-tiles span { font-size: 12px; color: var(--muted); }
 .inbox .mail.unread { color: var(--text); box-shadow: inset 3px 0 0 var(--c1); }
 .mail-avatar { width: 36px; height: 36px; flex: none; border-radius: 50%; display: grid; place-items: center;
   background: color-mix(in srgb, var(--c1) 18%, transparent); color: var(--c1); }
@@ -814,10 +828,11 @@ function show(d) {
 function showGenome(d) {
   const box = $("genome"), dist = d.distance, rows = d.lineage || [];
   box.replaceChildren(...(dist || rows.length ? [el("h3", {text: "Genome"}),
-    ...(dist ? [el("p", {class: "muted", text: dist.genes_changed + " of " + dist.genes_total + " genes changed · "
-      + dist.original_strategies + " original and " + dist.new_strategies + " new strategies vote · stage " + dist.stage})] : []),
+    ...(dist ? [el("div", {class: "genome-tiles"},
+      ...[[dist.genes_changed + " / " + dist.genes_total, "Genes Changed"], [dist.original_strategies + " + " + dist.new_strategies, "Original + New Strategies"],
+        ["Stage " + dist.stage, "Evolution"]].map(([v, l]) => el("div", {}, el("b", {text: v}), el("span", {text: l}))))] : []),
     ...rows.slice().reverse().map(e => el("div", {class: "li"},
-      tag(e.answer === "yes" ? "Yes" : "No", e.answer === "yes" ? "good" : "bad"), " " + shortDate(e.date) + " · " + e.gene + ": "
+      tag(e.answer === "yes" ? "Approved" : "Declined", e.answer === "yes" ? "good" : "bad"), " " + shortDate(e.date) + " · " + e.gene + ": "
       + e.old + " → " + e.new + (e.watch ? " (watch: " + e.watch + ")" : "")))] : []));
 }
 
@@ -1242,7 +1257,7 @@ function showOffice() {
   // Oldest first inside a conversation; changes waiting on you (no date) count as newest.
   const thread = role => all.filter(n => n.role === role).sort((a, b) => String(a.at || "9").localeCompare(String(b.at || "9")));
   if (reading) {
-    const msgs = thread(reading), back = el("button", {class: "mail-back", text: "← Inbox"});
+    const msgs = thread(reading), back = el("button", {class: "mail-back", text: "← The Crew"});
     back.onclick = () => { reading = null; showOffice(); };
     $("inbox").replaceChildren(el("div", {class: "chat"}, back,
       el("div", {class: "mail-from"}, el("span", {class: "mail-avatar"}, seatIcon(reading)), el("b", {text: AGENTS[reading]})),
@@ -1254,23 +1269,24 @@ function showOffice() {
   }
   const last = role => thread(role).slice(-1)[0];
   const roles = Object.keys(WRITES).sort((a, b) => !last(a) - !last(b) || String((last(b) || {}).at || "9").localeCompare(String((last(a) || {}).at || "9")));
-  $("inbox").replaceChildren(el("div", {class: "mail-folder"}, el("b", {text: "Inbox"}), el("span", {class: "sub", text: fresh ? fresh + " unread" : "All read"})),
-    ...roles.map(role => {
+  $("inbox").replaceChildren(
+    el("div", {class: "desk-status"}, el("i", {class: "dot " + (fresh ? "warn" : "good")}),
+      el("span", {text: fresh ? fresh + " new for you" : "Nothing new for you"})),
+    el("div", {class: "crew"}, ...roles.map(role => {
       const n = last(role), unread = thread(role).filter(m => !seen.includes(m.key)).length;
-      const row = el("button", {class: "mail" + (unread ? " unread" : "") + (n ? "" : " quiet"), "aria-label": AGENTS[role]},
-        el("span", {class: "mail-avatar"}, seatIcon(role)),
-        el("span", {class: "mail-text"},
-          el("span", {class: "mail-top"}, el("span", {class: "mail-sender", text: AGENTS[role]}), el("span", {class: "mail-date", text: n ? mailDate(n.at) : ""})),
-          el("span", {class: "mail-subj", text: n ? n.title : "No messages yet"}),
-          el("span", {class: "mail-snip", text: n ? textOf(el("div", {}, ...n.body())) : WRITES[role]})),
-        ...(unread ? [el("span", {class: "mail-count", text: String(unread)})] : []));
-      row.onclick = () => {
+      const card = el("button", {class: "mate" + (unread ? " unread" : ""), "aria-label": AGENTS[role]},
+        el("span", {class: "mate-head"}, el("span", {class: "mail-avatar"}, seatIcon(role)),
+          el("span", {class: "mail-text"}, el("b", {text: AGENTS[role]})),
+          el("span", {class: "mate-state" + (unread ? " on" : ""), text: unread ? unread + " new" : "Quiet"})),
+        el("span", {class: "mail-text mate-job", text: WRITES[role]}),
+        ...(n ? [el("span", {class: "mail-text mate-last"}, el("b", {text: n.title}), el("small", {text: " " + mailDate(n.at)}))] : []));
+      card.onclick = () => {
         reading = role;
         store.set("seen", JSON.stringify([...new Set([...seenList(), ...thread(role).map(m => m.key)])].slice(-200)));
         showOffice();
       };
-      return row;
-    }));
+      return card;
+    })));
 }
 // Labels in Title Case ("Chief of Staff"); sentences, reports and data stay as written.
 const SMALL = new Set(["a", "an", "the", "and", "or", "of", "for", "to", "in", "on", "at", "by", "vs"]);
