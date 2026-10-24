@@ -85,10 +85,18 @@ h1 { font-size: 18px; margin: 0; letter-spacing: -.01em; }
 .stat .value { font-size: 17px; font-weight: 600; }
 @media (max-width: 520px) { .big { font-size: 32px; } .stats { gap: 16px; } }
 .bars { display: flex; gap: 8px; flex-wrap: wrap; }
-.day { display: grid; grid-template-columns: 96px 1fr; gap: 8px 12px; font-size: 13px; margin-bottom: 16px; }
+.day { display: grid; gap: 14px; font-size: 13px; margin-bottom: 16px; }
 .day:empty { display: none; }
-.day b { font-size: 12px; font-weight: 600; color: var(--muted); padding-top: 1px; }
-@media (max-width: 640px) { .day { grid-template-columns: 1fr; gap: 2px; } .day span { margin-bottom: 8px; } }
+.day .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.day .pills .vs b { font-weight: 600; }
+.day .kv { display: grid; grid-template-columns: 96px 1fr; gap: 2px 12px; }
+.day .kv b, .day .verdict b { font-size: 12px; font-weight: 600; color: var(--muted); }
+.day .prog { height: 6px; border-radius: 99px; background: var(--faint); overflow: hidden; margin: 8px 0 6px; }
+.day .prog i { display: block; height: 100%; min-width: 6px; border-radius: 99px; background: linear-gradient(90deg, var(--c1), var(--c3)); }
+.day .state { display: flex; align-items: center; gap: 8px; }
+.day .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex: none; }
+.day .dot.good { background: var(--good); } .day .dot.bad { background: var(--bad); }
+@media (max-width: 640px) { .day .kv { grid-template-columns: 1fr; } }
 .vs { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 99px; background: var(--faint); font-size: 13px; }
 .vs i { width: 8px; height: 8px; border-radius: 50%; }
 .vs b { font-weight: 650; }
@@ -773,7 +781,7 @@ function show(d) {
   const fc = d.fill_cost;
   $("fillCost").textContent = fc ? `Fill cost vs mid price: ${pct(fc.avg)} a trade, ${money(fc.dollars)} total over ${fc.fills} fill(s)` : "";
   drawChart(growthLine(d), d.scorecard && d.scorecard.start_value);
-  $("daySummary").replaceChildren(...(d.summary || []).flatMap(r => [el("b", {text: r.label}), tone(el("span", {text: r.text}), r.tone === "good" ? 1 : r.tone === "bad" ? -1 : 0)]));
+  daySummary(d.summary);
   perfNote(d.team);
 
   const pos = positions = d.positions || [];
@@ -895,6 +903,29 @@ function growthLine(d) {
   const now = {date: new Date(d.updated).toLocaleDateString("en-CA"), bot: s.bot, ...s.markets}, last = pts[pts.length - 1];
   if (["bot", ...Object.keys(s.markets)].some(k => last[k] !== now[k])) pts.push(now);
   return pts;
+}
+
+// The bot's daily summary: pills for the numbers, a bar for the 60-day Verdict, a dot for Warnings, plain rows for the rest.
+const cap = t => String(t).charAt(0).toUpperCase() + String(t).slice(1);
+function daySummary(rows) {
+  const by = Object.fromEntries((rows || []).map(r => [r.label, r])), done = new Set(), out = [];
+  const pill = (name, text, v) => tone(el("span", {class: "vs"}, el("span", {class: "who", text: name}), el("b", {class: "num", text})), v);
+  const pills = [];
+  if (by.Today && by.Today.amount != null) { pills.push(pill("Today", signed(by.Today.amount) + " (" + pct(by.Today.pct) + ")", by.Today.amount)); done.add("Today"); }
+  if (by["Since start"] && by["Since start"].parts) { by["Since start"].parts.forEach(p => pills.push(pill(p.name, pct(p.value), p.value))); done.add("Since start"); }
+  if (pills.length) out.push(el("div", {class: "pills"}, ...pills));
+  const v = by.Verdict;
+  if (v && v.days != null) {
+    out.push(el("div", {class: "verdict"}, el("b", {text: "Verdict · " + v.days + " of " + v.of + " trading days"}),
+      el("div", {class: "prog"}, el("i", {style: "width:" + Math.min(100, 100 * v.days / v.of) + "%"})),
+      el("div", {text: cap(v.text.replace(/: \d+ of \d+ trading days tracked\./, "."))})));
+    done.add("Verdict");
+  }
+  const w = by.Warnings;
+  if (w) { out.push(el("div", {class: "state"}, el("i", {class: "dot " + (w.tone || "")}), el("span", {text: cap(w.text)}))); done.add("Warnings"); }
+  (rows || []).filter(r => !done.has(r.label)).forEach(r =>
+    out.push(el("div", {class: "kv"}, el("b", {text: cap(r.label)}), tone(el("span", {text: cap(r.text)}), r.tone === "good" ? 1 : r.tone === "bad" ? -1 : 0))));
+  $("daySummary").replaceChildren(...out);
 }
 
 // The Chief of staff's "How Adlin did" section from the latest weekly brief.
