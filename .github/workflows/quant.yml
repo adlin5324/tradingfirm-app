@@ -156,7 +156,13 @@ jobs:
       - name: Open a pull request or an issue
         run: |
           gh label create agent --force && gh label create "$ROLE" --force
-          [ -s work/report.md ] || echo "The agent finished without writing a report. Check the run log." > work/report.md
+          # No report means the AI never finished (cancelled, crashed or out of turns): never turn its half-done change
+          # into a pull request. Say so in an issue and stop.
+          if [ ! -s work/report.md ]; then
+            echo "The Quant run ended without a report, so its change (if any) was dropped. Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$RUN_ID" > work/report.md
+            gh issue create --title "Quant run ended without a report" --body-file work/report.md --label agent --label "$ROLE"
+            exit 0
+          fi
           title="$(head -n 1 work/report.md | sed 's/^#* *//' | cut -c1-100)"
           if [ -s work/sealed.txt ]; then
             { echo; echo "## Sealed last 60 days (the Quant never saw these)"; echo '```'; cat work/sealed.txt; echo '```'; } >> work/report.md
