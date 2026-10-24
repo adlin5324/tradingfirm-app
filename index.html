@@ -911,7 +911,7 @@ function daySummary(rows) {
   const by = Object.fromEntries((rows || []).map(r => [r.label, r])), done = new Set(), out = [];
   const pill = (name, text, v) => tone(el("span", {class: "vs"}, el("span", {class: "who", text: name}), el("b", {class: "num", text})), v);
   const pills = [];
-  if (by.Today && by.Today.amount != null) { pills.push(pill("Today", signed(by.Today.amount) + " (" + pct(by.Today.pct) + ")", by.Today.amount)); done.add("Today"); }
+  done.add("Today");  // the account card above already shows today's change
   if (by["Since start"] && by["Since start"].parts) { by["Since start"].parts.forEach(p => pills.push(pill(p.name, pct(p.value), p.value))); done.add("Since start"); }
   if (pills.length) out.push(el("div", {class: "pills"}, ...pills));
   const v = by.Verdict;
