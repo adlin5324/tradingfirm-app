@@ -905,7 +905,7 @@ function growthLine(d) {
   return pts;
 }
 
-// The bot's daily summary: pills for the numbers, a bar for the 60-day Verdict, a dot for Warnings, plain rows for the rest.
+// The bot's daily summary: pills for the numbers, a bar for the 60-day Verdict, a red dot for Warnings (hidden when there are none), plain rows for the rest.
 const cap = t => String(t).charAt(0).toUpperCase() + String(t).slice(1);
 function daySummary(rows) {
   const by = Object.fromEntries((rows || []).map(r => [r.label, r])), done = new Set(), out = [];
@@ -922,7 +922,7 @@ function daySummary(rows) {
     done.add("Verdict");
   }
   const w = by.Warnings;
-  if (w) { out.push(el("div", {class: "state"}, el("i", {class: "dot " + (w.tone || "")}), el("span", {text: cap(w.text)}))); done.add("Warnings"); }
+  if (w) { if (w.tone === "bad") out.push(el("div", {class: "state"}, el("i", {class: "dot bad"}), el("span", {text: cap(w.text)}))); done.add("Warnings"); }  // "All clear" is not shown
   (rows || []).filter(r => !done.has(r.label)).forEach(r =>
     out.push(el("div", {class: "kv"}, el("b", {text: cap(r.label)}), tone(el("span", {text: cap(r.text)}), r.tone === "good" ? 1 : r.tone === "bad" ? -1 : 0))));
   $("daySummary").replaceChildren(...out);
