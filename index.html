@@ -1244,7 +1244,7 @@ const seenList = () => { try { return JSON.parse(store.get("seen") || "[]"); } c
 let reading = null;
 const WRITES = {mechanic: "A fix for something that failed, when it needs your approval.",
   quant: "An improvement that passed its tests, when it needs your approval.",
-  evolve: "Every change to the bot's genome (settings, vote weights, abilities), one card each, waiting for your Yes or No."};
+  evolve: "A change to the bot's settings, when it needs your approval."};
 const mailDate = s => !s ? "" : /^\d{4}-\d\d-\d\d$/.test(s) || new Date(s).toDateString() !== new Date().toDateString() ? shortDate(s)
   : new Date(s).toLocaleTimeString(undefined, {hour: "numeric", minute: "2-digit"});
 // The message's text on one line, with a space between headings, bullets and cells so words don't run together.
