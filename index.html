@@ -638,7 +638,7 @@ header { margin-bottom: 16px; }
 @keyframes welcomePulse { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { #welcome, .welcome-box small { animation: none; } }
 </style>
-<link rel="stylesheet" href="tabs.css?v=14">
+<link rel="stylesheet" href="tabs.css?v=16">
 </head>
 <body>
 <form id="lock" class="lock card glow" autocomplete="off">
@@ -690,12 +690,7 @@ header { margin-bottom: 16px; }
     </section>
     <div class="grp-h">Bot secrets</div>
     <section class="card grp">
-      <label class="rw"><span>Brokerage app key</span><input id="sk_WEBULL_APP_KEY" type="password" autocomplete="off" placeholder="leave blank to keep"></label>
-      <label class="rw"><span>Brokerage app secret</span><input id="sk_WEBULL_APP_SECRET" type="password" autocomplete="off" placeholder="leave blank to keep"></label>
-      <label class="rw"><span>Brokerage account ID</span><input id="sk_WEBULL_ACCOUNT_ID" type="password" autocomplete="off" placeholder="optional"></label>
-      <label class="rw"><span>Memory password</span><input id="sk_MEMORY_PASSWORD" type="password" autocomplete="off" placeholder="same as before"></label>
-      <label class="rw"><span>Write token</span><input id="secretsToken" type="password" autocomplete="off" placeholder="one use, not saved"></label>
-      <button type="button" class="rw acc" id="secretsSave">Save to GitHub</button>
+      <button type="button" class="rw acc" id="secretsOpen">Sign in to brokerage</button>
       <div class="status" style="margin:0;padding:0 16px"></div>
     </section>
     <div class="grp-h">Lock token behind password</div>
@@ -777,6 +772,17 @@ header { margin-bottom: 16px; }
   </div>
 
 </main>
+
+<dialog id="secBox">
+  <p class="muted small" id="secStep"></p>
+  <h2 id="secTitle"></h2>
+  <input id="secInput" type="password" autocomplete="off" autocapitalize="off" spellcheck="false">
+  <p class="small" id="secErr" style="min-height:20px;margin:8px 0 0;color:var(--c1)"></p>
+  <div class="row" style="margin-top:12px;justify-content:space-between">
+    <button type="button" id="secCancel">Cancel</button>
+    <span class="row"><button type="button" id="secBack">Back</button><button type="button" id="secSkip">Skip</button><button type="button" id="secMake">Make one</button><button type="button" class="primary" id="secNext">Next</button></span>
+  </div>
+</dialog>
 
 <dialog id="askBox">
   <h2 id="askTitle"></h2>
@@ -1510,32 +1516,54 @@ $("themeSw").addEventListener("click", e => { const b = e.target.closest("button
 const markMode = () => document.querySelectorAll("#modeSeg button").forEach(b => b.classList.toggle("on", b.dataset.mode === (store.get("mode") === "dark" ? "dark" : "light")));
 markMode();
 document.querySelectorAll("#modeSeg button").forEach(b => b.addEventListener("click", () => { store.set("mode", b.dataset.mode); applyMode(b.dataset.mode); markMode(); }));
-// Bot secrets: each value is locked in the browser with the repo's public key (libsodium sealed box) and sent straight to GitHub. Nothing is stored here.
-$("secretsSave").addEventListener("click", async () => {
-  const btn = $("secretsSave"), names = ["WEBULL_APP_KEY", "WEBULL_APP_SECRET", "WEBULL_ACCOUNT_ID", "MEMORY_PASSWORD"];
-  const todo = names.map(n => [n, $("sk_" + n).value.trim()]).filter(([, v]) => v), token = $("secretsToken").value.trim(), repo = $("repo").value.trim();
-  if (!todo.length) return setStatus("Fill in at least one secret.", btn);
-  if (!token) return setStatus("Paste a token that can write secrets.", btn);
-  if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) return setStatus("Check the repository name above.", btn);
-  btn.disabled = true; setStatus("Saving…", btn);
+// Bot secrets: a short step-by-step popup. Each value is locked in the browser with the repo's public key (libsodium sealed box) and sent straight to GitHub. Nothing is stored here.
+const SEC_STEPS = [["WEBULL_APP_KEY", "Brokerage app key"], ["WEBULL_APP_SECRET", "Brokerage app secret"], ["WEBULL_ACCOUNT_ID", "Brokerage account ID", true],
+  ["MEMORY_PASSWORD", "Memory password"], ["", "Write token (used once, not saved)"]];
+let secAt = 0, secVals = {};
+function secShow() {
+  const [name, label, optional] = SEC_STEPS[secAt], last = secAt === SEC_STEPS.length - 1;
+  $("secStep").textContent = "Step " + (secAt + 1) + " of " + SEC_STEPS.length;
+  $("secTitle").textContent = label;
+  $("secInput").value = secVals[name || "TOKEN"] || ""; $("secErr").textContent = "";
+  $("secInput").type = name === "MEMORY_PASSWORD" ? "text" : "password"; $("secMake").classList.toggle("hidden", name !== "MEMORY_PASSWORD");
+  $("secBack").classList.toggle("hidden", secAt === 0); $("secSkip").classList.toggle("hidden", !optional);
+  $("secNext").textContent = last ? "Save to GitHub" : "Next"; $("secInput").focus();
+}
+$("secretsOpen").addEventListener("click", () => { secAt = 0; secVals = {}; $("secNext").disabled = false; $("secBox").showModal(); secShow(); });
+$("secCancel").addEventListener("click", () => { secVals = {}; $("secInput").value = ""; $("secBox").close(); });
+$("secBack").addEventListener("click", () => { secVals[SEC_STEPS[secAt][0] || "TOKEN"] = $("secInput").value.trim(); secAt--; secShow(); });
+$("secMake").addEventListener("click", () => {
+  const a = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789", r = crypto.getRandomValues(new Uint8Array(32));
+  $("secInput").value = [...r].map(x => a[x % a.length]).join("");
+  $("secErr").textContent = "Copy it somewhere safe first. A new password cannot open the old saved memory.";
+});
+$("secSkip").addEventListener("click", () => { secVals[SEC_STEPS[secAt][0]] = ""; secAt++; secShow(); });
+$("secInput").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); $("secNext").click(); } });
+$("secNext").addEventListener("click", async () => {
+  const [name, , optional] = SEC_STEPS[secAt], v = $("secInput").value.trim(), last = secAt === SEC_STEPS.length - 1;
+  if (!v && !optional) { $("secErr").textContent = "Enter a value, or Cancel."; return; }
+  secVals[name || "TOKEN"] = v;
+  if (!last) { secAt++; secShow(); return; }
+  const token = secVals.TOKEN, repo = $("repo").value.trim(), todo = SEC_STEPS.slice(0, -1).map(([n]) => [n, secVals[n]]).filter(([, x]) => x);
+  if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) { $("secErr").textContent = "Check the repository name."; return; }
+  $("secNext").disabled = true; $("secErr").textContent = "Saving…";
   const api = (path, opt = {}) => fetch("https://api.github.com/repos/" + repo + "/actions/secrets/" + path, {...opt, headers: {Authorization: "Bearer " + token,
     "X-GitHub-Api-Version": "2022-11-28", Accept: "application/vnd.github+json", ...(opt.body ? {"Content-Type": "application/json"} : {})}});
   try {
     if (!window.sodiumReady) await new Promise((ok, no) => { const sc = document.createElement("script"); sc.src = "sodium.js?v=1"; sc.onload = ok; sc.onerror = () => no(new Error("could not load the lock library")); document.head.append(sc); });
     const sodium = await window.sodiumReady;
     const kr = await api("public-key");
-    if (!kr.ok) throw new Error(kr.status === 404 ? "GitHub says no access to " + repo + " (token needs Secrets: write on it)" : "GitHub refused the token (" + kr.status + ")");
-    const {key, key_id} = await kr.json(), pub = sodium.from_base64(key, sodium.base64_variants.ORIGINAL), done = [];
-    for (const [name, value] of todo) {
+    if (!kr.ok) throw new Error(kr.status === 404 ? "no access to " + repo + " (the token needs Secrets: write on it)" : "GitHub refused the token (" + kr.status + ")");
+    const {key, key_id} = await kr.json(), pub = sodium.from_base64(key, sodium.base64_variants.ORIGINAL);
+    for (const [n, value] of todo) {
       const enc = sodium.to_base64(sodium.crypto_box_seal(sodium.from_string(value), pub), sodium.base64_variants.ORIGINAL);
-      const r = await api(name, {method: "PUT", body: JSON.stringify({encrypted_value: enc, key_id})});
-      if (!r.ok) throw new Error(name + " failed (" + r.status + ")");
-      done.push(name); $("sk_" + name).value = "";
+      const r = await api(n, {method: "PUT", body: JSON.stringify({encrypted_value: enc, key_id})});
+      if (!r.ok) throw new Error(n + " failed (" + r.status + ")");
     }
-    $("secretsToken").value = "";
-    setStatus("Saved: " + done.join(", ") + ". Delete the write token on GitHub now.", btn);
-  } catch (e) { setStatus("Not saved: " + e.message, btn); }
-  btn.disabled = false;
+    secVals = {}; $("secInput").value = ""; $("secBox").close();
+    setStatus("Saved " + todo.length + " secret(s). Delete the write token on GitHub now.", $("secretsOpen"));
+  } catch (e) { $("secErr").textContent = "Not saved: " + e.message; }
+  $("secNext").disabled = false;
 });
 $("vaultMake").addEventListener("click", async () => {
   const pw = $("vaultPw").value, token = $("token").value.trim() || store.get("token"), out = $("vaultOut");
