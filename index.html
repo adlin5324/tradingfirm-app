@@ -350,7 +350,6 @@ body::after { opacity: var(--topo); transform-origin: 50% 100%; animation: drift
 #settingsBtn { display: inline-flex; align-items: center; }
 #settingsBtn .hi { margin-right: 4px; }
 .card.glow::before { background: linear-gradient(120deg, var(--c3), var(--c1)); }
-#themePick, #modePick { width: 100%; margin: 4px 0 8px; }
 /* Light mode (Settings → Appearance). */
 :root[data-mode="light"] {
   color-scheme: light;
@@ -629,7 +628,7 @@ header { margin-bottom: 16px; }
 @keyframes welcomePulse { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { #welcome, .welcome-box small { animation: none; } }
 </style>
-<link rel="stylesheet" href="tabs.css?v=4">
+<link rel="stylesheet" href="tabs.css?v=5">
 </head>
 <body>
 <form id="lock" class="lock card glow" autocomplete="off">
@@ -668,10 +667,9 @@ header { margin-bottom: 16px; }
     <h2 class="big">Settings</h2>
     <div class="grp-h">Appearance</div>
     <section class="card grp">
-      <label class="rw"><span>Theme</span><select id="themePick"></select></label>
+      <div class="rw"><span>Theme</span><div class="sw" id="themeSw" role="radiogroup" aria-label="Theme"></div></div>
       <div class="rw"><span>Appearance</span><div class="seg" id="modeSeg"><button type="button" data-mode="light">Light</button><button type="button" data-mode="dark">Dark</button></div></div>
     </section>
-    <p class="foot" id="themeSchools"></p>
     <div class="grp-h">GitHub</div>
     <section class="card grp">
       <label class="rw"><span>Repository</span><input id="repo" placeholder="owner/repo" value="adlin5324/tradingfirm" autocomplete="off" autocapitalize="off"></label>
@@ -1481,10 +1479,10 @@ $("save").addEventListener("click", () => {
 });
 $("forget").addEventListener("click", () => { store.del("token"); setStatus("Token removed from this browser.", $("forget")); });
 $("repo").value = store.get("repo") || "adlin5324/tradingfirm";
-$("themePick").replaceChildren(...Object.entries(THEMES).map(([k, t]) => el("option", {value: k, text: t[0]})));
-$("themePick").value = THEMES[store.get("theme")] ? store.get("theme") : "crimson";
-const showSchools = () => $("themeSchools").textContent = THEMES[$("themePick").value][1];
-showSchools();
+const markTheme = () => document.querySelectorAll("#themeSw button").forEach(b => { const on = b.dataset.theme === (THEMES[store.get("theme")] ? store.get("theme") : "crimson"); b.classList.toggle("on", on); b.setAttribute("aria-checked", on); });
+$("themeSw").replaceChildren(...Object.entries(THEMES).map(([k, t]) => { const b = el("button", {type: "button", role: "radio", title: t[0].split(" / ")[0], "aria-label": t[0]}); b.dataset.theme = k; b.style.setProperty("--a", t[2]); b.style.setProperty("--b", t[4]); return b; }));
+markTheme();
+$("themeSw").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; store.set("theme", b.dataset.theme); applyTheme(b.dataset.theme); markTheme(); });
 const markMode = () => document.querySelectorAll("#modeSeg button").forEach(b => b.classList.toggle("on", b.dataset.mode === (store.get("mode") === "light" ? "light" : "dark")));
 markMode();
 document.querySelectorAll("#modeSeg button").forEach(b => b.addEventListener("click", () => { store.set("mode", b.dataset.mode); applyMode(b.dataset.mode); markMode(); }));
@@ -1495,7 +1493,6 @@ $("signOut").addEventListener("click", () => {
   document.documentElement.classList.add("locked", "welcome");
   scrollTo(0, 0); pw.focus();
 });
-$("themePick").addEventListener("change", () => { store.set("theme", $("themePick").value); applyTheme($("themePick").value); showSchools(); });
 archNews();
 refresh();
 if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js");
