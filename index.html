@@ -33,7 +33,16 @@ function applyMode(mode) {
   document.getElementById("barColor").content = light ? "#d6d2cd" : "#000000";
 }
 try { applyTheme(localStorage.getItem("theme")); applyMode(localStorage.getItem("mode")); } catch { applyTheme(); applyMode(); }
+// Front-door lock. shortcut: static site, hash is public in source; fine to keep out casual visitors, not for secrets (the GitHub token is stored in the browser, not behind this).
+const LOCK = { salt: "template-v1", hash: "2d2d9cc8e9a9c9237f0ab90e8952aa0d2b495cb74a3b545978b95b3a37608aa3" };
+const sha256 = async s => [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)))].map(b => b.toString(16).padStart(2, "0")).join("");
+let unlocked = false;
+try { unlocked = localStorage.getItem("trading:unlocked") === LOCK.hash; } catch {}
+document.documentElement.classList.add("welcome");
+if (!unlocked) document.documentElement.classList.add("locked");
 </script>
+<!-- Lock visibility is inline so a stale cached style can never show the app. -->
+<style>#lock,#welcome{display:none}.locked #lock{display:block}.locked main,.locked dialog{display:none}.welcome:not(.locked) #welcome{display:flex}.welcome main,.welcome dialog{display:none}.locked,.locked body,.welcome,.welcome body{overflow:hidden}</style>
 <!-- Icons: Lucide (lucide.dev), ISC license -->
 <style>
 :root {
@@ -599,9 +608,44 @@ header { margin-bottom: 16px; }
 /* Market lines: teal, blue, gold and violet, all apart from the crimson Adlin line. */
 :root { --spx: #2dd4bf; --ndx: #4da3ff; --brk: #f5c542; --hf: #a78bfa; }
 :root[data-mode="light"] { --spx: #0d9488; --ndx: #2563eb; --brk: #c9930a; --hf: #7c3aed; }
+/* password lock and welcome screen */
+.lock { position: fixed; top: 0; left: 0; right: 0; bottom: 0; margin: auto; width: min(340px, calc(100% - 32px)); height: fit-content; text-align: center; z-index: 20; }
+.lock h1 { margin: 0 0 16px; font: 400 30px/1.2 "Instrument Serif", Georgia, serif; }
+.lock label { display: block; text-align: left; margin: 12px 0 4px; font-size: 12px; color: var(--muted); }
+.lock input { font-size: 16px; }
+#lockErr { min-height: 20px; margin: 8px 0 0; line-height: 20px; text-align: center; color: var(--c1); font-size: 13px; }
+#welcome { position: fixed; top: 0; left: 0; right: 0; height: 100vh; height: 100lvh; z-index: 20; align-items: center; justify-content: center; padding: 24px; text-align: center; cursor: pointer; outline: none; animation: welcomeIn .7s ease both; }
+.welcome-box { max-width: 520px; display: grid; justify-items: center; gap: 14px; }
+.welcome-box h1 { margin: 0; font: 400 clamp(40px, 9vw, 64px)/1.1 "Instrument Serif", Georgia, serif; -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; }
+.welcome-box .badge { margin: 0; }
+.welcome-box p { margin: 0; color: var(--muted); font-size: 16px; line-height: 1.5; }
+.welcome-box small { margin-top: 10px; color: var(--muted); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; animation: welcomePulse 2.4s ease-in-out infinite; }
+.lock .hl, .welcome-box .hl { color: color-mix(in srgb, var(--c1) 55%, white); text-shadow: 0 0 2px color-mix(in srgb, var(--c1) 70%, transparent), 0 0 9px color-mix(in srgb, var(--c1) 40%, transparent); }
+.lock em, .welcome-box em { font-style: italic; color: color-mix(in srgb, var(--c3) 70%, white); text-shadow: 0 0 2px color-mix(in srgb, var(--c3) 55%, transparent), 0 0 9px color-mix(in srgb, var(--c3) 30%, transparent); }
+:root[data-mode="light"] .lock .hl, :root[data-mode="light"] .welcome-box .hl { color: var(--c1); text-shadow: none; }
+:root[data-mode="light"] .lock em, :root[data-mode="light"] .welcome-box em { color: color-mix(in srgb, var(--c3) 25%, #1c1719); text-shadow: none; }
+.locked, .welcome { overscroll-behavior: none; }
+@keyframes welcomeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes welcomePulse { 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { #welcome, .welcome-box small { animation: none; } }
 </style>
 </head>
 <body>
+<form id="lock" class="lock card glow" autocomplete="off">
+  <h1><span class="hl">Adlin&rsquo;s</span> <em>Investments</em></h1>
+  <label for="pw">Password</label>
+  <input id="pw" type="password" autocomplete="current-password" required>
+  <div id="lockErr" role="alert"></div>
+  <button class="primary" style="width:100%;margin-top:12px">Unlock</button>
+</form>
+<div id="welcome" role="button" tabindex="0" aria-label="Welcome. Press anywhere to continue.">
+  <div class="welcome-box">
+    <span class="badge">Welcome</span>
+    <h1><span class="hl">Adlin&rsquo;s</span> <em>Investments</em></h1>
+    <p>Your trading dashboard.</p>
+    <small>Tap anywhere to continue</small>
+  </div>
+</div>
 <main>
   <header>
     <div class="topbar">
@@ -1420,6 +1464,24 @@ if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.ser
 // Picks up data written by the bot's runs and by Refresh live numbers.
 setInterval(() => { if (!document.hidden && !document.querySelector("[data-cmd]:disabled, #liveBtn:disabled")) refresh(); }, 60 * 1000);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
+</script>
+<script>
+// lock + welcome screens
+(() => {
+  const root = document.documentElement, pw = document.getElementById("pw");
+  document.getElementById("lock").onsubmit = async e => {
+    e.preventDefault();
+    if (await sha256(LOCK.salt + pw.value) === LOCK.hash) {
+      try { localStorage.setItem("trading:unlocked", LOCK.hash); } catch {}
+      root.classList.remove("locked"); document.getElementById("welcome").focus();
+    } else { document.getElementById("lockErr").textContent = "Wrong password."; pw.select(); }
+  };
+  const leave = () => { root.classList.remove("welcome"); scrollTo(0, 0); };
+  const w = document.getElementById("welcome");
+  w.addEventListener("click", leave);
+  w.addEventListener("keydown", e => { if (["Enter", " ", "Escape"].includes(e.key)) { e.preventDefault(); leave(); } });
+  if (!root.classList.contains("locked")) w.focus();
+})();
 </script>
 </body>
 </html>
