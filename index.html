@@ -638,7 +638,7 @@ header { margin-bottom: 16px; }
 @keyframes welcomePulse { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { #welcome, .welcome-box small { animation: none; } }
 </style>
-<link rel="stylesheet" href="tabs.css?v=18">
+<link rel="stylesheet" href="tabs.css?v=19">
 </head>
 <body>
 <form id="lock" class="lock card glow" autocomplete="off">
@@ -1556,7 +1556,6 @@ $("secNext").addEventListener("click", async () => {
       if (!r.ok) throw new Error(n + " failed (" + r.status + ")");
     }
     secVals = {}; $("secInput").value = ""; $("secBox").close();
-    setStatus("Saved " + todo.length + " secret(s).", $("secretsOpen"));
   } catch (e) { $("secErr").textContent = "Not saved: " + e.message; }
   $("secNext").disabled = false;
 });
