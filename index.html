@@ -638,7 +638,7 @@ header { margin-bottom: 16px; }
 @keyframes welcomePulse { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { #welcome, .welcome-box small { animation: none; } }
 </style>
-<link rel="stylesheet" href="tabs.css?v=17">
+<link rel="stylesheet" href="tabs.css?v=18">
 </head>
 <body>
 <form id="lock" class="lock card glow" autocomplete="off">
@@ -780,7 +780,7 @@ header { margin-bottom: 16px; }
   <p class="small" id="secErr" style="min-height:20px;margin:8px 0 0;color:var(--c1)"></p>
   <div class="row" style="margin-top:12px;justify-content:space-between">
     <button type="button" id="secCancel">Cancel</button>
-    <span class="row"><button type="button" id="secBack">Back</button><button type="button" id="secSkip">Skip</button><button type="button" id="secMake">Make one</button><button type="button" class="primary" id="secNext">Next</button></span>
+    <span class="row"><button type="button" id="secBack">Back</button><button type="button" id="secSkip">Skip</button><button type="button" class="primary" id="secNext">Next</button></span>
   </div>
 </dialog>
 
@@ -1526,18 +1526,12 @@ function secShow() {
   $("secStep").textContent = "Step " + (secAt + 1) + " of " + SEC_STEPS.length;
   $("secTitle").textContent = label;
   $("secInput").value = secVals[name || "TOKEN"] || ""; $("secErr").textContent = "";
-  $("secInput").type = name === "MEMORY_PASSWORD" ? "text" : "password"; $("secMake").classList.toggle("hidden", name !== "MEMORY_PASSWORD");
   $("secBack").classList.toggle("hidden", secAt === 0); $("secSkip").classList.toggle("hidden", !optional);
   $("secNext").textContent = last ? "Save" : "Next"; $("secInput").focus();
 }
 $("secretsOpen").addEventListener("click", () => { SEC_STEPS = store.get("token") ? SEC_BASE : [...SEC_BASE, ["", "GitHub token (used once, not saved)"]]; secAt = 0; secVals = {}; $("secNext").disabled = false; $("secBox").showModal(); secShow(); });
 $("secCancel").addEventListener("click", () => { secVals = {}; $("secInput").value = ""; $("secBox").close(); });
 $("secBack").addEventListener("click", () => { secVals[SEC_STEPS[secAt][0] || "TOKEN"] = $("secInput").value.trim(); secAt--; secShow(); });
-$("secMake").addEventListener("click", () => {
-  const a = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789", r = crypto.getRandomValues(new Uint8Array(32));
-  $("secInput").value = [...r].map(x => a[x % a.length]).join("");
-  $("secErr").textContent = "Copy it somewhere safe first. A new password cannot open the old saved memory.";
-});
 $("secSkip").addEventListener("click", () => { secVals[SEC_STEPS[secAt][0]] = ""; secAt++; secShow(); });
 $("secInput").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); $("secNext").click(); } });
 $("secNext").addEventListener("click", async () => {
