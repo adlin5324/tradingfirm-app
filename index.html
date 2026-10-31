@@ -638,7 +638,7 @@ header { margin-bottom: 16px; }
 @keyframes welcomePulse { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { #welcome, .welcome-box small { animation: none; } }
 </style>
-<link rel="stylesheet" href="tabs.css?v=10">
+<link rel="stylesheet" href="tabs.css?v=12">
 </head>
 <body>
 <form id="lock" class="lock card glow" autocomplete="off">
@@ -682,7 +682,7 @@ header { margin-bottom: 16px; }
     </section>
     <div class="grp-h">GitHub</div>
     <section class="card grp">
-      <label class="rw"><span>Repository</span><input id="repo" placeholder="owner/repo" value="adlin5324/tradingfirm" autocomplete="off" autocapitalize="off"></label>
+      <label class="rw hidden"><span>Repository</span><input id="repo" placeholder="owner/repo" value="adlin5324/tradingfirm" autocomplete="off" autocapitalize="off"></label>
       <label class="rw"><span>Token</span><input id="token" type="password" placeholder="github_pat_…" autocomplete="off"></label>
       <button type="button" class="rw acc" id="save">Save and connect</button>
       <button type="button" class="rw danger-t" id="forget">Forget token</button>

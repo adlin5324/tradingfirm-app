@@ -124,3 +124,7 @@ body.off-dash #banner, body.is-settings #heroCard { display: none !important; }
 #settings .sw { display: flex; gap: 10px; }
 #settings .sw button { width: 30px; height: 30px; padding: 0; border: 0; border-radius: 50%; background: linear-gradient(90deg, var(--a) 50%, var(--b) 50%); box-shadow: 0 0 0 1px var(--line); }
 #settings .sw button.on { box-shadow: 0 0 0 2px var(--card), 0 0 0 4px var(--text); }
+#settings .rw input, #settings .rw input:focus, #settings .rw input:focus-visible { outline: none; border: 0; border-radius: 0; box-shadow: none; background: none; padding: 4px 0; min-width: 0; max-width: 68%; text-overflow: ellipsis; }
+#settings .rw input::placeholder { color: var(--muted); opacity: .7; }
+#settings .rw input:focus { color: var(--text); }
+#settings .rw:focus-within { background: var(--faint); }
