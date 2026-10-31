@@ -127,5 +127,5 @@ body.off-dash #banner, body.is-settings #heroCard { display: none !important; }
 #heroCard.stuck { padding-top: 10px; padding-bottom: 10px; }
 #heroCard { background: color-mix(in srgb, var(--bg) 92%, var(--c2)); }
 #settings .sw { display: flex; gap: 10px; }
-#settings .sw button { width: 30px; height: 30px; padding: 0; border-radius: 50%; border: 2px solid transparent; background: linear-gradient(135deg, var(--a) 55%, var(--b) 55%); box-shadow: 0 0 0 1px var(--line); }
-#settings .sw button.on { border-color: var(--bg); box-shadow: 0 0 0 2px var(--text); }
+#settings .sw button { width: 30px; height: 30px; padding: 0; border: 0; border-radius: 50%; background: linear-gradient(90deg, var(--a) 50%, var(--b) 50%); box-shadow: 0 0 0 1px var(--line); }
+#settings .sw button.on { box-shadow: 0 0 0 2px var(--card), 0 0 0 4px var(--text); }
