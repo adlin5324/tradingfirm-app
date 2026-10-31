@@ -628,7 +628,7 @@ header { margin-bottom: 16px; }
 @keyframes welcomePulse { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { #welcome, .welcome-box small { animation: none; } }
 </style>
-<link rel="stylesheet" href="tabs.css?v=5">
+<link rel="stylesheet" href="tabs.css?v=6">
 </head>
 <body>
 <form id="lock" class="lock card glow" autocomplete="off">
@@ -1445,6 +1445,7 @@ function showView() {
   document.querySelectorAll("[data-view]").forEach(e => e.classList.toggle("hidden", e.dataset.view !== view));
   document.querySelectorAll("[data-go]").forEach(b => b.classList.toggle("on", b.dataset.go === view));
   $("settingsBtn").classList.toggle("on", view === "settings");
+  document.body.classList.toggle("is-settings", view === "settings");
   document.body.classList.toggle("off-dash", !["positions", "performance", "trades", "office"].includes(view));
   if (VIEWS.includes(view)) { lastView = view; store.set("view", view); }
   scrollTo(0, 0);
