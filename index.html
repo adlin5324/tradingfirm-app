@@ -629,6 +629,7 @@ header { margin-bottom: 16px; }
 @keyframes welcomePulse { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { #welcome, .welcome-box small { animation: none; } }
 </style>
+<link rel="stylesheet" href="tabs.css?v=1">
 </head>
 <body>
 <form id="lock" class="lock card glow" autocomplete="off">
@@ -656,29 +657,40 @@ header { margin-bottom: 16px; }
         <button data-go="performance">Performance</button>
         <button data-go="trades">Trades</button>
         <button data-go="office">The Desk<span id="officeCount"></span></button>
+        <button data-go="competitors">Competitors</button>
+        <button data-go="roadmap">Roadmap</button>
       </nav>
       <button class="ghost" id="settingsBtn" title="Settings" aria-label="Settings"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg></button>
     </div>
   </header>
 
-  <section class="card setup hidden" id="setup">
-    <h2>Theme</h2>
-    <label>Colors<select id="themePick"></select></label>
-    <p class="muted small" id="themeSchools"></p>
-    <label>Appearance<select id="modePick"><option value="dark">Dark</option><option value="light">Light</option></select></label>
-    <div style="margin-top:24px"></div>
-    <label>Repository<input id="repo" placeholder="owner/repo" value="adlin5324/tradingfirm"></label>
-    <label>Token<input id="token" type="password" placeholder="github_pat_…" autocomplete="off"></label>
-    <div class="row">
-      <button class="primary" id="save">Save and connect</button>
-      <button id="forget">Forget token</button>
-    </div>
-    <div class="status"></div>
-  </section>
+  <div id="settings" data-view="settings" class="hidden">
+    <h2 class="big">Settings</h2>
+    <div class="grp-h">Appearance</div>
+    <section class="card grp">
+      <label class="rw"><span>Theme</span><select id="themePick"></select></label>
+      <div class="rw"><span>Appearance</span><div class="seg" id="modeSeg"><button type="button" data-mode="light">Light</button><button type="button" data-mode="dark">Dark</button></div></div>
+    </section>
+    <p class="foot" id="themeSchools"></p>
+    <div class="grp-h">GitHub</div>
+    <section class="card grp">
+      <label class="rw"><span>Repository</span><input id="repo" placeholder="owner/repo" value="adlin5324/tradingfirm" autocomplete="off" autocapitalize="off"></label>
+      <label class="rw"><span>Token</span><input id="token" type="password" placeholder="github_pat_…" autocomplete="off"></label>
+      <button type="button" class="rw acc" id="save">Save and connect</button>
+      <button type="button" class="rw danger-t" id="forget">Forget token</button>
+      <div class="status" style="margin:0;padding:0 16px"></div>
+    </section>
+    <p class="foot">The token stays in this browser only. It is never part of the app files.</p>
+    <div class="grp-h">Account</div>
+    <section class="card grp">
+      <button type="button" class="rw danger-t" id="signOut">Sign out</button>
+    </section>
+    <p class="foot">Sign out locks the app on this device. You will see the password screen, then the welcome screen again.</p>
+  </div>
 
   <div class="banner hidden" id="banner"></div>
 
-  <section class="card glow">
+  <section class="card glow" id="heroCard">
     <div class="hero">
       <div class="acct">
         <div class="acct-head"><span class="muted small">Account Value</span>
@@ -729,6 +741,24 @@ header { margin-bottom: 16px; }
     <div class="status"></div>
     <div id="genome" class="small"></div>
   </section>
+
+  <div id="cmp" data-view="competitors" class="hidden">
+    <nav class="subnav" id="cmpNav" aria-label="Competitors pages"></nav>
+    <div id="cmpPages"></div>
+  </div>
+
+  <div id="rm" data-view="roadmap" class="hidden">
+    <nav class="subnav" id="rmPills" aria-label="Filter by status"></nav>
+    <section class="card glow">
+      <form id="addForm" class="add" autocomplete="off">
+        <input id="addTitle" placeholder="Add a task" maxlength="120" required aria-label="Task title">
+        <select id="addPrio" aria-label="Priority"><option value="1">High</option><option value="2" selected>Medium</option><option value="3">Low</option></select>
+        <button class="primary">Add</button>
+      </form>
+    </section>
+    <div id="board"></div>
+    <div class="row" style="margin-top:4px"><button type="button" id="rmCopy" class="ghost" title="Copy the agent prompt, then paste it into Claude">Agent prompt</button></div>
+  </div>
 
 </main>
 
@@ -1099,7 +1129,7 @@ function setStatus(text, from) {
 }
 
 async function refresh() {
-  if (!store.get("token")) { $("setup").classList.remove("hidden"); $("chip").textContent = "Not connected"; return; }
+  if (!store.get("token")) { $("chip").textContent = "Not connected"; return; }
   try { await loadDashboard(); }
   catch (e) { reportProblem("Loading the app's data", e.message); }
 }
@@ -1416,12 +1446,17 @@ new MutationObserver(() => { cancelAnimationFrame(titling); titling = requestAni
 titleLabels();
 
 // Top bar picks the page: Positions, Performance, Trades, The Firm (every AI team) or The Desk.
-let view = store.get("view");
-if (!["positions", "performance", "trades", "office"].includes(view)) view = "positions";
+const VIEWS = ["positions", "performance", "trades", "office", "competitors", "roadmap"];
+let view = store.get("view"), lastView;
+if (!VIEWS.includes(view)) view = "positions";
+lastView = view;
 function showView() {
   document.querySelectorAll("[data-view]").forEach(e => e.classList.toggle("hidden", e.dataset.view !== view));
   document.querySelectorAll("[data-go]").forEach(b => b.classList.toggle("on", b.dataset.go === view));
-  store.set("view", view);
+  $("settingsBtn").classList.toggle("on", view === "settings");
+  document.body.classList.toggle("off-dash", !["positions", "performance", "trades", "office"].includes(view));
+  if (VIEWS.includes(view)) { lastView = view; store.set("view", view); }
+  scrollTo(0, 0);
 }
 document.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => { view = b.dataset.go; showView(); }));
 showView();
@@ -1440,13 +1475,13 @@ document.addEventListener("pointermove", e => {
   card.style.setProperty("--mx", e.clientX - r.left + "px");
   card.style.setProperty("--my", e.clientY - r.top + "px");
 });
-$("settingsBtn").addEventListener("click", () => $("setup").classList.toggle("hidden"));
+$("settingsBtn").addEventListener("click", () => { view = view === "settings" ? lastView : "settings"; showView(); });
 $("save").addEventListener("click", () => {
   store.set("repo", $("repo").value.trim());
   const token = $("token").value.trim();
   if (token) store.set("token", token);
   $("token").value = "";
-  $("setup").classList.add("hidden");
+  view = lastView; showView();
   refresh();
 });
 $("forget").addEventListener("click", () => { store.del("token"); setStatus("Token removed from this browser.", $("forget")); });
@@ -1455,8 +1490,16 @@ $("themePick").replaceChildren(...Object.entries(THEMES).map(([k, t]) => el("opt
 $("themePick").value = THEMES[store.get("theme")] ? store.get("theme") : "crimson";
 const showSchools = () => $("themeSchools").textContent = THEMES[$("themePick").value][1];
 showSchools();
-$("modePick").value = store.get("mode") === "light" ? "light" : "dark";
-$("modePick").addEventListener("change", () => { store.set("mode", $("modePick").value); applyMode($("modePick").value); });
+const markMode = () => document.querySelectorAll("#modeSeg button").forEach(b => b.classList.toggle("on", b.dataset.mode === (store.get("mode") === "light" ? "light" : "dark")));
+markMode();
+document.querySelectorAll("#modeSeg button").forEach(b => b.addEventListener("click", () => { store.set("mode", b.dataset.mode); applyMode(b.dataset.mode); markMode(); }));
+$("signOut").addEventListener("click", () => {
+  try { localStorage.removeItem("trading:unlocked"); } catch {}
+  view = lastView; showView();
+  const pw = $("pw"); pw.value = ""; $("lockErr").textContent = "";
+  document.documentElement.classList.add("locked", "welcome");
+  scrollTo(0, 0); pw.focus();
+});
 $("themePick").addEventListener("change", () => { store.set("theme", $("themePick").value); applyTheme($("themePick").value); showSchools(); });
 archNews();
 refresh();
@@ -1465,6 +1508,9 @@ if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.ser
 setInterval(() => { if (!document.hidden && !document.querySelector("[data-cmd]:disabled, #liveBtn:disabled")) refresh(); }, 60 * 1000);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
 </script>
+<script src="competitors-data.js?v=1"></script>
+<script src="competitors.js?v=1"></script>
+<script src="roadmap.js?v=1"></script>
 <script>
 // lock + welcome screens
 (() => {
