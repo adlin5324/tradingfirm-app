@@ -638,7 +638,7 @@ header { margin-bottom: 16px; }
 @keyframes welcomePulse { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { #welcome, .welcome-box small { animation: none; } }
 </style>
-<link rel="stylesheet" href="tabs.css?v=9">
+<link rel="stylesheet" href="tabs.css?v=10">
 </head>
 <body>
 <form id="lock" class="lock card glow" autocomplete="off">
@@ -686,6 +686,16 @@ header { margin-bottom: 16px; }
       <label class="rw"><span>Token</span><input id="token" type="password" placeholder="github_pat_…" autocomplete="off"></label>
       <button type="button" class="rw acc" id="save">Save and connect</button>
       <button type="button" class="rw danger-t" id="forget">Forget token</button>
+      <div class="status" style="margin:0;padding:0 16px"></div>
+    </section>
+    <div class="grp-h">Bot secrets</div>
+    <section class="card grp">
+      <label class="rw"><span>Webull app key</span><input id="sk_WEBULL_APP_KEY" type="password" autocomplete="off" placeholder="leave blank to keep"></label>
+      <label class="rw"><span>Webull app secret</span><input id="sk_WEBULL_APP_SECRET" type="password" autocomplete="off" placeholder="leave blank to keep"></label>
+      <label class="rw"><span>Webull account ID</span><input id="sk_WEBULL_ACCOUNT_ID" type="password" autocomplete="off" placeholder="optional"></label>
+      <label class="rw"><span>Memory password</span><input id="sk_MEMORY_PASSWORD" type="password" autocomplete="off" placeholder="same as before"></label>
+      <label class="rw"><span>Write token</span><input id="secretsToken" type="password" autocomplete="off" placeholder="one use, not saved"></label>
+      <button type="button" class="rw acc" id="secretsSave">Save to GitHub</button>
       <div class="status" style="margin:0;padding:0 16px"></div>
     </section>
     <div class="grp-h">Lock token behind password</div>
@@ -1500,6 +1510,33 @@ $("themeSw").addEventListener("click", e => { const b = e.target.closest("button
 const markMode = () => document.querySelectorAll("#modeSeg button").forEach(b => b.classList.toggle("on", b.dataset.mode === (store.get("mode") === "light" ? "light" : "dark")));
 markMode();
 document.querySelectorAll("#modeSeg button").forEach(b => b.addEventListener("click", () => { store.set("mode", b.dataset.mode); applyMode(b.dataset.mode); markMode(); }));
+// Bot secrets: each value is locked in the browser with the repo's public key (libsodium sealed box) and sent straight to GitHub. Nothing is stored here.
+$("secretsSave").addEventListener("click", async () => {
+  const btn = $("secretsSave"), names = ["WEBULL_APP_KEY", "WEBULL_APP_SECRET", "WEBULL_ACCOUNT_ID", "MEMORY_PASSWORD"];
+  const todo = names.map(n => [n, $("sk_" + n).value.trim()]).filter(([, v]) => v), token = $("secretsToken").value.trim(), repo = $("repo").value.trim();
+  if (!todo.length) return setStatus("Fill in at least one secret.", btn);
+  if (!token) return setStatus("Paste a token that can write secrets.", btn);
+  if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) return setStatus("Check the repository name above.", btn);
+  btn.disabled = true; setStatus("Saving…", btn);
+  const api = (path, opt = {}) => fetch("https://api.github.com/repos/" + repo + "/actions/secrets/" + path, {...opt, headers: {Authorization: "Bearer " + token,
+    "X-GitHub-Api-Version": "2022-11-28", Accept: "application/vnd.github+json", ...(opt.body ? {"Content-Type": "application/json"} : {})}});
+  try {
+    if (!window.sodiumReady) await new Promise((ok, no) => { const sc = document.createElement("script"); sc.src = "sodium.js?v=1"; sc.onload = ok; sc.onerror = () => no(new Error("could not load the lock library")); document.head.append(sc); });
+    const sodium = await window.sodiumReady;
+    const kr = await api("public-key");
+    if (!kr.ok) throw new Error(kr.status === 404 ? "GitHub says no access to " + repo + " (token needs Secrets: write on it)" : "GitHub refused the token (" + kr.status + ")");
+    const {key, key_id} = await kr.json(), pub = sodium.from_base64(key, sodium.base64_variants.ORIGINAL), done = [];
+    for (const [name, value] of todo) {
+      const enc = sodium.to_base64(sodium.crypto_box_seal(sodium.from_string(value), pub), sodium.base64_variants.ORIGINAL);
+      const r = await api(name, {method: "PUT", body: JSON.stringify({encrypted_value: enc, key_id})});
+      if (!r.ok) throw new Error(name + " failed (" + r.status + ")");
+      done.push(name); $("sk_" + name).value = "";
+    }
+    $("secretsToken").value = "";
+    setStatus("Saved: " + done.join(", ") + ". Delete the write token on GitHub now.", btn);
+  } catch (e) { setStatus("Not saved: " + e.message, btn); }
+  btn.disabled = false;
+});
 $("vaultMake").addEventListener("click", async () => {
   const pw = $("vaultPw").value, token = $("token").value.trim() || store.get("token"), out = $("vaultOut");
   if (pw.length < 16) return setStatus("Use a password of at least 16 characters.", $("vaultMake"));
