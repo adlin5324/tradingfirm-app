@@ -629,7 +629,7 @@ header { margin-bottom: 16px; }
 @keyframes welcomePulse { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { #welcome, .welcome-box small { animation: none; } }
 </style>
-<link rel="stylesheet" href="tabs.css?v=3">
+<link rel="stylesheet" href="tabs.css?v=4">
 </head>
 <body>
 <form id="lock" class="lock card glow" autocomplete="off">
@@ -749,13 +749,6 @@ header { margin-bottom: 16px; }
 
   <div id="rm" data-view="roadmap" class="hidden">
     <nav class="subnav" id="rmPills" aria-label="Filter by status"></nav>
-    <section class="card glow">
-      <form id="addForm" class="add" autocomplete="off">
-        <input id="addTitle" placeholder="Add a task" maxlength="120" required aria-label="Task title">
-        <select id="addPrio" aria-label="Priority"><option value="1">High</option><option value="2" selected>Medium</option><option value="3">Low</option></select>
-        <button class="primary">Add</button>
-      </form>
-    </section>
     <div id="board"></div>
     <div class="row" style="margin-top:4px"><button type="button" id="rmCopy" class="ghost" title="Copy the agent prompt, then paste it into Claude">Agent prompt</button></div>
   </div>
@@ -1512,7 +1505,7 @@ document.addEventListener("visibilitychange", () => { if (!document.hidden) refr
 </script>
 <script src="competitors-data.js?v=1"></script>
 <script src="competitors.js?v=1"></script>
-<script src="roadmap.js?v=1"></script>
+<script src="roadmap.js?v=2"></script>
 <script>
 // lock + welcome screens
 (() => {

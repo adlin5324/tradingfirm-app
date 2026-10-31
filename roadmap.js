@@ -76,13 +76,6 @@
     save(); render();
   });
 
-  $("addForm").onsubmit = e => {
-    e.preventDefault();
-    const title = $("addTitle").value.trim(); if (!title) return;
-    tasks.push({ id: "t" + Date.now(), title, note: "", tag: "", prio: +$("addPrio").value, status: "todo" });
-    $("addTitle").value = ""; save(); filter = "all"; render();
-  };
-
   render();
   fetch("proposals.json?v=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : {}).then(data => { const list = Array.isArray(data) ? data : data.proposals; updated = (!Array.isArray(data) && data.updated) || ""; if (Array.isArray(list)) { proposals = list.filter(p => p && p.id && p.title); render(); } }).catch(() => {});
 })();
