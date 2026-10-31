@@ -1566,6 +1566,16 @@ document.addEventListener("visibilitychange", () => { if (!document.hidden) refr
 <script src="competitors.js?v=1"></script>
 <script src="roadmap.js?v=2"></script>
 <script>
+// Remote reset: reset.json holds a number. A device that has not yet seen that number wipes its saved data (tasks, choices, token, theme, sign-in) and reloads.
+(async () => {
+  try {
+    const r = await fetch("reset.json", {cache: "no-store"}); if (!r.ok) return;
+    const want = Number((await r.json()).reset) || 0, have = Number(localStorage.getItem("trading:reset")) || 0;
+    if (want > have) { localStorage.clear(); localStorage.setItem("trading:reset", String(want)); location.reload(); }
+  } catch {}
+})();
+</script>
+<script>
 // lock + welcome screens
 (() => {
   const root = document.documentElement, pw = document.getElementById("pw");
