@@ -36,8 +36,18 @@ try { applyTheme(localStorage.getItem("theme")); applyMode(localStorage.getItem(
 // Front-door lock. shortcut: static site, hash is public in source; fine to keep out casual visitors, not for secrets (the GitHub token is stored in the browser, not behind this).
 const LOCK = { salt: "template-v1", hash: "2d2d9cc8e9a9c9237f0ab90e8952aa0d2b495cb74a3b545978b95b3a37608aa3" };
 const sha256 = async s => [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)))].map(b => b.toString(16).padStart(2, "0")).join("");
+// Vault: your GitHub token, locked with your password (AES-GCM, key from PBKDF2). Signing in unlocks it. null until a locked copy is made in Settings.
+const VAULT = null;
+const b64 = u => btoa(String.fromCharCode(...u)), unb64 = t => Uint8Array.from(atob(t), c => c.charCodeAt(0));
+const vaultKey = async (pw, salt, iter) => crypto.subtle.deriveKey({name: "PBKDF2", salt, iterations: iter, hash: "SHA-256"},
+  await crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveKey"]), {name: "AES-GCM", length: 256}, false, ["encrypt", "decrypt"]);
+const vaultSeal = async (pw, obj) => { const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12)), iter = 600000;
+  const ct = new Uint8Array(await crypto.subtle.encrypt({name: "AES-GCM", iv}, await vaultKey(pw, salt, iter), new TextEncoder().encode(JSON.stringify(obj))));
+  return {v: 1, iter, salt: b64(salt), iv: b64(iv), ct: b64(ct)}; };
+const vaultOpen = async (pw, V) => JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name: "AES-GCM", iv: unb64(V.iv)}, await vaultKey(pw, unb64(V.salt), V.iter), unb64(V.ct))));
+const UKEY = "trading:unlocked", UVAL = VAULT ? VAULT.ct.slice(0, 24) : LOCK.hash;
 let unlocked = false;
-try { unlocked = localStorage.getItem("trading:unlocked") === LOCK.hash; } catch {}
+try { unlocked = localStorage.getItem(UKEY) === UVAL; } catch {}
 document.documentElement.classList.add("welcome");
 if (!unlocked) document.documentElement.classList.add("locked");
 </script>
@@ -628,7 +638,7 @@ header { margin-bottom: 16px; }
 @keyframes welcomePulse { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { #welcome, .welcome-box small { animation: none; } }
 </style>
-<link rel="stylesheet" href="tabs.css?v=8">
+<link rel="stylesheet" href="tabs.css?v=9">
 </head>
 <body>
 <form id="lock" class="lock card glow" autocomplete="off">
@@ -676,6 +686,13 @@ header { margin-bottom: 16px; }
       <label class="rw"><span>Token</span><input id="token" type="password" placeholder="github_pat_…" autocomplete="off"></label>
       <button type="button" class="rw acc" id="save">Save and connect</button>
       <button type="button" class="rw danger-t" id="forget">Forget token</button>
+      <div class="status" style="margin:0;padding:0 16px"></div>
+    </section>
+    <div class="grp-h">Lock token behind password</div>
+    <section class="card grp">
+      <label class="rw"><span>New password</span><input id="vaultPw" type="password" placeholder="long, 4+ random words" autocomplete="new-password"></label>
+      <button type="button" class="rw acc" id="vaultMake">Make locked copy</button>
+      <textarea id="vaultOut" class="hidden" readonly rows="5" style="width:100%;box-sizing:border-box;font:12px/1.4 ui-monospace,monospace;padding:10px 16px;border:0;border-top:1px solid var(--line);background:none;color:var(--muted);resize:none"></textarea>
       <div class="status" style="margin:0;padding:0 16px"></div>
     </section>
     <div class="grp-h">Account</div>
@@ -1483,8 +1500,19 @@ $("themeSw").addEventListener("click", e => { const b = e.target.closest("button
 const markMode = () => document.querySelectorAll("#modeSeg button").forEach(b => b.classList.toggle("on", b.dataset.mode === (store.get("mode") === "light" ? "light" : "dark")));
 markMode();
 document.querySelectorAll("#modeSeg button").forEach(b => b.addEventListener("click", () => { store.set("mode", b.dataset.mode); applyMode(b.dataset.mode); markMode(); }));
+$("vaultMake").addEventListener("click", async () => {
+  const pw = $("vaultPw").value, token = $("token").value.trim() || store.get("token"), out = $("vaultOut");
+  if (pw.length < 16) return setStatus("Use a password of at least 16 characters.", $("vaultMake"));
+  if (!token) return setStatus("Paste your token above first.", $("vaultMake"));
+  setStatus("Working…", $("vaultMake"));
+  const v = await vaultSeal(pw, {token, repo: $("repo").value.trim()}), text = JSON.stringify(v);
+  out.value = text; out.classList.remove("hidden"); out.select(); $("vaultPw").value = "";
+  try { await navigator.clipboard.writeText(text); setStatus("Locked copy made and copied. Send it to Claude to install. It is safe to share: it only opens with your password.", $("vaultMake")); }
+  catch { setStatus("Locked copy made. Copy the text above and send it to Claude to install.", $("vaultMake")); }
+});
 $("signOut").addEventListener("click", () => {
-  try { localStorage.removeItem("trading:unlocked"); } catch {}
+  try { localStorage.removeItem(UKEY); } catch {}
+  if (VAULT) store.del("token");  // with a vault, the token only lives on this device while you are signed in
   view = lastView; showView();
   const pw = $("pw"); pw.value = ""; $("lockErr").textContent = "";
   document.documentElement.classList.add("locked", "welcome");
@@ -1506,10 +1534,18 @@ document.addEventListener("visibilitychange", () => { if (!document.hidden) refr
   const root = document.documentElement, pw = document.getElementById("pw");
   document.getElementById("lock").onsubmit = async e => {
     e.preventDefault();
-    if (await sha256(LOCK.salt + pw.value) === LOCK.hash) {
-      try { localStorage.setItem("trading:unlocked", LOCK.hash); } catch {}
-      root.classList.remove("locked"); document.getElementById("welcome").focus();
-    } else { document.getElementById("lockErr").textContent = "Wrong password."; pw.select(); }
+    const btn = e.target.querySelector("button"), err = document.getElementById("lockErr");
+    let ok = false;
+    if (VAULT) {
+      btn.disabled = true; btn.textContent = "Checking…";
+      try { const d = await vaultOpen(pw.value, VAULT); store.set("token", d.token); if (d.repo) store.set("repo", d.repo); ok = true; } catch {}
+      btn.disabled = false; btn.textContent = "Unlock";
+    } else ok = await sha256(LOCK.salt + pw.value) === LOCK.hash;
+    if (ok) {
+      try { localStorage.setItem(UKEY, UVAL); } catch {}
+      root.classList.remove("locked"); document.getElementById("welcome").focus(); pw.value = "";
+      if (VAULT) { $("repo").value = store.get("repo") || $("repo").value; refresh(); }
+    } else { err.textContent = "Wrong password."; pw.select(); }
   };
   const leave = () => { root.classList.remove("welcome"); scrollTo(0, 0); };
   const w = document.getElementById("welcome");
