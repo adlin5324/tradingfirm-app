@@ -119,4 +119,10 @@
 #settings button.rw.acc { color: var(--c1); font-weight: 600; }
 #settings .foot { margin: 8px 14px 0; font-size: 12.5px; line-height: 1.45; color: var(--muted); }
 #settings .status { margin: 8px 14px 0; min-height: 18px; font-size: 13px; }
-body.off-dash #heroCard, body.off-dash #banner { display: none !important; }
+body.off-dash #banner { display: none !important; }
+/* Account value card stays pinned at the top on every page; it shrinks to value and change once you scroll. */
+#heroCard { position: sticky; top: 8px; z-index: 30; }
+#heroCard .stats, #heroCard .acct .row { transition: opacity .2s; }
+#heroCard.stuck .stats, #heroCard.stuck .acct .row { display: none; }
+#heroCard.stuck { padding-top: 10px; padding-bottom: 10px; }
+#heroCard { background: color-mix(in srgb, var(--bg) 92%, var(--c2)); }
