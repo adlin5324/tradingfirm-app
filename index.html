@@ -638,7 +638,7 @@ header { margin-bottom: 16px; }
 @keyframes welcomePulse { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { #welcome, .welcome-box small { animation: none; } }
 </style>
-<link rel="stylesheet" href="tabs.css?v=16">
+<link rel="stylesheet" href="tabs.css?v=17">
 </head>
 <body>
 <form id="lock" class="lock card glow" autocomplete="off">
@@ -1517,9 +1517,10 @@ const markMode = () => document.querySelectorAll("#modeSeg button").forEach(b =>
 markMode();
 document.querySelectorAll("#modeSeg button").forEach(b => b.addEventListener("click", () => { store.set("mode", b.dataset.mode); applyMode(b.dataset.mode); markMode(); }));
 // Bot secrets: a short step-by-step popup. Each value is locked in the browser with the repo's public key (libsodium sealed box) and sent straight to GitHub. Nothing is stored here.
-const SEC_STEPS = [["WEBULL_APP_KEY", "Brokerage app key"], ["WEBULL_APP_SECRET", "Brokerage app secret"], ["WEBULL_ACCOUNT_ID", "Brokerage account ID", true],
-  ["MEMORY_PASSWORD", "Memory password"], ["", "Write token (used once, not saved)"]];
-let secAt = 0, secVals = {};
+const SEC_BASE = [["WEBULL_APP_KEY", "Brokerage app key"], ["WEBULL_APP_SECRET", "Brokerage app secret"], ["WEBULL_ACCOUNT_ID", "Brokerage account ID", true],
+  ["MEMORY_PASSWORD", "Memory password"]];
+// The saved dashboard token does the saving when there is one (it needs the Secrets permission); otherwise a last step asks for a token to use once.
+let SEC_STEPS = SEC_BASE, secAt = 0, secVals = {};
 function secShow() {
   const [name, label, optional] = SEC_STEPS[secAt], last = secAt === SEC_STEPS.length - 1;
   $("secStep").textContent = "Step " + (secAt + 1) + " of " + SEC_STEPS.length;
@@ -1527,9 +1528,9 @@ function secShow() {
   $("secInput").value = secVals[name || "TOKEN"] || ""; $("secErr").textContent = "";
   $("secInput").type = name === "MEMORY_PASSWORD" ? "text" : "password"; $("secMake").classList.toggle("hidden", name !== "MEMORY_PASSWORD");
   $("secBack").classList.toggle("hidden", secAt === 0); $("secSkip").classList.toggle("hidden", !optional);
-  $("secNext").textContent = last ? "Save to GitHub" : "Next"; $("secInput").focus();
+  $("secNext").textContent = last ? "Save" : "Next"; $("secInput").focus();
 }
-$("secretsOpen").addEventListener("click", () => { secAt = 0; secVals = {}; $("secNext").disabled = false; $("secBox").showModal(); secShow(); });
+$("secretsOpen").addEventListener("click", () => { SEC_STEPS = store.get("token") ? SEC_BASE : [...SEC_BASE, ["", "GitHub token (used once, not saved)"]]; secAt = 0; secVals = {}; $("secNext").disabled = false; $("secBox").showModal(); secShow(); });
 $("secCancel").addEventListener("click", () => { secVals = {}; $("secInput").value = ""; $("secBox").close(); });
 $("secBack").addEventListener("click", () => { secVals[SEC_STEPS[secAt][0] || "TOKEN"] = $("secInput").value.trim(); secAt--; secShow(); });
 $("secMake").addEventListener("click", () => {
@@ -1544,7 +1545,7 @@ $("secNext").addEventListener("click", async () => {
   if (!v && !optional) { $("secErr").textContent = "Enter a value, or Cancel."; return; }
   secVals[name || "TOKEN"] = v;
   if (!last) { secAt++; secShow(); return; }
-  const token = secVals.TOKEN, repo = $("repo").value.trim(), todo = SEC_STEPS.slice(0, -1).map(([n]) => [n, secVals[n]]).filter(([, x]) => x);
+  const token = store.get("token") || secVals.TOKEN, repo = $("repo").value.trim(), todo = SEC_STEPS.filter(([n]) => n).map(([n]) => [n, secVals[n]]).filter(([, x]) => x);
   if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) { $("secErr").textContent = "Check the repository name."; return; }
   $("secNext").disabled = true; $("secErr").textContent = "Saving…";
   const api = (path, opt = {}) => fetch("https://api.github.com/repos/" + repo + "/actions/secrets/" + path, {...opt, headers: {Authorization: "Bearer " + token,
@@ -1553,7 +1554,7 @@ $("secNext").addEventListener("click", async () => {
     if (!window.sodiumReady) await new Promise((ok, no) => { const sc = document.createElement("script"); sc.src = "sodium.js?v=1"; sc.onload = ok; sc.onerror = () => no(new Error("could not load the lock library")); document.head.append(sc); });
     const sodium = await window.sodiumReady;
     const kr = await api("public-key");
-    if (!kr.ok) throw new Error(kr.status === 404 ? "no access to " + repo + " (the token needs Secrets: write on it)" : "GitHub refused the token (" + kr.status + ")");
+    if (!kr.ok) throw new Error(kr.status === 404 || kr.status === 403 ? "the token cannot write secrets on " + repo + " (it needs the Secrets: Read and write permission)" : "GitHub refused the token (" + kr.status + ")");
     const {key, key_id} = await kr.json(), pub = sodium.from_base64(key, sodium.base64_variants.ORIGINAL);
     for (const [n, value] of todo) {
       const enc = sodium.to_base64(sodium.crypto_box_seal(sodium.from_string(value), pub), sodium.base64_variants.ORIGINAL);
@@ -1561,7 +1562,7 @@ $("secNext").addEventListener("click", async () => {
       if (!r.ok) throw new Error(n + " failed (" + r.status + ")");
     }
     secVals = {}; $("secInput").value = ""; $("secBox").close();
-    setStatus("Saved " + todo.length + " secret(s). Delete the write token on GitHub now.", $("secretsOpen"));
+    setStatus("Saved " + todo.length + " secret(s).", $("secretsOpen"));
   } catch (e) { $("secErr").textContent = "Not saved: " + e.message; }
   $("secNext").disabled = false;
 });
