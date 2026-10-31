@@ -628,7 +628,7 @@ header { margin-bottom: 16px; }
 @keyframes welcomePulse { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { #welcome, .welcome-box small { animation: none; } }
 </style>
-<link rel="stylesheet" href="tabs.css?v=7">
+<link rel="stylesheet" href="tabs.css?v=8">
 </head>
 <body>
 <form id="lock" class="lock card glow" autocomplete="off">
@@ -1450,8 +1450,6 @@ function showView() {
 }
 document.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => { view = b.dataset.go; showView(); }));
 showView();
-// Account card is pinned on every page; once scrolled it collapses to the value and today's change.
-{ const hc = $("heroCard"), sync = () => hc.classList.toggle("stuck", scrollY > 140); addEventListener("scroll", sync, {passive: true}); sync(); }
 // Looks: fade-in on scroll, and a soft glow that follows the cursor over cards.
 if ("IntersectionObserver" in window) {
   document.documentElement.classList.add("js-anim");
