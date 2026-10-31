@@ -39,7 +39,7 @@ jobs:
           done
           echo "ok=$ok" >> "$GITHUB_OUTPUT"
 
-  # The AI gets no Webull login and no memory password: it can edit files here and run backtests.
+  # The AI gets no brokerage login and no memory password: it can edit files here and run backtests.
   research:
     needs: key
     if: needs.key.outputs.ok == 'true'
