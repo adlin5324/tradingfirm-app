@@ -638,7 +638,7 @@ header { margin-bottom: 16px; }
 @keyframes welcomePulse { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { #welcome, .welcome-box small { animation: none; } }
 </style>
-<link rel="stylesheet" href="tabs.css?v=19">
+<link rel="stylesheet" href="tabs.css?v=20">
 </head>
 <body>
 <form id="lock" class="lock card glow" autocomplete="off">
@@ -688,11 +688,6 @@ header { margin-bottom: 16px; }
       <button type="button" class="rw danger-t" id="forget">Forget token</button>
       <div class="status" style="margin:0;padding:0 16px"></div>
     </section>
-    <div class="grp-h">Bot secrets</div>
-    <section class="card grp">
-      <button type="button" class="rw acc" id="secretsOpen">Sign in to brokerage</button>
-      <div class="status" style="margin:0;padding:0 16px"></div>
-    </section>
     <div class="grp-h">Lock token behind password</div>
     <section class="card grp">
       <label class="rw"><span>New password</span><input id="vaultPw" type="password" placeholder="long, 4+ random words" autocomplete="new-password"></label>
@@ -702,6 +697,7 @@ header { margin-bottom: 16px; }
     </section>
     <div class="grp-h">Account</div>
     <section class="card grp">
+      <button type="button" class="rw acc" id="secretsOpen">Sign in to brokerage</button>
       <button type="button" class="rw danger-t" id="signOut">Sign out</button>
     </section>
   </div>
