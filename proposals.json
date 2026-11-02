@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-31",
+  "updated": "2026-11-02",
   "proposals": [
     {
       "id": "gap-drawdown-guard",
@@ -80,6 +80,46 @@
       "tag": "Reports and explanations",
       "prio": 3,
       "source": "Vibe Trading 9, TradingAgents 8"
+    },
+    {
+      "id": "gap-docs-and-community",
+      "title": "Document how each role works",
+      "note": "Write one short page per role: what it reads, decides and writes. Freqtrade scores 10 here.",
+      "tag": "Docs and community",
+      "prio": 2,
+      "source": "Freqtrade 10, Vibe Trading 9"
+    },
+    {
+      "id": "gap-update-frequency",
+      "title": "Keep a changelog",
+      "note": "Write down each change so it is clear how the bot is improving. Vibe Trading scores 10 here.",
+      "tag": "Update frequency",
+      "prio": 2,
+      "source": "Vibe Trading 10, NautilusTrader 10"
+    },
+    {
+      "id": "gap-customizability",
+      "title": "Move more settings into the rules file",
+      "note": "Make thresholds and limits editable in one place. NautilusTrader scores 10 here.",
+      "tag": "Customizability",
+      "prio": 2,
+      "source": "NautilusTrader 10, Freqtrade 9"
+    },
+    {
+      "id": "gap-practice-mode",
+      "title": "Make the practice mode behave like the real run",
+      "note": "Run the paper lane through the same order and risk checks as live trading. Freqtrade scores 9 here.",
+      "tag": "Practice mode",
+      "prio": 1,
+      "source": "Freqtrade 9, NautilusTrader 9"
+    },
+    {
+      "id": "gap-running-cost",
+      "title": "Cut the running cost",
+      "note": "Run the heavy jobs less often so the free minutes last the whole month. Awesome Systematic Trading scores 9 here.",
+      "tag": "Running cost",
+      "prio": 2,
+      "source": "Awesome Systematic Trading 9, Backtrader 8"
     }
   ]
 }
