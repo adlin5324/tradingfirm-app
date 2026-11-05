@@ -182,44 +182,44 @@
       "done": "2026-11-05"
     },
     {
-      "id": "gap-news-sentiment",
-      "title": "Feed news and sentiment to the advisers",
-      "note": "Give the advisory agents headlines and a simple sentiment score per stock, as advice only. TradingAgents already reads news and social feeds.",
-      "tag": "News and sentiment",
-      "prio": 2,
-      "source": "TradingAgents 9, Fincept Terminal 7"
+      "id": "win-ai-safety",
+      "title": "Take first place on AI safety limits",
+      "note": "Only Vibe Trading (8) is ahead. Add a signed daily decision log of every adviser action and a test that fails the build if any adviser path can place an order or raise a limit. Then the safest AI design in the field is also the one that proves it.",
+      "tag": "AI safety limits",
+      "prio": 1,
+      "source": "Beats Vibe Trading 8"
     },
     {
-      "id": "gap-fundamentals",
-      "title": "Add earnings and ratio data beyond filings",
-      "note": "Pull key ratios and earnings dates next to the SEC filings, so the bot can skip stocks just before earnings. Vibe Trading and Fincept already cover this.",
+      "id": "win-risk-controls",
+      "title": "Build the strictest risk controls in the field",
+      "note": "Four rivals are ahead, led by NautilusTrader (9). Add a per-order pre-trade checklist in the report, a what-if stress test (every stock down 10%) and a limit on how much of the account moves together. Risk is the one area a small cash account can do better than the big engines.",
+      "tag": "Risk controls",
+      "prio": 1,
+      "source": "Beats NautilusTrader 9, Freqtrade 9"
+    },
+    {
+      "id": "win-fundamentals",
+      "title": "Lead on fundamentals and earnings",
+      "note": "Three rivals are ahead (Vibe Trading 9, Fincept 8). Add earnings dates and key ratios per stock next to the SEC filings, skip new buys just before earnings, and show the reason in the report.",
       "tag": "Fundamentals and filings",
+      "prio": 1,
+      "source": "Beats Vibe Trading 9, Fincept 8"
+    },
+    {
+      "id": "win-running-cost",
+      "title": "Be the cheapest to run",
+      "note": "Only Awesome Systematic Trading (a reading list) is truly cheaper. Show the monthly cost in minutes and AI tokens on the dashboard, add a monthly budget that pauses the heavy jobs first, and skip jobs when nothing changed.",
+      "tag": "Running cost",
       "prio": 2,
-      "source": "Vibe Trading 9, Fincept Terminal 8"
+      "source": "Beats Awesome Systematic Trading 9"
     },
     {
-      "id": "gap-alerts",
-      "title": "Send phone alerts for fills, halts and failures",
-      "note": "Push a short message when an order fills, a guard halts trading or a run fails. Freqtrade and Vibe Trading send chat alerts.",
-      "tag": "Alerts and notifications",
-      "prio": 1,
-      "source": "Freqtrade 9, Vibe Trading 9"
-    },
-    {
-      "id": "gap-emergency-controls",
-      "title": "Add a one-tap flatten and freeze switch",
-      "note": "One control that stops new orders and sells open positions for cash, usable from the phone. Freqtrade has force-exit and stop commands.",
-      "tag": "Emergency controls",
-      "prio": 1,
-      "source": "Freqtrade 8, Vibe Trading 7"
-    },
-    {
-      "id": "gap-mobile-remote",
-      "title": "Let the phone view and change safe settings",
-      "note": "Show live status and allow low-risk changes, such as pausing a strategy, from the phone page. Freqtrade and Vibe Trading offer remote control.",
-      "tag": "Mobile and remote access",
-      "prio": 3,
-      "source": "Freqtrade 8, Vibe Trading 8"
+      "id": "win-optimization",
+      "title": "Add walk-forward strategy optimization",
+      "note": "Freqtrade and Jesse (9) tune strategies with hyperopt and Optuna. Add a walk-forward search that tunes on one period, tests on the next, and only proposes a change that survives the significance test the Quant already has.",
+      "tag": "Strategy optimization",
+      "prio": 2,
+      "source": "Beats Freqtrade 9, Jesse 9"
     }
   ]
 }
