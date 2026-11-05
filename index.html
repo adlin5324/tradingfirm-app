@@ -1516,7 +1516,7 @@ const markMode = () => document.querySelectorAll("#modeSeg button").forEach(b =>
 markMode();
 document.querySelectorAll("#modeSeg button").forEach(b => b.addEventListener("click", () => { store.set("mode", b.dataset.mode); applyMode(b.dataset.mode); markMode(); }));
 // Bot secrets: a short step-by-step popup. Each value is locked in the browser with the repo's public key (libsodium sealed box) and sent straight to GitHub. Nothing is stored here.
-const SEC_BASE = [["WEBULL_APP_KEY", "Brokerage app key"], ["WEBULL_APP_SECRET", "Brokerage app secret"], ["WEBULL_ACCOUNT_ID", "Brokerage account ID", true],
+const SEC_BASE = [["BROKER_APP_KEY", "Brokerage app key"], ["BROKER_APP_SECRET", "Brokerage app secret"], ["BROKER_ACCOUNT_ID", "Brokerage account ID", true],
   ["MEMORY_PASSWORD", "Memory password"]];
 // The saved dashboard token does the saving when there is one (it needs the Secrets permission); otherwise a last step asks for a token to use once.
 let SEC_STEPS = SEC_BASE, secAt = 0, secVals = {};
