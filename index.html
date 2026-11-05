@@ -418,6 +418,8 @@ header { margin-bottom: 16px; }
 .topbar .switch:hover { opacity: 1; }
 .topnav { flex: 1; display: flex; justify-content: safe center; gap: 4px; min-width: 0; }
 .topnav button { border: 0; background: none; color: var(--muted); font-weight: 600; padding: 8px 14px; border-radius: 99px; white-space: nowrap; }
+.topnav button svg { width: 22px; height: 22px; display: block; }
+.topnav button { position: relative; }
 .topnav button:hover { color: var(--text); background: var(--faint); opacity: 1; }
 #settingsBtn { width: 40px; height: 40px; padding: 0; border-radius: 50%; justify-content: center; flex: none; }
 #settingsBtn .hi { margin: 0; width: 18px; height: 18px; }
@@ -430,7 +432,8 @@ header { margin-bottom: 16px; }
 @media (max-width: 640px) {
   /* Five pages don't fit one phone row: wrap to two, centered. */
   .topnav { flex-wrap: wrap; justify-content: center; gap: 2px 4px; }
-  .topnav button { padding: 8px 10px; font-size: 13px; }
+  .topnav button { padding: 8px 6px; }
+  .topnav button svg { width: 20px; height: 20px; }
 }
 .topnav button.on { color: var(--text); background: var(--faint); }
 /* The Firm is one card; each floor gets a line above it and its team's heading. */
@@ -607,7 +610,7 @@ header { margin-bottom: 16px; }
 .mail-body { padding: 12px 0; } .mail-body pre { white-space: pre-wrap; font-size: 12px; max-height: 360px; overflow: auto; }
 .inbox .acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; font-size: 13px; }
 .inbox .acts button { padding: 4px 10px; font-size: 12px; }
-#officeCount:not(:empty) { margin-left: 6px; padding: 1px 7px; border-radius: 99px; font-size: 11px; background: var(--c1); color: #fff; }
+#officeCount:not(:empty) { position: absolute; top: 0; right: 0; min-width: 16px; padding: 1px 4px; border-radius: 99px; font-size: 10px; line-height: 14px; text-align: center; background: var(--c1); color: #fff; }
 
 @media (max-width: 640px) {
   .stage { height: 200px; margin-left: -8px; margin-right: -8px; }
@@ -662,14 +665,14 @@ header { margin-bottom: 16px; }
       <h1><button class="switch" id="tradeSwitch" role="switch" aria-checked="false">
         <span class="name"><span class="hl">Adlin</span> <em>Investments</em></span><span class="sr" id="chip">Loading</span></button></h1>
       <nav class="topnav" aria-label="Sections">
-        <button data-go="positions">Positions</button>
-        <button data-go="performance">Performance</button>
-        <button data-go="trades">Trades</button>
-        <button data-go="risk">Risk</button>
-        <button data-go="strategies">Strategies</button>
-        <button data-go="office">The Desk<span id="officeCount"></span></button>
-        <button data-go="competitors">Competitors</button>
-        <button data-go="roadmap">Roadmap</button>
+        <button data-go="positions" aria-label="Positions"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></button>
+        <button data-go="performance" aria-label="Performance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></button>
+        <button data-go="trades" aria-label="Trades"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></svg></button>
+        <button data-go="risk" aria-label="Risk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg></button>
+        <button data-go="strategies" aria-label="Strategies"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg></button>
+        <button data-go="office" aria-label="The Desk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg><span id="officeCount"></span></button>
+        <button data-go="competitors" aria-label="Competitors"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21v-6"/><path d="M12 21V3"/><path d="M19 21V9"/></svg></button>
+        <button data-go="roadmap" aria-label="Roadmap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528"/></svg></button>
       </nav>
       <button class="ghost" id="settingsBtn" aria-label="Settings"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg></button>
     </div>
