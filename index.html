@@ -902,7 +902,7 @@ function show(d) {
   const fc = d.fill_cost;
   $("fillCost").textContent = fc ? `Fill cost vs mid price: ${pct(fc.avg)} a trade, ${money(fc.dollars)} total over ${fc.fills} fill(s)` : "";
   drawChart(growthLine(d), d.scorecard && d.scorecard.start_value);
-  daySummary(d.summary);
+  daySummary(d.summary, d.stats);
   perfNote(d.team);
 
   const pos = positions = d.positions || [];
@@ -1072,7 +1072,7 @@ function growthLine(d) {
 
 // The bot's daily summary: pills for the numbers, a bar for the 60-day Verdict, a red dot for Warnings (hidden when there are none), plain rows for the rest.
 const cap = t => String(t).charAt(0).toUpperCase() + String(t).slice(1);
-function daySummary(rows) {
+function daySummary(rows, stats) {
   const by = Object.fromEntries((rows || []).map(r => [r.label, r])), done = new Set(), out = [];
   const pill = (name, text, v) => tone(el("span", {class: "vs"}, el("span", {class: "who", text: name}), el("b", {class: "num", text})), v);
   const pills = [];
@@ -1090,6 +1090,10 @@ function daySummary(rows) {
   if (w) { if (w.tone === "bad") out.push(el("div", {class: "state"}, el("i", {class: "dot bad"}), el("span", {text: cap(w.text)}))); done.add("Warnings"); }  // "All clear" is not shown
   (rows || []).filter(r => !done.has(r.label)).forEach(r =>
     out.push(el("div", {class: "kv"}, el("b", {text: cap(r.label)}), tone(el("span", {text: cap(r.text)}), r.tone === "good" ? 1 : r.tone === "bad" ? -1 : 0))));
+  // Worst fall from a peak, share of closed sales that made money, and money won / money lost.
+  const st = stats && [["Worst drop", stats.max_drawdown != null && pct(stats.max_drawdown)], ["Win rate", stats.win_rate != null && Math.round(stats.win_rate * 100) + "% of " + stats.closed],
+    ["Profit factor", stats.profit_factor != null && stats.profit_factor.toFixed(2)]].filter(r => r[1]);
+  if (st && st.length) out.push(el("div", {class: "pills"}, ...st.map(([n, v]) => el("span", {class: "vs"}, el("span", {class: "who", text: n}), el("b", {class: "num", text: v})))));
   $("daySummary").replaceChildren(...out);
 }
 
