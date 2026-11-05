@@ -659,7 +659,7 @@ header { margin-bottom: 16px; }
 <main>
   <header>
     <div class="topbar">
-      <h1><button class="switch" id="tradeSwitch" role="switch" aria-checked="false" title="Trading on or off: click to change">
+      <h1><button class="switch" id="tradeSwitch" role="switch" aria-checked="false">
         <span class="name"><span class="hl">Adlin</span> <em>Investments</em></span><span class="sr" id="chip">Loading</span></button></h1>
       <nav class="topnav" aria-label="Sections">
         <button data-go="positions">Positions</button>
@@ -671,7 +671,7 @@ header { margin-bottom: 16px; }
         <button data-go="competitors">Competitors</button>
         <button data-go="roadmap">Roadmap</button>
       </nav>
-      <button class="ghost" id="settingsBtn" title="Settings" aria-label="Settings"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg></button>
+      <button class="ghost" id="settingsBtn" aria-label="Settings"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg></button>
     </div>
   </header>
 
@@ -714,7 +714,7 @@ header { margin-bottom: 16px; }
     <div class="hero">
       <div class="acct">
         <div class="acct-head"><span class="muted small">Account Value</span>
-          <span class="badge" title="Connected to your brokerage"><span class="wb" aria-hidden="true"></span>Connected</span></div>
+          <span class="badge"><span class="wb" aria-hidden="true"></span>Connected</span></div>
         <div class="acct-row"><div class="big num" id="total">–</div><div class="delta num" id="today">&nbsp;</div></div>
         <div class="row" style="margin-top:8px;align-items:center"><span class="muted small" id="loginInfo"></span><button id="loginBtn" data-cmd="login"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="m9 12 2 2 4-4" /></svg>Verify login</button></div>
       </div>
@@ -734,7 +734,7 @@ header { margin-bottom: 16px; }
       <tfoot id="posTotal"></tfoot>
     </table></div>
     <div class="row" style="margin-top:16px"><button class="danger" id="sellBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" /><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" /><path d="m2 16 6 6" /><circle cx="16" cy="9" r="2.9" /><circle cx="6" cy="5" r="3" /></svg>Sell stocks…</button>
-      <button class="danger" id="freezeBtn" title="Stops all trading, then sells every stock for cash">Freeze and sell all</button><button id="liveBtn" data-cmd="account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" /></svg>Refresh</button></div>
+      <button class="danger" id="freezeBtn">Freeze and sell all</button><button id="liveBtn" data-cmd="account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" /></svg>Refresh</button></div>
     <div class="status"></div>
   </section>
 
@@ -781,7 +781,7 @@ header { margin-bottom: 16px; }
   <div id="rm" data-view="roadmap" class="hidden">
     <nav class="subnav" id="rmPills" aria-label="Filter by status"></nav>
     <div id="board"></div>
-    <div class="row" style="margin-top:4px"><button type="button" id="rmCopy" class="ghost" title="Copy the agent prompt, then paste it into Claude">Agent prompt</button></div>
+    <div class="row" style="margin-top:4px"><button type="button" id="rmCopy" class="ghost" aria-label="Copy the agent prompt, then paste it into Claude">Agent prompt</button></div>
   </div>
 
 </main>
@@ -893,7 +893,6 @@ function show(d) {
   $("tradeSwitch").setAttribute("aria-checked", String(!halted));
   $("tradeSwitch").dataset.ready = "1";
   $("chip").textContent = halted ? "Halted" : "Active";
-  $("tradeSwitch").title = halted ? "Trading is halted. Click to resume." : "Trading is on. Click to halt.";
   const login = d.login, left = login && Math.max(0, Math.floor(login.days_left));
   $("loginInfo").textContent = login ? (login.days_left <= 0 ? "Expired" : left + (left === 1 ? " Day Left" : " Days Left")) : "";
   const banner = $("banner");
@@ -932,7 +931,6 @@ function show(d) {
     const cost = p.cost * p.shares, gp = cost ? p.gain / cost : 0;
     const names = (p.strategy || "").split("+").filter(n => n && n !== "owner");
     const who = tag(names.length + " strategies", "blue");
-    who.title = names.join(", ");
     const gain = tone(el("td", {class: "num"}, signed(p.gain), el("span", {class: "sub", text: pct(gp)})), p.gain);
     return el("tr", {}, td(p.symbol, "sym"), td(String(p.shares), "num opt"), td(money(p.cost), "num opt"),
               td(money(p.value), "num"), gain, el("td", {class: "opt"}, who), el("td", {}, gradeTag(grades[p.symbol])),
@@ -1006,7 +1004,6 @@ const AGENTS = {scout: "News scout", risk: "Risk officer", analyst: "Equity anal
 function gradeTag(g) {
   if (!g) return el("span", {class: "muted small", text: "–"});
   const t = tag(g.grade, /[AB]/.test(g.grade) ? "good" : /[DF]/.test(g.grade) ? "bad" : "");
-  t.title = g.why || "";
   return t;
 }
 
@@ -1059,7 +1056,7 @@ function archNews() {
     if (role === "evolve") {
       const risk = /RED BANNER/.test(p.body || ""), worse = /Did worse in testing/.test(p.body || "");
       const yes = answerButton(p.number, "yes", "Yes");
-      if (!p.tests) { yes.disabled = true; yes.title = "Tests not passed"; }
+      if (!p.tests) { yes.disabled = true; yes.textContent = "Yes (tests not passed)"; }
       news.evolve.push({key: "pr:" + p.number, title: (risk ? "Safety limit: " : "") + p.title, role,
         body: () => [...(risk ? [el("p", {class: "banner halted", text: "This changes a safety limit."})] : []),
           ...(worse ? [el("p", {class: "banner", text: "Did worse in testing. You decide."})] : []),
@@ -1180,7 +1177,7 @@ function drawRisk(d) {
   const grades = (d.team && d.team.grades) || {}, sent = (d.team && d.team.sentiment) || {}, fund = d.fundamentals || {}, events = (d.team && d.team.events) || {};
   if (pos.length) out.push(section("What is known about each stock held", ...pos.map(p => {
     const f = fund[p.symbol] || {}, s = sent[p.symbol], ev = events[p.symbol], bits = [];
-    if (grades[p.symbol]) bits.push("rated " + grades[p.symbol].grade);
+    if (grades[p.symbol]) bits.push("rated " + grades[p.symbol].grade + (grades[p.symbol].why ? " (" + grades[p.symbol].why.replace(/\.$/, "") + ")" : ""));
     if (s) bits.push("news " + (s.score > 0 ? "+" : "") + s.score.toFixed(1) + " (" + s.facts + ")");
     if (f.revenue_growth != null) bits.push("sales " + pct(f.revenue_growth));
     if (f.net_margin != null) bits.push("margin " + (f.net_margin * 100).toFixed(0) + "%");
@@ -1694,7 +1691,7 @@ setInterval(() => { if (!document.hidden && !document.querySelector("[data-cmd]:
 document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
 </script>
 <script src="competitors-data.js?v=6"></script>
-<script src="competitors.js?v=3"></script>
+<script src="competitors.js?v=4"></script>
 <script src="roadmap.js?v=4"></script>
 <script>
 // Remote reset: reset.json holds a number. A device that has not yet seen that number wipes its saved data (tasks, choices, token, theme, sign-in) and reloads.

@@ -105,7 +105,7 @@
   const CLIP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>';
   $("cmpNav").innerHTML = `<button data-page="tf">Investments</button>` + repos.map(r => `<button data-page="${r.id}">${esc(r.nav)}</button>`).join("") +
     `<button class="lb" data-page="leaderboard" aria-label="Leaderboard">${TROPHY}<span>Leaderboard</span></button><span class="sp"></span>` +
-    `<button class="lb" id="copyPrompt" type="button" title="Copy the agent prompt, then paste it into Claude" aria-label="Copy agent prompt">${CLIP}<span id="copyLabel">Agent prompt</span></button>`;
+    `<button class="lb" id="copyPrompt" type="button" aria-label="Copy the agent prompt, then paste it into Claude">${CLIP}<span id="copyLabel">Agent prompt</span></button>`;
 
   // "Agent prompt": copies an instruction to paste into Claude to re-check the competitors and refresh the scores and text.
   const PROMPT = "Refresh the Competitors scores. Open competitors-data.js in the adlin5324/tradingfirm-app repo. For each competitor listed, check what has changed in its GitHub repo since the last review (new releases, brokers, data sources, tests, features, last commit). Update any scores that moved (0 to 10, where 5 means the same as Adlin's Investments), keep the 30 categories and their order, update each description and summary so it matches the scores, and keep private details such as the broker's name out. Then raise the ?v= numbers in index.html, test the Competitors tab in a browser, and commit and push to main.";
