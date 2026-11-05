@@ -187,7 +187,8 @@
       "note": "Only Vibe Trading (8) is ahead. Add a signed daily decision log of every adviser action and a test that fails the build if any adviser path can place an order or raise a limit. Then the safest AI design in the field is also the one that proves it.",
       "tag": "AI safety limits",
       "prio": 1,
-      "source": "Beats Vibe Trading 8"
+      "source": "Beats Vibe Trading 8",
+      "done": "2026-11-05"
     },
     {
       "id": "win-risk-controls",
@@ -195,7 +196,8 @@
       "note": "Four rivals are ahead, led by NautilusTrader (9). Add a per-order pre-trade checklist in the report, a what-if stress test (every stock down 10%) and a limit on how much of the account moves together. Risk is the one area a small cash account can do better than the big engines.",
       "tag": "Risk controls",
       "prio": 1,
-      "source": "Beats NautilusTrader 9, Freqtrade 9"
+      "source": "Beats NautilusTrader 9, Freqtrade 9",
+      "done": "2026-11-05"
     },
     {
       "id": "win-fundamentals",
@@ -203,7 +205,8 @@
       "note": "Three rivals are ahead (Vibe Trading 9, Fincept 8). Add earnings dates and key ratios per stock next to the SEC filings, skip new buys just before earnings, and show the reason in the report.",
       "tag": "Fundamentals and filings",
       "prio": 1,
-      "source": "Beats Vibe Trading 9, Fincept 8"
+      "source": "Beats Vibe Trading 9, Fincept 8",
+      "done": "2026-11-05"
     },
     {
       "id": "win-running-cost",
@@ -211,7 +214,8 @@
       "note": "Only Awesome Systematic Trading (a reading list) is truly cheaper. Show the monthly cost in minutes and AI tokens on the dashboard, add a monthly budget that pauses the heavy jobs first, and skip jobs when nothing changed.",
       "tag": "Running cost",
       "prio": 2,
-      "source": "Beats Awesome Systematic Trading 9"
+      "source": "Beats Awesome Systematic Trading 9",
+      "done": "2026-11-05"
     },
     {
       "id": "win-optimization",
@@ -219,7 +223,8 @@
       "note": "Freqtrade and Jesse (9) tune strategies with hyperopt and Optuna. Add a walk-forward search that tunes on one period, tests on the next, and only proposes a change that survives the significance test the Quant already has.",
       "tag": "Strategy optimization",
       "prio": 2,
-      "source": "Beats Freqtrade 9, Jesse 9"
+      "source": "Beats Freqtrade 9, Jesse 9",
+      "done": "2026-11-05"
     }
   ]
 }

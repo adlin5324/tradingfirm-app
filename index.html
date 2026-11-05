@@ -727,7 +727,8 @@ header { margin-bottom: 16px; }
       <tbody id="positions"></tbody>
       <tfoot id="posTotal"></tfoot>
     </table></div>
-    <div class="row" style="margin-top:16px"><button class="danger" id="sellBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" /><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" /><path d="m2 16 6 6" /><circle cx="16" cy="9" r="2.9" /><circle cx="6" cy="5" r="3" /></svg>Sell stocks…</button><button id="liveBtn" data-cmd="account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" /></svg>Refresh</button></div>
+    <div class="row" style="margin-top:16px"><button class="danger" id="sellBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" /><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" /><path d="m2 16 6 6" /><circle cx="16" cy="9" r="2.9" /><circle cx="6" cy="5" r="3" /></svg>Sell stocks…</button>
+      <button class="danger" id="freezeBtn" title="Stops all trading, then sells every stock for cash">Freeze and sell all</button><button id="liveBtn" data-cmd="account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" /></svg>Refresh</button></div>
     <div class="status"></div>
   </section>
 
@@ -902,7 +903,7 @@ function show(d) {
   const fc = d.fill_cost;
   $("fillCost").textContent = fc ? `Fill cost vs mid price: ${pct(fc.avg)} a trade, ${money(fc.dollars)} total over ${fc.fills} fill(s)` : "";
   drawChart(growthLine(d), d.scorecard && d.scorecard.start_value);
-  daySummary(d.summary, d.stats);
+  daySummary(d.summary, d.stats, d.cost);
   perfNote(d.team);
 
   const pos = positions = d.positions || [];
@@ -1072,7 +1073,7 @@ function growthLine(d) {
 
 // The bot's daily summary: pills for the numbers, a bar for the 60-day Verdict, a red dot for Warnings (hidden when there are none), plain rows for the rest.
 const cap = t => String(t).charAt(0).toUpperCase() + String(t).slice(1);
-function daySummary(rows, stats) {
+function daySummary(rows, stats, cost) {
   const by = Object.fromEntries((rows || []).map(r => [r.label, r])), done = new Set(), out = [];
   const pill = (name, text, v) => tone(el("span", {class: "vs"}, el("span", {class: "who", text: name}), el("b", {class: "num", text})), v);
   const pills = [];
@@ -1091,8 +1092,9 @@ function daySummary(rows, stats) {
   (rows || []).filter(r => !done.has(r.label)).forEach(r =>
     out.push(el("div", {class: "kv"}, el("b", {text: cap(r.label)}), tone(el("span", {text: cap(r.text)}), r.tone === "good" ? 1 : r.tone === "bad" ? -1 : 0))));
   // Worst fall from a peak, share of closed sales that made money, and money won / money lost.
-  const st = stats && [["Worst drop", stats.max_drawdown != null && pct(stats.max_drawdown)], ["Win rate", stats.win_rate != null && Math.round(stats.win_rate * 100) + "% of " + stats.closed],
-    ["Profit factor", stats.profit_factor != null && stats.profit_factor.toFixed(2)]].filter(r => r[1]);
+  const st = (stats || cost) && [["Worst drop", stats && stats.max_drawdown != null && pct(stats.max_drawdown)], ["Win rate", stats && stats.win_rate != null && Math.round(stats.win_rate * 100) + "% of " + stats.closed],
+    ["Profit factor", stats && stats.profit_factor != null && stats.profit_factor.toFixed(2)],
+    ["Actions", cost && cost.minutes + " of " + cost.budget + " min"]].filter(r => r[1]);
   if (st && st.length) out.push(el("div", {class: "pills"}, ...st.map(([n, v]) => el("span", {class: "vs"}, el("span", {class: "who", text: n}), el("b", {class: "num", text: v})))));
   $("daySummary").replaceChildren(...out);
 }
@@ -1221,6 +1223,13 @@ function openSell() {
 }
 
 $("sellBtn").addEventListener("click", openSell);
+// One tap for an emergency: halt trading first, then sell every stock (a sale does not need trading switched on).
+$("freezeBtn").addEventListener("click", async () => {
+  if (await ask({title: "Freeze and sell everything?", text: "Trading stops until you resume it, then every stock is sold for cash while the market is open. A sale can't be undone once your brokerage fills it.",
+                 ok: "Freeze and sell"}) === null) return;
+  await dispatch("halt", "Freeze and sell from the app", true);
+  await dispatch("sell", "ALL", true);
+});
 $("tradeSwitch").addEventListener("click", () => {
   if (!$("tradeSwitch").dataset.ready) return;  // state unknown until the dashboard loads
   dispatch($("tradeSwitch").getAttribute("aria-checked") === "true" ? "halt" : "resume");
@@ -1306,14 +1315,14 @@ async function failedAt(run) {
   return outcome;
 }
 
-async function dispatch(cmd, preset = "") {
+async function dispatch(cmd, preset = "", confirmed = false) {
   let reason = preset;
-  if (ASK[cmd]) {
+  if (ASK[cmd] && !confirmed) {
     const answer = await ask(ASK[cmd]);
     if (answer === null) return;
     if (typeof answer === "string") reason = answer;
   }
-  const buttons = document.querySelectorAll("[data-cmd], #sellBtn, #tradeSwitch");
+  const buttons = document.querySelectorAll("[data-cmd], #sellBtn, #freezeBtn, #tradeSwitch");
   buttons.forEach(b => b.disabled = true);
   // A spinner right of the pressed button while its run is going.
   const pressed = cmd === "sell" ? $("sellBtn") : cmd === "halt" || cmd === "resume" ? $("tradeSwitch") : document.querySelector(`[data-cmd="${cmd}"]`);
