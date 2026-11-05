@@ -1062,7 +1062,10 @@ function growthLine(d) {
   const s = d.scorecard, pts = (d.history || []).slice();
   if (!s) return pts;
   if (!pts.length || pts[0].date > s.start) pts.unshift({date: s.start, bot: 0, ...Object.fromEntries(Object.keys(s.markets).map(n => [n, 0]))});
-  const now = {date: new Date(d.updated).toLocaleDateString("en-CA"), bot: s.bot, ...s.markets}, last = pts[pts.length - 1];
+  // The last days use every run's point (date = a full timestamp) instead of one point per day, so the end is not a few big jumps.
+  const recent = (d.recent || []).map(r => ({...r, date: r.at})), from = recent.length && recent[0].at.slice(0, 10);
+  if (recent.length) pts.splice(0, pts.length, ...pts.filter(h => h.date < from), ...recent);
+  const now = {date: d.updated, bot: s.bot, ...s.markets}, last = pts[pts.length - 1];
   if (["bot", ...Object.keys(s.markets)].some(k => last[k] !== now[k])) pts.push(now);
   return pts;
 }
@@ -1112,7 +1115,7 @@ function drawChart(history, base) {
   const lo = Math.floor(min / step + 1e-9) * step, hi = Math.max(Math.ceil(max / step - 1e-9) * step, lo + step), span = hi - lo;
   const ticks = Array.from({length: Math.round(span / step) + 1}, (_, i) => lo + i * step);
   // Time runs left to right from the start (the origin) to today, so the middle of the chart is the middle day.
-  const W = 600, H = 150, pad = 6, day = t => Date.parse(String(t).slice(0, 10) + "T12:00:00");
+  const W = 600, H = 150, pad = 6, day = t => String(t).length > 10 ? Date.parse(t) : Date.parse(String(t) + "T12:00:00");
   const t0 = day(history[0].date), t1 = Math.max(day(new Date().toLocaleDateString("en-CA")), day(history[history.length - 1].date), t0 + 864e5);
   const x = i => (day(history[i].date) - t0) * W / (t1 - t0);
   const y = v => pad + (hi - v) * (H - 2 * pad) / span;
