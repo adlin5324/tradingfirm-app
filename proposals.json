@@ -7,7 +7,8 @@
       "note": "Pause trading after the account falls a set amount from its peak. Freqtrade has a max-drawdown and stop-loss guard, and Vibe Trading has an order guard with a halt switch.",
       "tag": "Risk controls",
       "prio": 1,
-      "source": "Freqtrade 6, Vibe Trading 8"
+      "source": "Freqtrade 6, Vibe Trading 8",
+      "done": "2026-11-05"
     },
     {
       "id": "gap-backup-data",
@@ -15,7 +16,8 @@
       "note": "Prices and SEC filings are the only inputs today, so one outage stops the run. Vibe Trading has about 45 data loaders.",
       "tag": "Data sources",
       "prio": 1,
-      "source": "Vibe Trading 10"
+      "source": "Vibe Trading 10",
+      "done": "2026-11-05"
     },
     {
       "id": "gap-quickstart",
@@ -23,7 +25,8 @@
       "note": "Setup is the weakest area: a broker login, secrets and many workflows with no walkthrough. Freqtrade's docs are the model.",
       "tag": "Ease of setup",
       "prio": 1,
-      "source": "Freqtrade 10 on docs"
+      "source": "Freqtrade 10 on docs",
+      "done": "2026-11-05"
     },
     {
       "id": "gap-tests",
@@ -31,7 +34,8 @@
       "note": "152 tests today against Freqtrade's 1,619 and over 1,000 test files in Vibe Trading. Start with the order and risk code.",
       "tag": "Testing and code quality",
       "prio": 2,
-      "source": "Freqtrade 10, NautilusTrader 10"
+      "source": "Freqtrade 10, NautilusTrader 10",
+      "done": "2026-11-05"
     },
     {
       "id": "gap-backtest-costs",
@@ -39,7 +43,8 @@
       "note": "Replay the strategies with fees, slippage and trailing stops at portfolio level, the way NautilusTrader and Jesse do.",
       "tag": "Backtesting",
       "prio": 2,
-      "source": "NautilusTrader 10"
+      "source": "NautilusTrader 10",
+      "done": "2026-11-05"
     },
     {
       "id": "gap-performance-metrics",
@@ -47,7 +52,8 @@
       "note": "Add drawdown, profit factor and win rate to the daily scorecard next to the S&P comparison. Freqtrade and Jesse report these.",
       "tag": "Performance tracking",
       "prio": 2,
-      "source": "Freqtrade 9, Jesse 9"
+      "source": "Freqtrade 9, Jesse 9",
+      "done": "2026-11-05"
     },
     {
       "id": "gap-actions-minutes",
@@ -55,7 +61,8 @@
       "note": "Schedules were paused when the 2,000 free minutes ran out. Run less often, or move the heavy jobs elsewhere.",
       "tag": "Maturity",
       "prio": 2,
-      "source": "Freqtrade 10, NautilusTrader 8"
+      "source": "Freqtrade 10, NautilusTrader 8",
+      "done": "2026-11-05"
     },
     {
       "id": "gap-significance",
@@ -63,7 +70,8 @@
       "note": "Jesse runs Monte Carlo and significance tests so a lucky backtest is not trusted.",
       "tag": "Strategy optimization",
       "prio": 3,
-      "source": "Jesse 9"
+      "source": "Jesse 9",
+      "done": "2026-11-05"
     },
     {
       "id": "gap-indicators",
@@ -71,7 +79,8 @@
       "note": "Ten strategies and a handful of indicators, against Jesse's 300+ and Freqtrade's TA-Lib.",
       "tag": "Technical indicators",
       "prio": 3,
-      "source": "Jesse 10, Freqtrade 9"
+      "source": "Jesse 10, Freqtrade 9",
+      "done": "2026-11-05"
     },
     {
       "id": "gap-reports",
@@ -79,7 +88,8 @@
       "note": "TradingAgents saves one readable HTML report per run with the reasoning behind each decision, and Vibe Trading sends PDF reports.",
       "tag": "Reports and explanations",
       "prio": 3,
-      "source": "Vibe Trading 9, TradingAgents 8"
+      "source": "Vibe Trading 9, TradingAgents 8",
+      "done": "2026-11-05"
     },
     {
       "id": "gap-docs-and-community",
@@ -87,7 +97,8 @@
       "note": "Write one short page per role: what it reads, decides and writes. Freqtrade scores 10 here.",
       "tag": "Docs and community",
       "prio": 2,
-      "source": "Freqtrade 10, Vibe Trading 9"
+      "source": "Freqtrade 10, Vibe Trading 9",
+      "done": "2026-11-05"
     },
     {
       "id": "gap-update-frequency",
@@ -95,7 +106,8 @@
       "note": "Write down each change so it is clear how the bot is improving. Vibe Trading scores 10 here.",
       "tag": "Update frequency",
       "prio": 2,
-      "source": "Vibe Trading 10, NautilusTrader 10"
+      "source": "Vibe Trading 10, NautilusTrader 10",
+      "done": "2026-11-05"
     },
     {
       "id": "gap-customizability",
@@ -103,7 +115,8 @@
       "note": "Make thresholds and limits editable in one place. NautilusTrader scores 10 here.",
       "tag": "Customizability",
       "prio": 2,
-      "source": "NautilusTrader 10, Freqtrade 9"
+      "source": "NautilusTrader 10, Freqtrade 9",
+      "done": "2026-11-05"
     },
     {
       "id": "gap-practice-mode",
@@ -111,7 +124,8 @@
       "note": "Run the paper lane through the same order and risk checks as live trading. Freqtrade scores 9 here.",
       "tag": "Practice mode",
       "prio": 1,
-      "source": "Freqtrade 9, NautilusTrader 9"
+      "source": "Freqtrade 9, NautilusTrader 9",
+      "done": "2026-11-05"
     },
     {
       "id": "gap-running-cost",
@@ -119,7 +133,8 @@
       "note": "Run the heavy jobs less often so the free minutes last the whole month. Awesome Systematic Trading scores 9 here.",
       "tag": "Running cost",
       "prio": 2,
-      "source": "Awesome Systematic Trading 9, Backtrader 8"
+      "source": "Awesome Systematic Trading 9, Backtrader 8",
+      "done": "2026-11-05"
     },
     {
       "id": "gap-position-sizing",
@@ -127,7 +142,8 @@
       "note": "Pick share counts from the stop distance and a fixed percent of cash at risk. Freqtrade scores 8 here.",
       "tag": "Position sizing",
       "prio": 3,
-      "source": "Freqtrade 8, Vibe Trading 8"
+      "source": "Freqtrade 8, Vibe Trading 8",
+      "done": "2026-11-05"
     },
     {
       "id": "gap-ai-safety-limits",
@@ -135,7 +151,8 @@
       "note": "Keep a record of what each adviser flagged or halted, and why. Vibe Trading scores 8 here.",
       "tag": "AI safety limits",
       "prio": 1,
-      "source": "Vibe Trading 8, Awesome Systematic Trading 5"
+      "source": "Vibe Trading 8, Awesome Systematic Trading 5",
+      "done": "2026-11-05"
     },
     {
       "id": "gap-strategy-variety",
@@ -143,7 +160,8 @@
       "note": "Test a new rule-based strategy in the paper lane before it votes. Awesome Systematic Trading scores 9 here.",
       "tag": "Strategy variety",
       "prio": 2,
-      "source": "Awesome Systematic Trading 9, Vibe Trading 9"
+      "source": "Awesome Systematic Trading 9, Vibe Trading 9",
+      "done": "2026-11-05"
     },
     {
       "id": "gap-ai-and-ml-depth",
@@ -151,7 +169,8 @@
       "note": "Let the advisory agents read more data. They still never place orders. TradingAgents scores 9 here.",
       "tag": "AI and ML depth",
       "prio": 2,
-      "source": "TradingAgents 9, Vibe Trading 9"
+      "source": "TradingAgents 9, Vibe Trading 9",
+      "done": "2026-11-05"
     },
     {
       "id": "gap-automated-daily-run",
@@ -159,7 +178,8 @@
       "note": "Retry a failed run once and send an alert if it still fails. Freqtrade scores 8 here.",
       "tag": "Automated daily run",
       "prio": 3,
-      "source": "Freqtrade 8, Vibe Trading 8"
+      "source": "Freqtrade 8, Vibe Trading 8",
+      "done": "2026-11-05"
     }
   ]
 }

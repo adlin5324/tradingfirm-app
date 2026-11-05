@@ -77,7 +77,11 @@
   });
 
   render();
-  fetch("proposals.json?v=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : {}).then(data => { const list = Array.isArray(data) ? data : data.proposals; updated = (!Array.isArray(data) && data.updated) || ""; if (Array.isArray(list)) { proposals = list.filter(p => p && p.id && p.title); render(); } }).catch(() => {});
+  fetch("proposals.json?v=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : {}).then(data => { const list = Array.isArray(data) ? data : data.proposals; updated = (!Array.isArray(data) && data.updated) || ""; if (Array.isArray(list)) { proposals = list.filter(p => p && p.id && p.title);
+    // A proposal marked "done" in proposals.json is finished: it is hidden, and removed from this board if it was approved earlier.
+    const finished = new Set(proposals.filter(p => p.done).map(p => p.id)); proposals = proposals.filter(p => !p.done);
+    if (tasks.some(t => finished.has(t.id))) { tasks = tasks.filter(t => !finished.has(t.id)); save(); }
+    render(); } }).catch(() => {});
 })();
 
 // "Agent prompt": copies the instruction for the gap-scout agent, to paste into Claude.
