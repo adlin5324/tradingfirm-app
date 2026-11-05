@@ -68,14 +68,23 @@
   </section>`;
   };
 
-  const boardSection = () => {
-    const board = [...repos.map(r => [r.nav, overall(r), false]), [D.me.name, BASE, true]].sort((a, b) => b[1] - a[1]);
+  const boardList = score => {
+    const board = [...repos.map(r => [r.nav, score(r), false]), [D.me.name, BASE, true]].sort((a, b) => b[1] - a[1]);
     const scoresAll = board.map(b => b[1]);
-    const boardHtml = board.map(([name, v, me]) =>
+    return board.map(([name, v, me]) =>
       `<li class="${me ? "me" : ""}"><span class="pl num">${nth(place(v, scoresAll))}</span><span class="nm">${esc(name)}</span><span class="track"><i style="width:${v * 10}%"></i></span><span class="val num">${v.toFixed(1)}</span></li>`).join("");
+  };
+  const boardSection = () => {
+    const V = D.view, wsum = V ? catNames.reduce((a, c) => a + (V.weights[c] ?? 1), 0) : 1;
+    const weighted = r => catNames.reduce((a, c) => a + (V.weights[c] ?? 1) * sc(r, c), 0) / wsum;
+    const weights = V ? Object.entries(V.weights).sort((a, b) => b[1] - a[1]).map(([c, w]) => `<li><span>${esc(c)}</span><b class="num">${w}</b></li>`).join("") : "";
     return `<section class="card glow page" data-page="leaderboard" hidden>
     <h2>Leaderboard</h2>
-    <ol class="board">${boardHtml}</ol>
+    ${V ? `<div class="seg" id="boardSeg"><button type="button" class="on" data-b="all">All-round</button><button type="button" data-b="use">${esc(V.name)}</button></div>` : ""}
+    <ol class="board" data-board="all">${boardList(overall)}</ol>
+    ${V ? `<ol class="board" data-board="use" hidden>${boardList(weighted)}</ol>
+    <p class="small muted" data-board="use" hidden>${esc(V.note)}</p>
+    <details class="grp" data-board="use" hidden><summary>How each category is weighted <span>0 to 3</span></summary><ul class="wts">${weights}</ul></details>` : ""}
   </section>`;
   };
 
@@ -105,6 +114,13 @@
   cp.onclick = async () => {
     try { await navigator.clipboard.writeText(PROMPT); flash("Copied"); }
     catch { const t = document.createElement("textarea"); t.value = PROMPT; t.style.cssText = "position:fixed;opacity:0"; document.body.append(t); t.select(); let ok = false; try { ok = document.execCommand("copy"); } catch {} t.remove(); flash(ok ? "Copied" : "Copy failed"); }
+  };
+
+  const seg = $("boardSeg");
+  if (seg) seg.onclick = e => {
+    const b = e.target.closest("button[data-b]"); if (!b) return;
+    seg.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
+    document.querySelectorAll("[data-board]").forEach(el => { el.hidden = el.dataset.board !== b.dataset.b; });
   };
 
   const showPage = id => {

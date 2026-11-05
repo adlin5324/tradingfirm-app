@@ -3,6 +3,42 @@
 // Text tokens: {n} contenders, {n6} repo categories scoring 6+, {place:Group} and {avg:Group} for a repo (or Adlin's Investments' place),
 // {score:Category} for a repo, {rank:Category} and {bestrank} for Adlin's Investments.
 window.DATA = {
+ "view": {
+  "name": "Small stock cash account",
+  "note": "The same scores, weighted for what this bot is for: one person, a stock cash account, run from a phone. Safety, cost and fit count more; crypto exchanges and the number of brokers do not count at all. The weights below were set before the result was computed.",
+  "weights": {
+   "Fits stock trading": 3,
+   "Risk controls": 2,
+   "Emergency controls": 2,
+   "Running cost": 2,
+   "AI safety limits": 2,
+   "Mobile and remote access": 2,
+   "Automated daily run": 2,
+   "Alerts and notifications": 1.5,
+   "Ease of setup": 1.5,
+   "Practice mode": 1.5,
+   "Fundamentals and filings": 1.5,
+   "Dashboard and control": 1.5,
+   "Real trading": 1,
+   "Position sizing": 1,
+   "Docs and community": 1,
+   "Testing and code quality": 1,
+   "Maturity": 1,
+   "Customizability": 1,
+   "Backtesting": 1,
+   "Strategy variety": 1,
+   "Data sources": 1,
+   "News and sentiment": 1,
+   "Performance tracking": 1,
+   "AI and ML depth": 1,
+   "Reports and explanations": 1,
+   "Update frequency": 0.5,
+   "Strategy optimization": 0.5,
+   "Technical indicators": 0.5,
+   "Markets covered": 0,
+   "Broker and exchange support": 0
+  }
+ },
  "me": {
   "name": "Adlin’s Investments",
   "desc": "A private trading bot for a cash brokerage account that runs once a day on GitHub. It follows a fixed rules file, and every job is done by a separate role: a rule checker, strategies that vote on stocks (plus new ones watched on paper first), risk and optional risk-budget sizing, backtesting with costs, a bookkeeper, a library of 12 indicators, and daily reports in markdown and HTML. AI agents only advise, flag or halt, and they never place orders.",

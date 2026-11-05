@@ -638,7 +638,7 @@ header { margin-bottom: 16px; }
 @keyframes welcomePulse { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { #welcome, .welcome-box small { animation: none; } }
 </style>
-<link rel="stylesheet" href="tabs.css?v=23">
+<link rel="stylesheet" href="tabs.css?v=25">
 </head>
 <body>
 <form id="lock" class="lock card glow" autocomplete="off">
@@ -1693,8 +1693,8 @@ if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.ser
 setInterval(() => { if (!document.hidden && !document.querySelector("[data-cmd]:disabled, #liveBtn:disabled")) refresh(); }, 60 * 1000);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
 </script>
-<script src="competitors-data.js?v=5"></script>
-<script src="competitors.js?v=2"></script>
+<script src="competitors-data.js?v=6"></script>
+<script src="competitors.js?v=3"></script>
 <script src="roadmap.js?v=4"></script>
 <script>
 // Remote reset: reset.json holds a number. A device that has not yet seen that number wipes its saved data (tasks, choices, token, theme, sign-in) and reloads.
