@@ -128,3 +128,13 @@ body.off-dash #banner, body.is-settings #heroCard { display: none !important; }
 #settings .rw input::placeholder { color: var(--muted); opacity: .7; }
 #settings .rw input:focus { color: var(--text); }
 #settings .rw:focus-within { background: var(--faint); }
+
+/* Risk page */
+#riskBody .riskgrp { margin: 0 0 20px; }
+#riskBody h3 { margin: 0 0 8px; font-size: 12px; font-weight: 600; letter-spacing: .02em; }
+#riskBody .kv { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid var(--line); font-size: 14px; }
+#riskBody .kv:first-of-type { border-top: 0; }
+#riskBody .kv b { font-weight: 600; min-width: 64px; }
+#riskBody .kv > span:last-child { margin-left: auto; text-align: right; }
+#riskBody .prog { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; display: block; }
+#riskBody .prog i { display: block; height: 100%; background: var(--accent, #b3122e); border-radius: 3px; }

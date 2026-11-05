@@ -638,7 +638,7 @@ header { margin-bottom: 16px; }
 @keyframes welcomePulse { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { #welcome, .welcome-box small { animation: none; } }
 </style>
-<link rel="stylesheet" href="tabs.css?v=20">
+<link rel="stylesheet" href="tabs.css?v=21">
 </head>
 <body>
 <form id="lock" class="lock card glow" autocomplete="off">
@@ -665,6 +665,7 @@ header { margin-bottom: 16px; }
         <button data-go="positions">Positions</button>
         <button data-go="performance">Performance</button>
         <button data-go="trades">Trades</button>
+        <button data-go="risk">Risk</button>
         <button data-go="office">The Desk<span id="officeCount"></span></button>
         <button data-go="competitors">Competitors</button>
         <button data-go="roadmap">Roadmap</button>
@@ -748,6 +749,11 @@ header { margin-bottom: 16px; }
     <h2><span class="ttl"><svg class="hi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z" /><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" /><path d="M12 17.5v-11" /></svg>Trades</span><span id="tradesCount"></span></h2>
     <div class="trade-tiles" id="tradeTiles"></div>
     <div class="trades" id="trades"></div>
+  </section>
+
+  <section class="card" data-view="risk">
+    <h2><span class="ttl">Risk</span></h2>
+    <div id="riskBody"><p class="muted small">Press Refresh account to load the numbers.</p></div>
   </section>
 
   <section class="card" data-view="office">
@@ -904,6 +910,7 @@ function show(d) {
   $("fillCost").textContent = fc ? `Fill cost vs mid price: ${pct(fc.avg)} a trade, ${money(fc.dollars)} total over ${fc.fills} fill(s)` : "";
   drawChart(growthLine(d), d.scorecard && d.scorecard.start_value);
   daySummary(d.summary, d.stats, d.cost);
+  drawRisk(d);
   perfNote(d.team);
 
   const pos = positions = d.positions || [];
@@ -1141,6 +1148,37 @@ function drawChart(history, base) {
   box.replaceChildren(el("div", {class: "plot"}, svg, axis),
     // The middle label is the median day; with under two days of history there isn't one yet.
     el("div", {class: "xaxis"}, ...[t0, ...(t1 - t0 >= 2 * 864e5 ? [t0 + Math.round((t1 - t0) / 2 / 864e5) * 864e5] : []), t1].map(t => el("span", {text: date(t)}))));
+}
+
+// Risk page: what a bad day would cost, how concentrated the account is, and what is known about each stock held.
+function drawRisk(d) {
+  const lim = d.limits || {}, total = d.account && d.account.total, pos = d.positions || [], out = [];
+  const row = (name, value, note) => el("div", {class: "kv"}, el("b", {text: name}), el("span", {}, value, note ? el("small", {class: "muted", text: " " + note}) : ""));
+  const section = (title, ...kids) => el("div", {class: "riskgrp"}, el("h3", {class: "small muted", text: title}), ...kids);
+  if (d.stress) out.push(section("If every stock fell " + Math.round(d.stress.drop * 100) + "% at once",
+    row("Loss", tone(el("span", {class: "num", text: "-" + money(d.stress.loss) + " (" + (d.stress.share * 100).toFixed(1) + "% of the account)"}), -1)),
+    lim.max_daily_loss ? row("Daily loss limit", el("span", {class: "num", text: Math.round(lim.max_daily_loss * 100) + "%"}), "no new buys that day") : "",
+    lim.max_drawdown ? row("Drop from peak that stops everything", el("span", {class: "num", text: Math.round(lim.max_drawdown * 100) + "%"})) : ""));
+  if (total && pos.length) out.push(section("Share of the account in each stock" + (lim.max_per_stock ? " (limit " + Math.round(lim.max_per_stock * 100) + "%)" : ""),
+    ...pos.slice().sort((a, b) => b.value - a.value).map(p => {
+      const share = p.value / total, over = lim.max_per_stock && share > lim.max_per_stock;
+      return el("div", {class: "kv"}, el("b", {text: p.symbol}), el("span", {class: "prog", style: "flex:1;margin:0 10px"}, el("i", {style: "width:" + Math.min(100, share * 100 / (lim.max_per_stock || 0.3) * (lim.max_per_stock ? 0.5 : 1)) + "%"})),
+        tone(el("span", {class: "num", text: (share * 100).toFixed(1) + "%"}), over ? -1 : 0));
+    })));
+  const grades = (d.team && d.team.grades) || {}, sent = (d.team && d.team.sentiment) || {}, fund = d.fundamentals || {}, events = (d.team && d.team.events) || {};
+  if (pos.length) out.push(section("What is known about each stock held", ...pos.map(p => {
+    const f = fund[p.symbol] || {}, s = sent[p.symbol], ev = events[p.symbol], bits = [];
+    if (grades[p.symbol]) bits.push("rated " + grades[p.symbol].grade);
+    if (s) bits.push("news " + (s.score > 0 ? "+" : "") + s.score.toFixed(1) + " (" + s.facts + ")");
+    if (f.revenue_growth != null) bits.push("sales " + pct(f.revenue_growth));
+    if (f.net_margin != null) bits.push("margin " + (f.net_margin * 100).toFixed(0) + "%");
+    if (ev) bits.push(ev.what + " " + shortDate(ev.date));
+    return el("div", {class: "kv"}, el("b", {text: p.symbol}), el("span", {class: "small", text: bits.join(" · ") || "no facts yet"}));
+  })));
+  if (d.cost) out.push(section("Running cost this month", el("div", {class: "kv"}, el("b", {text: "Actions minutes"}),
+    el("span", {class: "prog", style: "flex:1;margin:0 10px"}, el("i", {style: "width:" + Math.min(100, d.cost.share * 100) + "%"})),
+    tone(el("span", {class: "num", text: d.cost.minutes + " of " + d.cost.budget}), d.cost.level === "ok" ? 0 : -1))));
+  $("riskBody").replaceChildren(...(out.length ? out : [el("p", {class: "muted small", text: "Nothing to show yet."})]));
 }
 
 async function loadRuns() {
@@ -1480,7 +1518,7 @@ new MutationObserver(() => { cancelAnimationFrame(titling); titling = requestAni
 titleLabels();
 
 // Top bar picks the page: Positions, Performance, Trades, The Firm (every AI team) or The Desk.
-const VIEWS = ["positions", "performance", "trades", "office", "competitors", "roadmap"];
+const VIEWS = ["positions", "performance", "trades", "risk", "office", "competitors", "roadmap"];
 let view = store.get("view"), lastView;
 if (!VIEWS.includes(view)) view = "positions";
 lastView = view;
@@ -1489,7 +1527,7 @@ function showView() {
   document.querySelectorAll("[data-go]").forEach(b => b.classList.toggle("on", b.dataset.go === view));
   $("settingsBtn").classList.toggle("on", view === "settings");
   document.body.classList.toggle("is-settings", view === "settings");
-  document.body.classList.toggle("off-dash", !["positions", "performance", "trades", "office"].includes(view));
+  document.body.classList.toggle("off-dash", !["positions", "performance", "trades", "risk", "office"].includes(view));
   if (VIEWS.includes(view)) { lastView = view; store.set("view", view); }
   scrollTo(0, 0);
 }
