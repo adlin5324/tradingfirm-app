@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-02",
+  "updated": "2026-11-05",
   "proposals": [
     {
       "id": "gap-drawdown-guard",
@@ -120,6 +120,46 @@
       "tag": "Running cost",
       "prio": 2,
       "source": "Awesome Systematic Trading 9, Backtrader 8"
+    },
+    {
+      "id": "gap-position-sizing",
+      "title": "Size positions from the risk budget",
+      "note": "Pick share counts from the stop distance and a fixed percent of cash at risk. Freqtrade scores 8 here.",
+      "tag": "Position sizing",
+      "prio": 3,
+      "source": "Freqtrade 8, Vibe Trading 8"
+    },
+    {
+      "id": "gap-ai-safety-limits",
+      "title": "Log every adviser decision",
+      "note": "Keep a record of what each adviser flagged or halted, and why. Vibe Trading scores 8 here.",
+      "tag": "AI safety limits",
+      "prio": 1,
+      "source": "Vibe Trading 8, Awesome Systematic Trading 5"
+    },
+    {
+      "id": "gap-strategy-variety",
+      "title": "Add one more strategy to the vote",
+      "note": "Test a new rule-based strategy in the paper lane before it votes. Awesome Systematic Trading scores 9 here.",
+      "tag": "Strategy variety",
+      "prio": 2,
+      "source": "Awesome Systematic Trading 9, Vibe Trading 9"
+    },
+    {
+      "id": "gap-ai-and-ml-depth",
+      "title": "Give the advisers more tools",
+      "note": "Let the advisory agents read more data. They still never place orders. TradingAgents scores 9 here.",
+      "tag": "AI and ML depth",
+      "prio": 2,
+      "source": "TradingAgents 9, Vibe Trading 9"
+    },
+    {
+      "id": "gap-automated-daily-run",
+      "title": "Make the daily run more dependable",
+      "note": "Retry a failed run once and send an alert if it still fails. Freqtrade scores 8 here.",
+      "tag": "Automated daily run",
+      "prio": 3,
+      "source": "Freqtrade 8, Vibe Trading 8"
     }
   ]
 }
