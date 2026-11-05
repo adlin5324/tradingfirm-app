@@ -26,7 +26,10 @@
       "tag": "Ease of setup",
       "prio": 1,
       "source": "Freqtrade 10 on docs",
-      "done": "2026-11-05"
+      "done": "2026-11-05",
+      "lift": {
+        "Ease of setup": 1
+      }
     },
     {
       "id": "gap-tests",
@@ -44,7 +47,10 @@
       "tag": "Backtesting",
       "prio": 2,
       "source": "NautilusTrader 10",
-      "done": "2026-11-05"
+      "done": "2026-11-05",
+      "lift": {
+        "Backtesting": 1
+      }
     },
     {
       "id": "gap-performance-metrics",
@@ -55,7 +61,7 @@
       "source": "Freqtrade 9, Jesse 9",
       "done": "2026-11-05",
       "lift": {
-        "Performance tracking": 1
+        "Performance tracking": 2
       }
     },
     {
@@ -109,7 +115,7 @@
       "source": "Freqtrade 10, Vibe Trading 9",
       "done": "2026-11-05",
       "lift": {
-        "Docs and community": 1
+        "Docs and community": 2
       }
     },
     {
@@ -194,7 +200,10 @@
       "tag": "Automated daily run",
       "prio": 3,
       "source": "Freqtrade 8, Vibe Trading 8",
-      "done": "2026-11-05"
+      "done": "2026-11-05",
+      "lift": {
+        "Automated daily run": 1
+      }
     },
     {
       "id": "win-ai-safety",
@@ -302,6 +311,18 @@
       "done": "2026-11-05",
       "lift": {
         "Dashboard and control": 1
+      }
+    },
+    {
+      "id": "gap-mobile-remote",
+      "title": "Let the phone tighten safety limits",
+      "note": "Settings > Safety limits: the phone can make a limit stricter (never looser). The bot checks again, edits one line of rules.toml and commits it.",
+      "tag": "Mobile and remote access",
+      "prio": 2,
+      "source": "Freqtrade 8, Vibe Trading 8",
+      "done": "2026-11-05",
+      "lift": {
+        "Mobile and remote access": 1
       }
     }
   ]
