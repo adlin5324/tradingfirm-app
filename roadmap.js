@@ -86,7 +86,7 @@
 
 // "Agent prompt": copies the instruction for the gap-scout agent, to paste into Claude.
 (() => {
-  const PROMPT = "Run the gap-scout agent for my Roadmap tab. Read the latest scores and the \"What it lacks\" list from competitors-data.js, add up to 5 new suggestions to proposals.json in the adlin5324/tradingfirm-app repo (keep every existing one and never change their ids), set updated to today's date, then commit and push to main.";
+  const PROMPT = "Run the gap-scout agent for my Roadmap tab. Read the latest scores and the \"What it lacks\" list from competitors-data.js, add up to 5 new suggestions aimed at BEATING the other repos (pick categories where few rivals are ahead, and name who each one beats) to proposals.json in the adlin5324/tradingfirm-app repo (keep every existing one and never change their ids), set updated to today's date, then commit and push to main.";
   const btn = document.getElementById("rmCopy"), label = document.getElementById("rmCopyLabel"); if (!btn) return;
   const done = t => { label.textContent = t; setTimeout(() => { label.textContent = "Agent prompt"; }, 2000); };
   btn.onclick = async () => {
