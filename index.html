@@ -638,7 +638,7 @@ header { margin-bottom: 16px; }
 @keyframes welcomePulse { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { #welcome, .welcome-box small { animation: none; } }
 </style>
-<link rel="stylesheet" href="tabs.css?v=21">
+<link rel="stylesheet" href="tabs.css?v=22">
 </head>
 <body>
 <form id="lock" class="lock card glow" autocomplete="off">
@@ -666,6 +666,7 @@ header { margin-bottom: 16px; }
         <button data-go="performance">Performance</button>
         <button data-go="trades">Trades</button>
         <button data-go="risk">Risk</button>
+        <button data-go="strategies">Strategies</button>
         <button data-go="office">The Desk<span id="officeCount"></span></button>
         <button data-go="competitors">Competitors</button>
         <button data-go="roadmap">Roadmap</button>
@@ -754,6 +755,11 @@ header { margin-bottom: 16px; }
   <section class="card" data-view="risk">
     <h2><span class="ttl">Risk</span></h2>
     <div id="riskBody"><p class="muted small">Press Refresh account to load the numbers.</p></div>
+  </section>
+
+  <section class="card" data-view="strategies">
+    <h2><span class="ttl">Strategies</span></h2>
+    <div id="stratBody" class="riskbody"><p class="muted small">Press Refresh account to load the numbers.</p></div>
   </section>
 
   <section class="card" data-view="office">
@@ -911,6 +917,7 @@ function show(d) {
   drawChart(growthLine(d), d.scorecard && d.scorecard.start_value);
   daySummary(d.summary, d.stats, d.cost);
   drawRisk(d);
+  drawStrategies(d);
   perfNote(d.team);
 
   const pos = positions = d.positions || [];
@@ -1179,6 +1186,25 @@ function drawRisk(d) {
     el("span", {class: "prog", style: "flex:1;margin:0 10px"}, el("i", {style: "width:" + Math.min(100, d.cost.share * 100) + "%"})),
     tone(el("span", {class: "num", text: d.cost.minutes + " of " + d.cost.budget}), d.cost.level === "ok" ? 0 : -1))));
   $("riskBody").replaceChildren(...(out.length ? out : [el("p", {class: "muted small", text: "Nothing to show yet."})]));
+}
+
+// Strategies page: who is voting on what today, and how the strategies still on trial are doing.
+function drawStrategies(d) {
+  const votes = d.votes || {}, lim = d.limits || {}, paper = d.paper_summary || {}, out = [];
+  const byName = {};
+  Object.entries(votes).forEach(([sym, names]) => names.forEach(n => (byName[n] = byName[n] || []).push(sym)));
+  const label = n => n.replace(/_/g, " ");
+  const group = (title, note, ...kids) => el("div", {class: "riskgrp"}, el("h3", {class: "small muted", text: title}), note ? el("p", {class: "small muted", text: note}) : "", ...kids);
+  const names = Object.keys(byName).sort((a, b) => byName[b].length - byName[a].length);
+  out.push(group("Voting today", lim.min_strategies_agree ? "A stock needs " + lim.min_strategies_agree + " votes before the bot buys it." : "",
+    ...(names.length ? names.map(n => el("div", {class: "kv"}, el("b", {text: label(n)}), el("span", {class: "small", text: byName[n].length + " stock" + (byName[n].length > 1 ? "s" : "") + ": " + byName[n].slice(0, 6).join(", ")})))
+      : [el("p", {class: "muted small", text: "No strategy likes any stock yet."})])));
+  const trial = Object.entries(paper).sort((a, b) => b[1].avg - a[1].avg);
+  out.push(group("On trial (no vote yet)", "Each is watched on paper. It needs 60 days of results before it can be proposed.",
+    ...(trial.length ? trial.map(([n, v]) => el("div", {class: "kv"}, el("b", {text: label(n)}),
+      el("span", {class: "small"}, v.picks + " picks, ", tone(el("span", {class: "num", text: pct(v.avg) + " on average"}), v.avg))))
+      : [el("p", {class: "muted small", text: "No paper results yet."})])));
+  $("stratBody").replaceChildren(...out);
 }
 
 async function loadRuns() {
@@ -1518,7 +1544,7 @@ new MutationObserver(() => { cancelAnimationFrame(titling); titling = requestAni
 titleLabels();
 
 // Top bar picks the page: Positions, Performance, Trades, The Firm (every AI team) or The Desk.
-const VIEWS = ["positions", "performance", "trades", "risk", "office", "competitors", "roadmap"];
+const VIEWS = ["positions", "performance", "trades", "risk", "strategies", "office", "competitors", "roadmap"];
 let view = store.get("view"), lastView;
 if (!VIEWS.includes(view)) view = "positions";
 lastView = view;
@@ -1527,7 +1553,7 @@ function showView() {
   document.querySelectorAll("[data-go]").forEach(b => b.classList.toggle("on", b.dataset.go === view));
   $("settingsBtn").classList.toggle("on", view === "settings");
   document.body.classList.toggle("is-settings", view === "settings");
-  document.body.classList.toggle("off-dash", !["positions", "performance", "trades", "risk", "office"].includes(view));
+  document.body.classList.toggle("off-dash", !["positions", "performance", "trades", "risk", "strategies", "office"].includes(view));
   if (VIEWS.includes(view)) { lastView = view; store.set("view", view); }
   scrollTo(0, 0);
 }
