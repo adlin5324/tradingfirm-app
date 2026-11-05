@@ -697,6 +697,10 @@ header { margin-bottom: 16px; }
       <textarea id="vaultOut" class="hidden" readonly rows="5" style="width:100%;box-sizing:border-box;font:12px/1.4 ui-monospace,monospace;padding:10px 16px;border:0;border-top:1px solid var(--line);background:none;color:var(--muted);resize:none"></textarea>
       <div class="status" style="margin:0;padding:0 16px"></div>
     </section>
+    <div class="grp-h">Safety limits</div>
+    <section class="card grp" id="limitsGrp">
+      <div class="rw"><span class="muted small">Press Refresh account to load the limits. The phone can only make a limit stricter.</span></div>
+    </section>
     <div class="grp-h">Account</div>
     <section class="card grp">
       <button type="button" class="rw acc" id="secretsOpen">Sign in to brokerage</button>
@@ -917,6 +921,7 @@ function show(d) {
   drawChart(growthLine(d), d.scorecard && d.scorecard.start_value);
   daySummary(d.summary, d.stats, d.cost);
   drawRisk(d);
+  drawLimits(d.limits);
   drawStrategies(d);
   perfNote(d.team);
 
@@ -1207,6 +1212,34 @@ function drawStrategies(d) {
   $("stratBody").replaceChildren(...out);
 }
 
+// Settings > Safety limits: the phone may only make a limit stricter (the bot checks this again and refuses anything looser).
+const LIMITS = {
+  max_per_order: ["Largest single order", "lower", v => money(v)],
+  max_per_stock: ["Most in one stock", "lower", v => Math.round(v * 100) + "% of the account"],
+  max_per_sector: ["Most in one sector", "lower", v => Math.round(v * 100) + "% of the account"],
+  max_stocks_held: ["Most stocks held", "lower", v => v],
+  max_daily_loss: ["Daily loss limit", "lower", v => Math.round(v * 100) + "%"],
+  max_drawdown: ["Drop from peak that stops everything", "lower", v => Math.round(v * 100) + "%"],
+  trailing_stop: ["Trailing stop", "lower", v => Math.round(v * 100) + "%"],
+  min_strategies_agree: ["Votes needed to buy", "higher", v => v],
+};
+function drawLimits(limits) {
+  if (!limits) return;
+  const rows = Object.entries(LIMITS).filter(([k]) => limits[k] != null).map(([k, [name, safer, fmt]]) =>
+    el("button", {type: "button", class: "rw", "data-limit": k}, el("span", {text: name}), el("span", {class: "muted", text: fmt(limits[k]) + "  ›"})));
+  $("limitsGrp").replaceChildren(...rows, el("div", {class: "status", style: "margin:0;padding:0 16px"}));
+  $("limitsGrp").onclick = async e => {
+    const b = e.target.closest("[data-limit]"); if (!b) return;
+    const k = b.dataset.limit, [name, safer] = LIMITS[k], now = limits[k], pctOf = k !== "max_per_order" && k !== "max_stocks_held" && k !== "min_strategies_agree";
+    const shown = pctOf ? now * 100 : now;
+    const answer = await ask({title: name, text: "Now " + (pctOf ? shown + "%" : shown) + ". Enter a " + (safer === "lower" ? "lower" : "higher") + " value" + (pctOf ? " (in %)" : "") + " to make it stricter. A looser value is refused.",
+      input: "", ok: "Tighten", check: v => { const n = Number(String(v).replace(/[$,%]/g, "")); return n > 0 && (safer === "lower" ? n < shown : n > shown) ? "" : "Enter a " + safer + " number than " + shown + "."; }});
+    if (answer === null || answer === true) return;
+    const n = Number(String(answer).replace(/[$,%]/g, ""));
+    dispatch("tighten", k + " " + (pctOf ? n / 100 : n), true);
+  };
+}
+
 async function loadRuns() {
   const res = await api("/actions/workflows/bot.yml/runs?per_page=8");
   if (!res.ok) return [];
@@ -1386,12 +1419,12 @@ async function dispatch(cmd, preset = "", confirmed = false) {
     if (answer === null) return;
     if (typeof answer === "string") reason = answer;
   }
-  const buttons = document.querySelectorAll("[data-cmd], #sellBtn, #freezeBtn, #tradeSwitch");
+  const buttons = document.querySelectorAll("[data-cmd], #sellBtn, #freezeBtn, #tradeSwitch, #limitsGrp .rw");
   buttons.forEach(b => b.disabled = true);
   // A spinner right of the pressed button while its run is going.
-  const pressed = cmd === "sell" ? $("sellBtn") : cmd === "halt" || cmd === "resume" ? $("tradeSwitch") : document.querySelector(`[data-cmd="${cmd}"]`);
+  const pressed = cmd === "sell" ? $("sellBtn") : cmd === "halt" || cmd === "resume" ? $("tradeSwitch") : cmd === "tighten" ? $("limitsGrp") : document.querySelector(`[data-cmd="${cmd}"]`);
   const spinner = el("span", {class: "spin btn-spin"});
-  const label = {halt: "Halt Trading", resume: "Resume Trading"}[cmd] || pressed.textContent.trim();
+  const label = {halt: "Halt Trading", resume: "Resume Trading", tighten: "Tighten limit"}[cmd] || pressed.textContent.trim();
   const started = Date.now() - 5000;
   try {
     const res = await api("/actions/workflows/bot.yml/dispatches", {
