@@ -14,7 +14,8 @@ The Roadmap tab reads `proposals.json` in the tradingfirm-app repo. It looks lik
 2. Read `DATA.me.lacks`: the written critique of Adlin's Investments. Each bullet is a candidate gap.
 3. The goal is to BEAT the other repos, not only to close gaps. Prefer categories where few repos are ahead (so a first place is within reach) and where the house rules give an edge (safety, risk, cost, a small cash stock account). Say in each note which repo and score it would beat, and start the id with `win-` for those. Read `DATA.repos[].scores`. Adlin's Investments scores 5 in every category by definition. For each category, find the repos scoring 6 or more and note the top two with their scores. Categories where several repos score 8 to 10 are the strongest gaps.
 4. Read `proposals.json`. Keep every proposal already in `proposals.json` and never change an existing `id`: the app uses ids to remember what you approved or dismissed.
-5. Add new proposals for gaps not already covered, with stable ids like `gap-<short-slug>`.
+5. A finished proposal gets a `done` date and a `lift`, like `{"done": "2026-11-05", "lift": {"Docs and community": 1}}`. The Competitors page lowers every rival by that many notches in that category (scores are relative to Adlin's), so only set a lift when the finished work really moves the category; use 0 or no lift otherwise.
+5b. Add new proposals for gaps not already covered, with stable ids like `gap-<short-slug>`.
 6. Write `proposals.json` back in the same shape and set `updated` to today's date (YYYY-MM-DD), even if you added nothing. The app shows it as "Agent last ran ...", which is how the user knows the agent has run. Do not touch any other file.
 
 ## Proposal format

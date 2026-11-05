@@ -53,7 +53,10 @@
       "tag": "Performance tracking",
       "prio": 2,
       "source": "Freqtrade 9, Jesse 9",
-      "done": "2026-11-05"
+      "done": "2026-11-05",
+      "lift": {
+        "Performance tracking": 1
+      }
     },
     {
       "id": "gap-actions-minutes",
@@ -80,7 +83,10 @@
       "tag": "Technical indicators",
       "prio": 3,
       "source": "Jesse 10, Freqtrade 9",
-      "done": "2026-11-05"
+      "done": "2026-11-05",
+      "lift": {
+        "Technical indicators": 1
+      }
     },
     {
       "id": "gap-reports",
@@ -89,7 +95,10 @@
       "tag": "Reports and explanations",
       "prio": 3,
       "source": "Vibe Trading 9, TradingAgents 8",
-      "done": "2026-11-05"
+      "done": "2026-11-05",
+      "lift": {
+        "Reports and explanations": 1
+      }
     },
     {
       "id": "gap-docs-and-community",
@@ -98,7 +107,10 @@
       "tag": "Docs and community",
       "prio": 2,
       "source": "Freqtrade 10, Vibe Trading 9",
-      "done": "2026-11-05"
+      "done": "2026-11-05",
+      "lift": {
+        "Docs and community": 1
+      }
     },
     {
       "id": "gap-update-frequency",
@@ -116,7 +128,10 @@
       "tag": "Customizability",
       "prio": 2,
       "source": "NautilusTrader 10, Freqtrade 9",
-      "done": "2026-11-05"
+      "done": "2026-11-05",
+      "lift": {
+        "Customizability": 1
+      }
     },
     {
       "id": "gap-practice-mode",
@@ -188,7 +203,10 @@
       "tag": "AI safety limits",
       "prio": 1,
       "source": "Beats Vibe Trading 8",
-      "done": "2026-11-05"
+      "done": "2026-11-05",
+      "lift": {
+        "AI safety limits": 1
+      }
     },
     {
       "id": "win-risk-controls",
@@ -197,7 +215,10 @@
       "tag": "Risk controls",
       "prio": 1,
       "source": "Beats NautilusTrader 9, Freqtrade 9",
-      "done": "2026-11-05"
+      "done": "2026-11-05",
+      "lift": {
+        "Risk controls": 1
+      }
     },
     {
       "id": "win-fundamentals",
@@ -206,7 +227,10 @@
       "tag": "Fundamentals and filings",
       "prio": 1,
       "source": "Beats Vibe Trading 9, Fincept 8",
-      "done": "2026-11-05"
+      "done": "2026-11-05",
+      "lift": {
+        "Fundamentals and filings": 1
+      }
     },
     {
       "id": "win-running-cost",
@@ -215,7 +239,10 @@
       "tag": "Running cost",
       "prio": 2,
       "source": "Beats Awesome Systematic Trading 9",
-      "done": "2026-11-05"
+      "done": "2026-11-05",
+      "lift": {
+        "Running cost": 1
+      }
     },
     {
       "id": "win-optimization",
@@ -224,7 +251,58 @@
       "tag": "Strategy optimization",
       "prio": 2,
       "source": "Beats Freqtrade 9, Jesse 9",
-      "done": "2026-11-05"
+      "done": "2026-11-05",
+      "lift": {
+        "Strategy optimization": 1
+      }
+    },
+    {
+      "id": "gap-news-sentiment",
+      "title": "Score news sentiment for each stock",
+      "note": "A news-tone score from -1 to +1 per stock, counted from confirmed facts only, shown on the Risk page.",
+      "tag": "News and sentiment",
+      "prio": 2,
+      "source": "TradingAgents 9",
+      "done": "2026-11-05",
+      "lift": {
+        "News and sentiment": 1
+      }
+    },
+    {
+      "id": "gap-alerts",
+      "title": "Send phone alerts for orders, halts and failures",
+      "note": "Urgent alerts and each day's orders open a GitHub issue that mentions the owner, which the GitHub phone app pushes.",
+      "tag": "Alerts and notifications",
+      "prio": 1,
+      "source": "Freqtrade 9, Vibe Trading 9",
+      "done": "2026-11-05",
+      "lift": {
+        "Alerts and notifications": 1
+      }
+    },
+    {
+      "id": "gap-emergency-controls",
+      "title": "Add a one-tap freeze and sell switch",
+      "note": "One button in the app halts trading, then sells every stock.",
+      "tag": "Emergency controls",
+      "prio": 1,
+      "source": "Freqtrade 8",
+      "done": "2026-11-05",
+      "lift": {
+        "Emergency controls": 1
+      }
+    },
+    {
+      "id": "gap-dashboard-pages",
+      "title": "Add Risk and Strategies pages to the app",
+      "note": "A Risk page (stress test, share of the account per stock, facts per stock, Actions minutes) and a Strategies page (votes today, strategies on trial).",
+      "tag": "Dashboard and control",
+      "prio": 2,
+      "source": "Fincept 9, Vibe Trading 9",
+      "done": "2026-11-05",
+      "lift": {
+        "Dashboard and control": 1
+      }
     }
   ]
 }

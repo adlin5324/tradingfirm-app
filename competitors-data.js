@@ -186,7 +186,7 @@ window.DATA = {
     "Data sources": 9,
     "Fundamentals and filings": 3,
     "News and sentiment": 2,
-    "Technical indicators": 7,
+    "Technical indicators": 8,
     "Performance tracking": 0,
     "AI and ML depth": 0,
     "AI safety limits": 5,
@@ -198,11 +198,11 @@ window.DATA = {
     "Emergency controls": 0,
     "Ease of setup": 9,
     "Running cost": 9,
-    "Docs and community": 7,
+    "Docs and community": 8,
     "Maturity": 7,
     "Testing and code quality": 4,
     "Update frequency": 6,
-    "Customizability": 0
+    "Customizability": 1
    }
   },
   {
@@ -224,7 +224,7 @@ window.DATA = {
     "Data sources": 8,
     "Fundamentals and filings": 8,
     "News and sentiment": 7,
-    "Technical indicators": 7,
+    "Technical indicators": 8,
     "Performance tracking": 7,
     "AI and ML depth": 8,
     "AI safety limits": 4,
@@ -236,11 +236,11 @@ window.DATA = {
     "Emergency controls": 3,
     "Ease of setup": 8,
     "Running cost": 6,
-    "Docs and community": 6,
+    "Docs and community": 7,
     "Maturity": 7,
     "Testing and code quality": 6,
     "Update frequency": 8,
-    "Customizability": 4
+    "Customizability": 5
    }
   },
   {
@@ -262,7 +262,7 @@ window.DATA = {
     "Data sources": 5,
     "Fundamentals and filings": 1,
     "News and sentiment": 1,
-    "Technical indicators": 8,
+    "Technical indicators": 9,
     "Performance tracking": 9,
     "AI and ML depth": 7,
     "AI safety limits": 5,
@@ -274,11 +274,11 @@ window.DATA = {
     "Emergency controls": 8,
     "Ease of setup": 6,
     "Running cost": 5,
-    "Docs and community": 9,
+    "Docs and community": 10,
     "Maturity": 10,
     "Testing and code quality": 10,
     "Update frequency": 9,
-    "Customizability": 8
+    "Customizability": 9
    }
   },
   {
@@ -300,7 +300,7 @@ window.DATA = {
     "Data sources": 8,
     "Fundamentals and filings": 8,
     "News and sentiment": 9,
-    "Technical indicators": 5,
+    "Technical indicators": 6,
     "Performance tracking": 6,
     "AI and ML depth": 9,
     "AI safety limits": 4,
@@ -312,11 +312,11 @@ window.DATA = {
     "Emergency controls": 0,
     "Ease of setup": 5,
     "Running cost": 3,
-    "Docs and community": 6,
+    "Docs and community": 7,
     "Maturity": 6,
     "Testing and code quality": 6,
     "Update frequency": 8,
-    "Customizability": 7
+    "Customizability": 8
    }
   },
   {
@@ -338,7 +338,7 @@ window.DATA = {
     "Data sources": 10,
     "Fundamentals and filings": 9,
     "News and sentiment": 7,
-    "Technical indicators": 8,
+    "Technical indicators": 9,
     "Performance tracking": 8,
     "AI and ML depth": 9,
     "AI safety limits": 8,
@@ -350,11 +350,11 @@ window.DATA = {
     "Emergency controls": 7,
     "Ease of setup": 6,
     "Running cost": 4,
-    "Docs and community": 8,
+    "Docs and community": 9,
     "Maturity": 6,
     "Testing and code quality": 9,
     "Update frequency": 10,
-    "Customizability": 8
+    "Customizability": 9
    }
   },
   {
@@ -376,7 +376,7 @@ window.DATA = {
     "Data sources": 4,
     "Fundamentals and filings": 1,
     "News and sentiment": 1,
-    "Technical indicators": 9,
+    "Technical indicators": 10,
     "Performance tracking": 9,
     "AI and ML depth": 5,
     "AI safety limits": 5,
@@ -388,11 +388,11 @@ window.DATA = {
     "Emergency controls": 6,
     "Ease of setup": 7,
     "Running cost": 5,
-    "Docs and community": 6,
+    "Docs and community": 7,
     "Maturity": 7,
     "Testing and code quality": 7,
     "Update frequency": 9,
-    "Customizability": 8
+    "Customizability": 9
    }
   },
   {
@@ -414,7 +414,7 @@ window.DATA = {
     "Data sources": 5,
     "Fundamentals and filings": 1,
     "News and sentiment": 7,
-    "Technical indicators": 7,
+    "Technical indicators": 8,
     "Performance tracking": 7,
     "AI and ML depth": 6,
     "AI safety limits": 5,
@@ -426,11 +426,11 @@ window.DATA = {
     "Emergency controls": 6,
     "Ease of setup": 8,
     "Running cost": 5,
-    "Docs and community": 7,
+    "Docs and community": 8,
     "Maturity": 7,
     "Testing and code quality": 8,
     "Update frequency": 6,
-    "Customizability": 7
+    "Customizability": 8
    }
   },
   {
@@ -452,7 +452,7 @@ window.DATA = {
     "Data sources": 8,
     "Fundamentals and filings": 1,
     "News and sentiment": 1,
-    "Technical indicators": 7,
+    "Technical indicators": 8,
     "Performance tracking": 9,
     "AI and ML depth": 2,
     "AI safety limits": 5,
@@ -464,11 +464,11 @@ window.DATA = {
     "Emergency controls": 7,
     "Ease of setup": 3,
     "Running cost": 5,
-    "Docs and community": 8,
+    "Docs and community": 9,
     "Maturity": 8,
     "Testing and code quality": 10,
     "Update frequency": 10,
-    "Customizability": 9
+    "Customizability": 10
    }
   },
   {
@@ -490,7 +490,7 @@ window.DATA = {
     "Data sources": 5,
     "Fundamentals and filings": 0,
     "News and sentiment": 0,
-    "Technical indicators": 8,
+    "Technical indicators": 9,
     "Performance tracking": 8,
     "AI and ML depth": 0,
     "AI safety limits": 5,
@@ -502,11 +502,11 @@ window.DATA = {
     "Emergency controls": 1,
     "Ease of setup": 6,
     "Running cost": 8,
-    "Docs and community": 6,
+    "Docs and community": 7,
     "Maturity": 8,
     "Testing and code quality": 5,
     "Update frequency": 1,
-    "Customizability": 7
+    "Customizability": 8
    }
   }
  ]

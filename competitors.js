@@ -1,6 +1,15 @@
 // Competitors tab. Builds every page from competitors-data.js: nav, repo cards, the Adlin's Investments card, leaderboard and group places.
-(() => {
+(async () => {
   const D = window.DATA, $ = id => document.getElementById(id);
+  // Finished roadmap items lift Adlin's Investments. Scores here are relative to Adlin's (5 = even), so each lift lowers every
+  // rival by that many notches in that category. Add {"done": "date", "lift": {"Category": 1}} to a proposal in proposals.json.
+  let finished = 0;
+  try {
+    const res = await fetch("proposals.json?v=" + Date.now(), { cache: "no-store" });
+    const data = res.ok ? await res.json() : {}, list = Array.isArray(data) ? data : data.proposals || [], total = {};
+    list.filter(p => p && p.done && p.lift).forEach(p => { finished++; Object.entries(p.lift).forEach(([c, v]) => { total[c] = (total[c] || 0) + (Number(v) || 0); }); });
+    D.repos.forEach(r => Object.entries(total).forEach(([c, v]) => { if (c in r.scores) r.scores[c] = Math.max(0, r.scores[c] - v); }));
+  } catch { /* offline: show the base scores */ }
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const BASE = 5;  // Adlin's Investments scores 5 in every category by definition
   const catNames = D.groups.flatMap(g => g.cats.map(c => c[0]));
@@ -74,6 +83,7 @@
     return `<section class="card glow page" data-page="tf" hidden>
     <h2>${esc(D.me.name)}</h2>
     <p class="desc">${esc(D.me.desc)}</p>
+    ${finished ? `<p class="small muted">Scores include ${finished} finished roadmap items.</p>` : ""}
     <h3 class="sub">What it lacks</h3>
     <ul class="lack">${D.me.lacks.map(t => `<li>${esc(fill(t, null))}</li>`).join("")}</ul>
     <h3 class="sub">Ranking <span>out of ${n}</span> ${EXP}</h3>
