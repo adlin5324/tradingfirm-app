@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "description": "Browser tests for the dashboard (npm test). They run the real index.html against a fake GitHub.",
+  "scripts": {"test": "node --test \"tests/*.test.mjs\""},
+  "devDependencies": {"playwright": "^1.50.0"}
+}

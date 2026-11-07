@@ -1,0 +1,2255 @@
+{
+ "updated": "2026-11-07T07:15:39+00:00",
+ "last_run": "2026-11-13T10:50:00-05:00",
+ "halt": null,
+ "buy_block": null,
+ "profit": -10.12,
+ "orders": [
+  {
+   "date": "2026-11-11",
+   "side": "SELL",
+   "symbol": "FLEX",
+   "shares": 2,
+   "price": 50.44,
+   "state": "FILLED",
+   "strategy": "breakout+low_volatility+momentum+near_high+trend_following"
+  },
+  {
+   "date": "2026-11-05",
+   "side": "SELL",
+   "symbol": "HBAN",
+   "shares": 2,
+   "price": 52.51,
+   "state": "FILLED",
+   "strategy": "breakout+low_volatility+momentum+near_high+trend_following"
+  },
+  {
+   "date": "2026-11-02",
+   "side": "SELL",
+   "symbol": "AR",
+   "shares": 4,
+   "price": 23.9,
+   "state": "FILLED",
+   "strategy": "low_volatility+mean_reversion+momentum+near_high+pullback+trend_following"
+  },
+  {
+   "date": "2026-10-28",
+   "side": "SELL",
+   "symbol": "SWKS",
+   "shares": 1,
+   "price": 61.52,
+   "state": "FILLED",
+   "strategy": "breakout+low_volatility+momentum+near_high+trend_following"
+  },
+  {
+   "date": "2026-10-23",
+   "side": "SELL",
+   "symbol": "IOVA",
+   "shares": 2,
+   "price": 36.47,
+   "state": "FILLED",
+   "strategy": "owner"
+  },
+  {
+   "date": "2026-10-14",
+   "side": "BUY",
+   "symbol": "AR",
+   "shares": 4,
+   "price": 27.36,
+   "state": "FILLED",
+   "strategy": "low_volatility+mean_reversion+momentum+near_high+pullback+trend_following"
+  },
+  {
+   "date": "2026-10-13",
+   "side": "BUY",
+   "symbol": "SLB",
+   "shares": 2,
+   "price": 58.13,
+   "state": "FILLED",
+   "strategy": "breakout+low_volatility+momentum+near_high+trend_following"
+  },
+  {
+   "date": "2026-10-13",
+   "side": "BUY",
+   "symbol": "HBAN",
+   "shares": 2,
+   "price": 58.62,
+   "state": "FILLED",
+   "strategy": "breakout+low_volatility+momentum+near_high+trend_following"
+  },
+  {
+   "date": "2026-10-13",
+   "side": "BUY",
+   "symbol": "FLEX",
+   "shares": 2,
+   "price": 58.74,
+   "state": "FILLED",
+   "strategy": "breakout+low_volatility+momentum+near_high+trend_following"
+  },
+  {
+   "date": "2026-10-13",
+   "side": "BUY",
+   "symbol": "SWKS",
+   "shares": 1,
+   "price": 72.6,
+   "state": "FILLED",
+   "strategy": "breakout+low_volatility+momentum+near_high+trend_following"
+  }
+ ],
+ "votes": {
+  "SLB": [
+   "mean_reversion",
+   "low_volatility"
+  ]
+ },
+ "account": {
+  "total": 607.3468058384503,
+  "cash": 502.93999999999994,
+  "settled_cash": 435.96,
+  "buying_power": 502.93999999999994,
+  "today_pl": 0.0
+ },
+ "stress": {
+  "drop": 0.1,
+  "loss": 10.44,
+  "share": 0.0172
+ },
+ "limits": {
+  "max_per_order": 200,
+  "max_stocks_held": 6,
+  "max_per_stock": 0.2,
+  "max_daily_loss": 0.07,
+  "trailing_stop": 0.15,
+  "max_per_sector": 0.5,
+  "max_drawdown": 0.15,
+  "min_strategies_agree": 5
+ },
+ "positions": [
+  {
+   "symbol": "SLB",
+   "shares": 2.0,
+   "price": 52.20340291922521,
+   "cost": 52.20340291922521,
+   "value": 104.40680583845042,
+   "gain": 0.0,
+   "strategy": "breakout+low_volatility+momentum+near_high+trend_following",
+   "free_to_sell": "2026-10-14"
+  }
+ ],
+ "scorecard": {
+  "start": "2026-10-13",
+  "start_value": 678.6856755762042,
+  "deposits": 0.0,
+  "bot": -0.10511326863822068,
+  "verdict": "Too early to judge: 24 of 60 trading days tracked. Don't add money yet.",
+  "markets": {
+   "S&P 500": 0.0,
+   "Nasdaq 100": 0.0
+  }
+ },
+ "history": [
+  {
+   "date": "2026-10-13",
+   "bot": 0.0,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "date": "2026-10-14",
+   "bot": 0.0006496154484385563,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "date": "2026-10-15",
+   "bot": -0.0072523529546891785,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "date": "2026-10-16",
+   "bot": -0.0036198645888816383,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "date": "2026-10-19",
+   "bot": -0.0010291600432235093,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "date": "2026-10-20",
+   "bot": 0.00260700148504478,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "date": "2026-10-21",
+   "bot": 0.002603854708516984,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "date": "2026-10-22",
+   "bot": 0.0030173723647208828,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "date": "2026-10-23",
+   "bot": -0.01607888941322977,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "date": "2026-10-26",
+   "bot": -0.026601748499561984,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "date": "2026-10-27",
+   "bot": -0.040692643461750944,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "date": "2026-10-28",
+   "bot": -0.04914381033186288,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "date": "2026-10-29",
+   "bot": -0.05023700316391799,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "date": "2026-10-30",
+   "bot": -0.05897811994657265,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "date": "2026-11-02",
+   "bot": -0.0720866292509369,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "date": "2026-11-03",
+   "bot": -0.0844870484314364,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "date": "2026-11-04",
+   "bot": -0.08436516675192995,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "date": "2026-11-05",
+   "bot": -0.0868158670473258,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "date": "2026-11-06",
+   "bot": -0.08941033121577746,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "date": "2026-11-09",
+   "bot": -0.09619987946715758,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "date": "2026-11-10",
+   "bot": -0.09776084256264339,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "date": "2026-11-11",
+   "bot": -0.10072072804920928,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "date": "2026-11-12",
+   "bot": -0.1028257516621317,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "date": "2026-11-13",
+   "bot": -0.10511326863822068,
+   "S&P 500": 0.0,
+   "Nasdaq 100": 0.0
+  }
+ ],
+ "stats": {
+  "max_drawdown": -0.1078053521127077,
+  "closed": 5,
+  "win_rate": 0.2,
+  "profit_factor": 0.81,
+  "sharpe": -12.0,
+  "sortino": -9.83,
+  "best_day": 0.0037,
+  "worst_day": -0.019
+ },
+ "recent": [
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": 0.0,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": 0.0,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": 0.0006496154484385563,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": 0.0006496154484385563,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.0072523529546891785,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.0072523529546891785,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.0036198645888816383,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.0036198645888816383,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.0010291600432235093,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.0010291600432235093,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": 0.00260700148504478,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": 0.00260700148504478,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": 0.002603854708516984,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": 0.002603854708516984,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": 0.0030173723647208828,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": 0.0030173723647208828,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.01607888941322977,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.01607888941322977,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.026601748499561984,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.026601748499561984,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.040692643461750944,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.040692643461750944,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.04914381033186288,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.04914381033186288,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.05023700316391799,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.05023700316391799,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.05897811994657265,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.05897811994657265,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.0720866292509369,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.0720866292509369,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.0844870484314364,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.0844870484314364,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.08436516675192995,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.08436516675192995,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.0868158670473258,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.0868158670473258,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.08941033121577746,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.08941033121577746,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.09619987946715758,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.09619987946715758,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.09776084256264339,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.09776084256264339,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.10072072804920928,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.10072072804920928,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.1028257516621317,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.1028257516621317,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.10511326863822068,
+   "Nasdaq 100": 0.0,
+   "S&P 500": 0.0
+  },
+  {
+   "at": "2026-11-07T07:15+00:00",
+   "bot": -0.10511326863822068,
+   "S&P 500": 0.0,
+   "Nasdaq 100": 0.0
+  }
+ ],
+ "fundamentals": {},
+ "cost": null,
+ "paper_summary": {
+  "adx_trend": {
+   "avg": -0.1563,
+   "picks": 39
+  },
+  "mfi_dip": {
+   "avg": -0.0821,
+   "picks": 5
+  },
+  "obv_trend": {
+   "avg": -0.1552,
+   "picks": 32
+  },
+  "rsi_dip": {
+   "avg": -0.0884,
+   "picks": 19
+  }
+ },
+ "fill_cost": {
+  "fills": 10,
+  "avg": 0.0023345681854279833,
+  "dollars": 2.26
+ },
+ "report": "# Trading bot: 2026-11-13\n\n**\ud83d\udca4 Quiet day**  \u00b7  mode: LIVE\n\n- Already traded today (once a day). Nothing more to do.\n\n## Team update\n- **Rule checker:** rules.toml checked: OK\n- **Operations:** Order history unavailable today (TypeError): that part of the brokerage's records was not checked.\n- **Bookkeeper:** Could not price new comparisons back to the start (AttributeError); they count from today.\n- **Bookkeeper:** Scorecard: Since 2026-10-13: bot -10.5%, S&P 500 +0.0%, Nasdaq 100 +0.0%\n- **Bookkeeper:** Verdict: Too early to judge: 24 of 60 trading days tracked. Don't add money yet.\n- **Bookkeeper:** Profit/loss from the bot's closed trades so far: -$10.12\n- **Risk:** Down 10.8% from the account's peak (stops everything at -15%).\n\n## Account\n```\n  Total account value: $607.35\n  Cash: $502.94  (settled $435.96, unsettled $66.98)\n  Buying power: $502.94\n  In stocks: $104.41\n  Today so far: +$0.00\n\n  Holdings (1 of max 6):\n    SLB: 2 shares @ $52.20 = $104.41  (+$0.00)\n\n  With your 7% limit, the bot stops buying for the day after losing $42.51.\n```\n",
+ "shadow": [],
+ "sales": [
+  {
+   "after_10d": 29.744535652135774,
+   "bought": "2026-10-13",
+   "cost": 14.66,
+   "date": "2026-10-23",
+   "latest": 25.943445399738415,
+   "price": 36.47,
+   "profit": 43.62,
+   "shares": 2.0,
+   "strategy": "owner",
+   "symbol": "IOVA"
+  },
+  {
+   "after_10d": 55.63200185563708,
+   "bought": "2026-10-13",
+   "cost": 72.6,
+   "date": "2026-10-28",
+   "latest": 53.791276256679666,
+   "price": 61.52,
+   "profit": -11.08,
+   "shares": 1.0,
+   "strategy": "breakout+low_volatility+momentum+near_high+trend_following",
+   "symbol": "SWKS"
+  },
+  {
+   "bought": "2026-10-14",
+   "cost": 27.36,
+   "date": "2026-11-02",
+   "latest": 21.042808374684974,
+   "price": 23.9,
+   "profit": -13.84,
+   "shares": 4.0,
+   "strategy": "low_volatility+mean_reversion+momentum+near_high+pullback+trend_following",
+   "symbol": "AR"
+  },
+  {
+   "bought": "2026-10-13",
+   "cost": 58.62,
+   "date": "2026-11-05",
+   "latest": 47.71742513273743,
+   "price": 52.51,
+   "profit": -12.22,
+   "shares": 2.0,
+   "strategy": "breakout+low_volatility+momentum+near_high+trend_following",
+   "symbol": "HBAN"
+  },
+  {
+   "bought": "2026-10-13",
+   "cost": 58.74,
+   "date": "2026-11-11",
+   "latest": 50.70077446269973,
+   "price": 50.44,
+   "profit": -16.6,
+   "shares": 2.0,
+   "strategy": "breakout+low_volatility+momentum+near_high+trend_following",
+   "symbol": "FLEX"
+  }
+ ],
+ "blocked": [],
+ "income": [],
+ "missed": [
+  {
+   "date": "2026-10-13",
+   "latest": 32.21194704552346,
+   "price": 38.3259514136101,
+   "symbol": "ANF",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-13",
+   "latest": 21.042808374684974,
+   "price": 27.677559524531656,
+   "symbol": "AR",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-13",
+   "latest": 48.15670580204511,
+   "price": 60.06637035608428,
+   "symbol": "CP",
+   "votes": [
+    "bollinger_bounce",
+    "low_volatility",
+    "momentum",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-13",
+   "latest": 19.859836918018054,
+   "price": 23.050706300886855,
+   "symbol": "ETR",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-13",
+   "latest": 27.9662823904897,
+   "price": 38.0156650140758,
+   "symbol": "LYB",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-13",
+   "latest": 49.8380138505593,
+   "price": 56.18465827841781,
+   "symbol": "MAC",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-13",
+   "latest": 38.569986355454304,
+   "price": 49.55430861003904,
+   "symbol": "SMR",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-14",
+   "latest": 32.21194704552346,
+   "price": 38.53602296935744,
+   "symbol": "ANF",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-14",
+   "latest": 27.9662823904897,
+   "price": 38.03700026683264,
+   "symbol": "LYB",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-14",
+   "latest": 49.8380138505593,
+   "price": 56.82682352240419,
+   "symbol": "MAC",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-14",
+   "latest": 38.569986355454304,
+   "price": 49.86914225276823,
+   "symbol": "SMR",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-15",
+   "latest": 32.21194704552346,
+   "price": 37.47557554476434,
+   "symbol": "ANF",
+   "votes": [
+    "bollinger_bounce",
+    "low_volatility",
+    "momentum",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-15",
+   "latest": 19.859836918018054,
+   "price": 22.35728478509807,
+   "symbol": "ETR",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-15",
+   "latest": 27.9662823904897,
+   "price": 37.80245274477973,
+   "symbol": "LYB",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-15",
+   "latest": 38.569986355454304,
+   "price": 49.88273088683699,
+   "symbol": "SMR",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-16",
+   "latest": 49.8380138505593,
+   "price": 57.787444899900585,
+   "symbol": "MAC",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-16",
+   "latest": 38.569986355454304,
+   "price": 48.774976593392545,
+   "symbol": "SMR",
+   "votes": [
+    "low_volatility",
+    "mean_reversion",
+    "momentum",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-19",
+   "latest": 32.21194704552346,
+   "price": 37.137590403423154,
+   "symbol": "ANF",
+   "votes": [
+    "bollinger_bounce",
+    "low_volatility",
+    "momentum",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-19",
+   "latest": 19.859836918018054,
+   "price": 23.04674439535825,
+   "symbol": "ETR",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-19",
+   "latest": 49.8380138505593,
+   "price": 58.624291360855835,
+   "symbol": "MAC",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-20",
+   "latest": 27.9662823904897,
+   "price": 37.63892902927458,
+   "symbol": "LYB",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-20",
+   "latest": 49.8380138505593,
+   "price": 58.57671442580875,
+   "symbol": "MAC",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-20",
+   "latest": 38.569986355454304,
+   "price": 50.0836753544962,
+   "symbol": "SMR",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-21",
+   "latest": 21.042808374684974,
+   "price": 26.788667434564054,
+   "symbol": "AR",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-21",
+   "latest": 49.8380138505593,
+   "price": 58.367762313510084,
+   "symbol": "MAC",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-21",
+   "latest": 38.569986355454304,
+   "price": 49.16396885660929,
+   "symbol": "SMR",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-22",
+   "latest": 21.042808374684974,
+   "price": 27.013563638565596,
+   "symbol": "AR",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-22",
+   "latest": 49.8380138505593,
+   "price": 57.67497507979593,
+   "symbol": "MAC",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-22",
+   "latest": 38.569986355454304,
+   "price": 49.15473980722908,
+   "symbol": "SMR",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-23",
+   "latest": 49.8380138505593,
+   "price": 58.06354472386451,
+   "symbol": "MAC",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-23",
+   "latest": 38.569986355454304,
+   "price": 47.94148012965781,
+   "symbol": "SMR",
+   "votes": [
+    "low_volatility",
+    "mean_reversion",
+    "momentum",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-26",
+   "latest": 49.8380138505593,
+   "price": 57.08225462410662,
+   "symbol": "MAC",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-10-30",
+   "latest": 19.859836918018054,
+   "price": 22.38861373510801,
+   "symbol": "ETR",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-11-02",
+   "latest": 50.70077446269973,
+   "price": 56.88587802070053,
+   "symbol": "FLEX",
+   "votes": [
+    "low_volatility",
+    "momentum",
+    "near_high",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-11-02",
+   "latest": 47.71742513273743,
+   "price": 53.23030592289181,
+   "symbol": "HBAN",
+   "votes": [
+    "low_volatility",
+    "mean_reversion",
+    "momentum",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-11-03",
+   "latest": 47.71742513273743,
+   "price": 53.51341376443804,
+   "symbol": "HBAN",
+   "votes": [
+    "breakout",
+    "low_volatility",
+    "momentum",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-11-04",
+   "latest": 47.71742513273743,
+   "price": 53.31479923550648,
+   "symbol": "HBAN",
+   "votes": [
+    "breakout",
+    "low_volatility",
+    "momentum",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-11-05",
+   "latest": 50.70077446269973,
+   "price": 53.97673327172562,
+   "symbol": "FLEX",
+   "votes": [
+    "bollinger_bounce",
+    "breakout",
+    "low_volatility",
+    "near_high"
+   ]
+  },
+  {
+   "date": "2026-11-05",
+   "latest": 47.71742513273743,
+   "price": 52.62596343517145,
+   "symbol": "HBAN",
+   "votes": [
+    "low_volatility",
+    "mean_reversion",
+    "momentum",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-11-05",
+   "latest": 52.20340291922521,
+   "price": 54.75979839233089,
+   "symbol": "SLB",
+   "votes": [
+    "low_volatility",
+    "mean_reversion",
+    "momentum",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-11-06",
+   "latest": 47.71742513273743,
+   "price": 52.164556569460785,
+   "symbol": "HBAN",
+   "votes": [
+    "low_volatility",
+    "mean_reversion",
+    "momentum",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-11-06",
+   "latest": 52.20340291922521,
+   "price": 54.19315652842784,
+   "symbol": "SLB",
+   "votes": [
+    "low_volatility",
+    "mean_reversion",
+    "momentum",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-11-09",
+   "latest": 47.71742513273743,
+   "price": 51.36077176198841,
+   "symbol": "HBAN",
+   "votes": [
+    "low_volatility",
+    "mean_reversion",
+    "momentum",
+    "trend_following"
+   ]
+  },
+  {
+   "date": "2026-11-10",
+   "latest": 47.71742513273743,
+   "price": 50.54559003167643,
+   "symbol": "HBAN",
+   "votes": [
+    "low_volatility",
+    "mean_reversion",
+    "momentum",
+    "trend_following"
+   ]
+  }
+ ],
+ "paper": [
+  {
+   "date": "2026-10-13",
+   "latest": 47.71742513273743,
+   "price": 58.48652788182563,
+   "strategy": "adx_trend",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-10-13",
+   "latest": 53.791276256679666,
+   "price": 72.43818776649216,
+   "strategy": "adx_trend",
+   "symbol": "SWKS"
+  },
+  {
+   "date": "2026-10-13",
+   "latest": 52.20340291922521,
+   "price": 57.999934333285324,
+   "strategy": "adx_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-10-13",
+   "latest": 47.71742513273743,
+   "price": 58.48652788182563,
+   "strategy": "obv_trend",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-10-13",
+   "latest": 19.859836918018054,
+   "price": 23.050706300886855,
+   "strategy": "obv_trend",
+   "symbol": "ETR"
+  },
+  {
+   "date": "2026-10-13",
+   "latest": 50.70077446269973,
+   "price": 58.605151806824935,
+   "strategy": "obv_trend",
+   "symbol": "FLEX"
+  },
+  {
+   "date": "2026-10-14",
+   "latest": 47.71742513273743,
+   "price": 59.720782454609044,
+   "strategy": "adx_trend",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-10-14",
+   "latest": 53.791276256679666,
+   "price": 71.49960467025925,
+   "strategy": "adx_trend",
+   "symbol": "SWKS"
+  },
+  {
+   "date": "2026-10-14",
+   "latest": 52.20340291922521,
+   "price": 58.11025914263688,
+   "strategy": "adx_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-10-14",
+   "latest": 47.71742513273743,
+   "price": 59.720782454609044,
+   "strategy": "obv_trend",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-10-14",
+   "latest": 50.70077446269973,
+   "price": 58.75642422960862,
+   "strategy": "obv_trend",
+   "symbol": "FLEX"
+  },
+  {
+   "date": "2026-10-14",
+   "latest": 38.569986355454304,
+   "price": 49.86914225276823,
+   "strategy": "obv_trend",
+   "symbol": "SMR"
+  },
+  {
+   "date": "2026-10-15",
+   "latest": 47.71742513273743,
+   "price": 59.920922700220785,
+   "strategy": "adx_trend",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-10-15",
+   "latest": 53.791276256679666,
+   "price": 69.9300427400476,
+   "strategy": "adx_trend",
+   "symbol": "SWKS"
+  },
+  {
+   "date": "2026-10-15",
+   "latest": 52.20340291922521,
+   "price": 58.404818034588864,
+   "strategy": "adx_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-10-15",
+   "latest": 38.569986355454304,
+   "price": 49.88273088683699,
+   "strategy": "obv_trend",
+   "symbol": "SMR"
+  },
+  {
+   "date": "2026-10-15",
+   "latest": 50.70077446269973,
+   "price": 58.915045116597774,
+   "strategy": "obv_trend",
+   "symbol": "FLEX"
+  },
+  {
+   "date": "2026-10-15",
+   "latest": 52.20340291922521,
+   "price": 58.404818034588864,
+   "strategy": "obv_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-10-16",
+   "latest": 33.48237558533864,
+   "price": 39.941493953872026,
+   "strategy": "rsi_dip",
+   "symbol": "WFC"
+  },
+  {
+   "date": "2026-10-16",
+   "latest": 47.71742513273743,
+   "price": 60.03817156439331,
+   "strategy": "adx_trend",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-10-16",
+   "latest": 53.791276256679666,
+   "price": 70.12516926456001,
+   "strategy": "adx_trend",
+   "symbol": "SWKS"
+  },
+  {
+   "date": "2026-10-16",
+   "latest": 52.20340291922521,
+   "price": 58.559997425410934,
+   "strategy": "adx_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-10-16",
+   "latest": 50.70077446269973,
+   "price": 59.7334187092726,
+   "strategy": "obv_trend",
+   "symbol": "FLEX"
+  },
+  {
+   "date": "2026-10-16",
+   "latest": 52.20340291922521,
+   "price": 58.559997425410934,
+   "strategy": "obv_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-10-16",
+   "latest": 49.8380138505593,
+   "price": 57.787444899900585,
+   "strategy": "obv_trend",
+   "symbol": "MAC"
+  },
+  {
+   "date": "2026-10-19",
+   "latest": 47.71742513273743,
+   "price": 61.39370372831431,
+   "strategy": "adx_trend",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-10-19",
+   "latest": 52.20340291922521,
+   "price": 59.20466765450488,
+   "strategy": "adx_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-10-19",
+   "latest": 50.70077446269973,
+   "price": 58.72942431066043,
+   "strategy": "adx_trend",
+   "symbol": "FLEX"
+  },
+  {
+   "date": "2026-10-19",
+   "latest": 49.8380138505593,
+   "price": 58.624291360855835,
+   "strategy": "obv_trend",
+   "symbol": "MAC"
+  },
+  {
+   "date": "2026-10-19",
+   "latest": 52.20340291922521,
+   "price": 59.20466765450488,
+   "strategy": "obv_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-10-19",
+   "latest": 50.70077446269973,
+   "price": 58.72942431066043,
+   "strategy": "obv_trend",
+   "symbol": "FLEX"
+  },
+  {
+   "date": "2026-10-20",
+   "latest": 47.71742513273743,
+   "price": 62.08997331435439,
+   "strategy": "adx_trend",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-10-20",
+   "latest": 52.20340291922521,
+   "price": 60.3801896316644,
+   "strategy": "adx_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-10-20",
+   "latest": 50.70077446269973,
+   "price": 58.411088857952464,
+   "strategy": "adx_trend",
+   "symbol": "FLEX"
+  },
+  {
+   "date": "2026-10-20",
+   "latest": 38.569986355454304,
+   "price": 50.0836753544962,
+   "strategy": "obv_trend",
+   "symbol": "SMR"
+  },
+  {
+   "date": "2026-10-20",
+   "latest": 52.20340291922521,
+   "price": 60.3801896316644,
+   "strategy": "obv_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-10-20",
+   "latest": 49.8380138505593,
+   "price": 58.57671442580875,
+   "strategy": "obv_trend",
+   "symbol": "MAC"
+  },
+  {
+   "date": "2026-10-21",
+   "latest": 47.71742513273743,
+   "price": 61.83552591672527,
+   "strategy": "adx_trend",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-10-21",
+   "latest": 52.20340291922521,
+   "price": 61.045924415262384,
+   "strategy": "adx_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-10-21",
+   "latest": 50.70077446269973,
+   "price": 58.77324933391517,
+   "strategy": "adx_trend",
+   "symbol": "FLEX"
+  },
+  {
+   "date": "2026-10-21",
+   "latest": 47.71742513273743,
+   "price": 61.83552591672527,
+   "strategy": "obv_trend",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-10-21",
+   "latest": 50.70077446269973,
+   "price": 58.77324933391517,
+   "strategy": "obv_trend",
+   "symbol": "FLEX"
+  },
+  {
+   "date": "2026-10-21",
+   "latest": 49.8380138505593,
+   "price": 58.367762313510084,
+   "strategy": "obv_trend",
+   "symbol": "MAC"
+  },
+  {
+   "date": "2026-10-22",
+   "latest": 47.71742513273743,
+   "price": 61.706354288540794,
+   "strategy": "adx_trend",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-10-22",
+   "latest": 52.20340291922521,
+   "price": 60.94543726919249,
+   "strategy": "adx_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-10-22",
+   "latest": 50.70077446269973,
+   "price": 58.863131424567904,
+   "strategy": "adx_trend",
+   "symbol": "FLEX"
+  },
+  {
+   "date": "2026-10-22",
+   "latest": 52.20340291922521,
+   "price": 60.94543726919249,
+   "strategy": "obv_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-10-22",
+   "latest": 47.71742513273743,
+   "price": 61.706354288540794,
+   "strategy": "obv_trend",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-10-22",
+   "latest": 19.859836918018054,
+   "price": 23.068003183355895,
+   "strategy": "obv_trend",
+   "symbol": "ETR"
+  },
+  {
+   "date": "2026-10-23",
+   "latest": 47.71742513273743,
+   "price": 58.99568635693448,
+   "strategy": "adx_trend",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-10-23",
+   "latest": 52.20340291922521,
+   "price": 60.54579347526555,
+   "strategy": "adx_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-10-23",
+   "latest": 50.70077446269973,
+   "price": 58.84458166611634,
+   "strategy": "adx_trend",
+   "symbol": "FLEX"
+  },
+  {
+   "date": "2026-10-23",
+   "latest": 52.20340291922521,
+   "price": 60.54579347526555,
+   "strategy": "obv_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-10-23",
+   "latest": 47.71742513273743,
+   "price": 58.99568635693448,
+   "strategy": "obv_trend",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-10-23",
+   "latest": 19.859836918018054,
+   "price": 23.290046723951562,
+   "strategy": "obv_trend",
+   "symbol": "ETR"
+  },
+  {
+   "date": "2026-10-26",
+   "latest": 21.042808374684974,
+   "price": 25.702570679280942,
+   "strategy": "rsi_dip",
+   "symbol": "AR"
+  },
+  {
+   "date": "2026-10-26",
+   "latest": 47.71742513273743,
+   "price": 57.5857221337795,
+   "strategy": "adx_trend",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-10-26",
+   "latest": 52.20340291922521,
+   "price": 59.772753491241204,
+   "strategy": "adx_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-10-26",
+   "latest": 50.70077446269973,
+   "price": 58.99103548976827,
+   "strategy": "adx_trend",
+   "symbol": "FLEX"
+  },
+  {
+   "date": "2026-10-26",
+   "latest": 50.70077446269973,
+   "price": 58.99103548976827,
+   "strategy": "obv_trend",
+   "symbol": "FLEX"
+  },
+  {
+   "date": "2026-10-26",
+   "latest": 52.20340291922521,
+   "price": 59.772753491241204,
+   "strategy": "obv_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-10-26",
+   "latest": 47.71742513273743,
+   "price": 57.5857221337795,
+   "strategy": "obv_trend",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-10-27",
+   "latest": 53.791276256679666,
+   "price": 62.697385531736955,
+   "strategy": "rsi_dip",
+   "symbol": "SWKS"
+  },
+  {
+   "date": "2026-10-27",
+   "latest": 47.71742513273743,
+   "price": 55.98418218881869,
+   "strategy": "adx_trend",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-10-27",
+   "latest": 52.20340291922521,
+   "price": 58.4536585857941,
+   "strategy": "adx_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-10-27",
+   "latest": 52.20340291922521,
+   "price": 58.4536585857941,
+   "strategy": "obv_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-10-28",
+   "latest": 53.791276256679666,
+   "price": 61.66112226164105,
+   "strategy": "rsi_dip",
+   "symbol": "SWKS"
+  },
+  {
+   "date": "2026-10-28",
+   "latest": 21.042808374684974,
+   "price": 25.24459974522021,
+   "strategy": "rsi_dip",
+   "symbol": "AR"
+  },
+  {
+   "date": "2026-10-28",
+   "latest": 47.71742513273743,
+   "price": 54.886524370037534,
+   "strategy": "adx_trend",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-10-28",
+   "latest": 52.20340291922521,
+   "price": 58.92321552926697,
+   "strategy": "adx_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-10-28",
+   "latest": 52.20340291922521,
+   "price": 58.92321552926697,
+   "strategy": "obv_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-10-29",
+   "latest": 53.791276256679666,
+   "price": 59.76819388983933,
+   "strategy": "rsi_dip",
+   "symbol": "SWKS"
+  },
+  {
+   "date": "2026-10-29",
+   "latest": 38.569986355454304,
+   "price": 44.76804733315461,
+   "strategy": "rsi_dip",
+   "symbol": "SMR"
+  },
+  {
+   "date": "2026-10-29",
+   "latest": 47.71742513273743,
+   "price": 54.6740178877656,
+   "strategy": "adx_trend",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-10-29",
+   "latest": 52.20340291922521,
+   "price": 58.09177207299093,
+   "strategy": "adx_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-10-30",
+   "latest": 21.042808374684974,
+   "price": 24.618623225790856,
+   "strategy": "rsi_dip",
+   "symbol": "AR"
+  },
+  {
+   "date": "2026-10-30",
+   "latest": 47.71742513273743,
+   "price": 54.70659879959186,
+   "strategy": "adx_trend",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-10-30",
+   "latest": 52.20340291922521,
+   "price": 57.38386104296821,
+   "strategy": "adx_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-10-30",
+   "latest": 53.791276256679666,
+   "price": 59.085522861649025,
+   "strategy": "mfi_dip",
+   "symbol": "SWKS"
+  },
+  {
+   "date": "2026-11-02",
+   "latest": 32.21194704552346,
+   "price": 34.995450254489256,
+   "strategy": "rsi_dip",
+   "symbol": "ANF"
+  },
+  {
+   "date": "2026-11-02",
+   "latest": 52.20340291922521,
+   "price": 56.128825396419714,
+   "strategy": "adx_trend",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-11-02",
+   "latest": 53.791276256679666,
+   "price": 60.171362024141594,
+   "strategy": "mfi_dip",
+   "symbol": "SWKS"
+  },
+  {
+   "date": "2026-11-03",
+   "latest": 38.569986355454304,
+   "price": 42.139915249944906,
+   "strategy": "rsi_dip",
+   "symbol": "SMR"
+  },
+  {
+   "date": "2026-11-03",
+   "latest": 53.791276256679666,
+   "price": 58.97083924046633,
+   "strategy": "rsi_dip",
+   "symbol": "SWKS"
+  },
+  {
+   "date": "2026-11-03",
+   "latest": 50.70077446269973,
+   "price": 53.42883354801578,
+   "strategy": "rsi_dip",
+   "symbol": "FLEX"
+  },
+  {
+   "date": "2026-11-03",
+   "latest": 53.791276256679666,
+   "price": 58.97083924046633,
+   "strategy": "mfi_dip",
+   "symbol": "SWKS"
+  },
+  {
+   "date": "2026-11-09",
+   "latest": 50.70077446269973,
+   "price": 52.44435153167331,
+   "strategy": "rsi_dip",
+   "symbol": "FLEX"
+  },
+  {
+   "date": "2026-11-09",
+   "latest": 52.20340291922521,
+   "price": 53.223746163170176,
+   "strategy": "rsi_dip",
+   "symbol": "SLB"
+  },
+  {
+   "date": "2026-11-09",
+   "latest": 47.71742513273743,
+   "price": 51.36077176198841,
+   "strategy": "rsi_dip",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-11-09",
+   "latest": 47.71742513273743,
+   "price": 51.36077176198841,
+   "strategy": "mfi_dip",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-11-10",
+   "latest": 50.70077446269973,
+   "price": 50.944235116857165,
+   "strategy": "rsi_dip",
+   "symbol": "FLEX"
+  },
+  {
+   "date": "2026-11-10",
+   "latest": 47.71742513273743,
+   "price": 50.54559003167643,
+   "strategy": "rsi_dip",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-11-10",
+   "latest": 47.71742513273743,
+   "price": 50.54559003167643,
+   "strategy": "mfi_dip",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-11-12",
+   "latest": 47.71742513273743,
+   "price": 49.15636907363754,
+   "strategy": "rsi_dip",
+   "symbol": "HBAN"
+  },
+  {
+   "date": "2026-11-13",
+   "latest": 52.20340291922521,
+   "price": 52.20340291922521,
+   "strategy": "rsi_dip",
+   "symbol": "SLB"
+  }
+ ],
+ "summary": [
+  {
+   "label": "Today",
+   "text": "$607.35  +$0.00 (+0.00%)",
+   "tone": null,
+   "amount": 0.0,
+   "pct": 0.0
+  },
+  {
+   "label": "Since start",
+   "text": "Adlin Investments -10.5% \u00b7 S&P 500 +0.0% \u00b7 Nasdaq 100 +0.0%",
+   "tone": "bad",
+   "parts": [
+    {
+     "name": "Adlin Investments",
+     "value": -0.10511326863822068
+    },
+    {
+     "name": "S&P 500",
+     "value": 0.0
+    },
+    {
+     "name": "Nasdaq 100",
+     "value": 0.0
+    }
+   ]
+  },
+  {
+   "label": "Verdict",
+   "text": "Too early to judge: 24 of 60 trading days tracked. Don't add money yet.",
+   "tone": null,
+   "days": 24,
+   "of": 60
+  },
+  {
+   "label": "Trades",
+   "text": "Today: None",
+   "tone": null
+  },
+  {
+   "label": "Warnings",
+   "text": "All clear",
+   "tone": "good"
+  },
+  {
+   "label": "Coming up",
+   "text": "No dated events for your stocks",
+   "tone": null
+  }
+ ],
+ "genome": [
+  {
+   "id": "account.type",
+   "kind": "risk",
+   "value": "cash",
+   "why": "Cash account only; margin is a Webull setting the owner changes."
+  },
+  {
+   "id": "account.use_real_balance",
+   "kind": "risk",
+   "value": true,
+   "why": "Trade off the real Webull balance."
+  },
+  {
+   "id": "trading.mode",
+   "kind": "risk",
+   "value": "live",
+   "why": "practice (fake money) or live (real money)."
+  },
+  {
+   "id": "trading.trades_per_day",
+   "kind": "risk",
+   "value": 1,
+   "why": "How many times a day the bot looks at the market."
+  },
+  {
+   "id": "trading.whole_shares_only",
+   "kind": "risk",
+   "value": true,
+   "why": "Fractional shares are not supported."
+  },
+  {
+   "id": "trading.min_strategies_agree",
+   "kind": "risk",
+   "value": 5,
+   "why": "How many strategies must agree before a buy."
+  },
+  {
+   "id": "trading.cash_target",
+   "kind": "risk",
+   "value": 0.1,
+   "why": "Idle cash is not preferred: while more than this share of the account is cash, stocks one vote short can be bought."
+  },
+  {
+   "id": "trading.tune_weights",
+   "kind": "tuning",
+   "value": null,
+   "why": "Whether the tuner's weights are used."
+  },
+  {
+   "id": "risk.max_daily_loss",
+   "kind": "risk",
+   "value": 0.07,
+   "why": "No buys after losing this share of the account in a day."
+  },
+  {
+   "id": "risk.max_stocks_held",
+   "kind": "risk",
+   "value": 6,
+   "why": "Most stocks held at once."
+  },
+  {
+   "id": "risk.max_per_stock",
+   "kind": "risk",
+   "value": 0.2,
+   "why": "Largest share of the account in one stock."
+  },
+  {
+   "id": "risk.max_per_sector",
+   "kind": "risk",
+   "value": 0.5,
+   "why": "Largest share of the account in one sector."
+  },
+  {
+   "id": "risk.max_per_order",
+   "kind": "risk",
+   "value": 200,
+   "why": "Largest dollar size of one order."
+  },
+  {
+   "id": "risk.trailing_stop",
+   "kind": "risk",
+   "value": 0.15,
+   "why": "Sell a stock this far below its high since bought."
+  },
+  {
+   "id": "risk.max_drawdown",
+   "kind": "risk",
+   "value": null,
+   "why": "Halt trading after the account falls this far from its peak."
+  },
+  {
+   "id": "rules.allow_etfs",
+   "kind": "risk",
+   "value": false,
+   "why": "The bot only trades regular stocks."
+  },
+  {
+   "id": "rules.allow_unsettled_buys",
+   "kind": "risk",
+   "value": true,
+   "why": "Buy with cash that has not settled yet."
+  },
+  {
+   "id": "rules.avoid_good_faith_violations",
+   "kind": "risk",
+   "value": true,
+   "why": "Never sell before the money settles."
+  },
+  {
+   "id": "rules.manage_my_existing_stocks",
+   "kind": "risk",
+   "value": true,
+   "why": "Whether the bot may sell stocks the owner already held."
+  },
+  {
+   "id": "weights.trend_following",
+   "kind": "tuning",
+   "value": 1.0,
+   "why": "Vote weight of the trend_following strategy."
+  },
+  {
+   "id": "weights.mean_reversion",
+   "kind": "tuning",
+   "value": 1.0,
+   "why": "Vote weight of the mean_reversion strategy."
+  },
+  {
+   "id": "weights.momentum",
+   "kind": "tuning",
+   "value": 1.0,
+   "why": "Vote weight of the momentum strategy."
+  },
+  {
+   "id": "weights.breakout",
+   "kind": "tuning",
+   "value": 1.0,
+   "why": "Vote weight of the breakout strategy."
+  },
+  {
+   "id": "weights.volume_surge",
+   "kind": "tuning",
+   "value": 1.0,
+   "why": "Vote weight of the volume_surge strategy."
+  },
+  {
+   "id": "weights.pullback",
+   "kind": "tuning",
+   "value": 1.0,
+   "why": "Vote weight of the pullback strategy."
+  },
+  {
+   "id": "weights.low_volatility",
+   "kind": "tuning",
+   "value": 1.0,
+   "why": "Vote weight of the low_volatility strategy."
+  },
+  {
+   "id": "weights.near_high",
+   "kind": "tuning",
+   "value": 1.0,
+   "why": "Vote weight of the near_high strategy."
+  },
+  {
+   "id": "weights.bollinger_bounce",
+   "kind": "tuning",
+   "value": 1.0,
+   "why": "Vote weight of the bollinger_bounce strategy."
+  },
+  {
+   "id": "weights.macd",
+   "kind": "tuning",
+   "value": 1.0,
+   "why": "Vote weight of the macd strategy."
+  },
+  {
+   "id": "models.claude_fast",
+   "kind": "research",
+   "value": "haiku",
+   "why": "Faster Claude model (Haiku) used by some research seats."
+  },
+  {
+   "id": "models.claude",
+   "kind": "research",
+   "value": "sonnet",
+   "why": "Claude model (Sonnet) used by the other research seats."
+  },
+  {
+   "id": "research.researched",
+   "kind": "research",
+   "value": 15,
+   "why": "Candidates researched and graded each day."
+  },
+  {
+   "id": "research.debated",
+   "kind": "research",
+   "value": 5,
+   "why": "Candidates debated each day."
+  },
+  {
+   "id": "research.rebuttal_gap",
+   "kind": "research",
+   "value": 2,
+   "why": "Score gap that triggers rebuttals."
+  },
+  {
+   "id": "research.evening_run",
+   "kind": "research",
+   "value": false,
+   "why": "Whether the 4:30 PM full run is on."
+  },
+  {
+   "id": "research.bad_event_days",
+   "kind": "research",
+   "value": 3,
+   "why": "Days ahead that a bad confirmed event downgrades a stock."
+  },
+  {
+   "id": "limits.fact_chars",
+   "kind": "research",
+   "value": 200,
+   "why": "Longest fact text kept."
+  },
+  {
+   "id": "limits.claim_words",
+   "kind": "research",
+   "value": 150,
+   "why": "Longest debate claim."
+  },
+  {
+   "id": "limits.brave_results",
+   "kind": "research",
+   "value": 5,
+   "why": "Search results per Brave query."
+  },
+  {
+   "id": "limits.timeout",
+   "kind": "research",
+   "value": 120,
+   "why": "Seconds before a model call gives up."
+  },
+  {
+   "id": "smoothing.upgrade_steps",
+   "kind": "research",
+   "value": 2,
+   "why": "Grade steps an upgrade needs to stick at once."
+  },
+  {
+   "id": "smoothing.upgrade_days",
+   "kind": "research",
+   "value": 2,
+   "why": "Days in a row an upgrade must repeat."
+  },
+  {
+   "id": "alerts.seats_down_urgent",
+   "kind": "research",
+   "value": 2,
+   "why": "Seats down before an urgent alert."
+  },
+  {
+   "id": "alerts.quota_warn",
+   "kind": "research",
+   "value": 0.8,
+   "why": "Share of a quota that triggers an alert."
+  },
+  {
+   "id": "gates.earnings_days",
+   "kind": "risk",
+   "value": 3,
+   "why": "No buy this many days before a company reports earnings."
+  },
+  {
+   "id": "gates.min_net_margin",
+   "kind": "risk",
+   "value": -0.2,
+   "why": "With shrinking sales, no buy when the company loses more than this share of sales."
+  },
+  {
+   "id": "gates.min_revenue_growth",
+   "kind": "risk",
+   "value": -0.1,
+   "why": "With a big loss, no buy when yearly sales shrank more than this."
+  },
+  {
+   "id": "gates.market_gate",
+   "kind": "risk",
+   "value": true,
+   "why": "No new buys while the market is weak."
+  },
+  {
+   "id": "gates.breadth_floor",
+   "kind": "risk",
+   "value": 0.3,
+   "why": "Market counts as weak when fewer than this share of stocks are above their 50-day average."
+  },
+  {
+   "id": "gates.vol_ceiling",
+   "kind": "risk",
+   "value": 0.45,
+   "why": "Market counts as weak when its yearly volatility is above this."
+  },
+  {
+   "id": "gates.price_tolerance",
+   "kind": "risk",
+   "value": 0.03,
+   "why": "No buy when a second price source disagrees with the brokerage's close by more than this."
+  },
+  {
+   "id": "gates.exit_before_earnings",
+   "kind": "risk",
+   "value": false,
+   "why": "Sell a held stock the day before it reports earnings."
+  }
+ ],
+ "lineage": [],
+ "distance": {
+  "genes_changed": 0,
+  "genes_total": 52,
+  "share_changed": 0.0,
+  "original_strategies": 10,
+  "new_strategies": 0,
+  "new_vote_share": 0.0,
+  "stage": 1
+ }
+}

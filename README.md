@@ -10,3 +10,7 @@ Yes and No buttons start theirs, so the token needs no extra permission and stil
 fine-grained token for the bot repository only (Actions: read and write; Contents, Issues, Pull requests: read) with an
 expiry date. It lives in this browser's `localStorage`, which every GitHub Pages site on the same `github.io` account
 shares, so host no other Pages site on this account.
+
+## Tests
+
+`npm install` once, then `npm test`. The tests open the real `index.html` in headless Chromium against a fake GitHub (no network, no real token) and check every button that can start the bot (halt, resume, sell, freeze, tighten, deposit, verify login, Yes and No on The Desk), what each page shows from the dashboard, what happens when GitHub refuses, that text from GitHub is never run as code, and that every page fits a small phone. `tests/fixtures/dashboard.json` was made by the bot's own dashboard code; see `tests/fixtures/README.md`.

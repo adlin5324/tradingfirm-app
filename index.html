@@ -712,6 +712,7 @@ header { margin-bottom: 16px; }
   </div>
 
   <div class="banner hidden" id="banner"></div>
+  <div class="banner halted hidden" id="problem" role="alert"></div>
 
   <section class="card glow" id="heroCard">
     <div class="hero">
@@ -1231,7 +1232,7 @@ function drawLimits(limits) {
   $("limitsGrp").onclick = async e => {
     const b = e.target.closest("[data-limit]"); if (!b) return;
     const k = b.dataset.limit, [name, safer] = LIMITS[k], now = limits[k], pctOf = k !== "max_per_order" && k !== "max_stocks_held" && k !== "min_strategies_agree";
-    const shown = pctOf ? now * 100 : now;
+    const shown = pctOf ? Math.round(now * 1e6) / 1e4 : now;  // 0.07 * 100 is 7.000000000000001 in JavaScript
     const answer = await ask({title: name, text: "Now " + (pctOf ? shown + "%" : shown) + ". Enter a " + (safer === "lower" ? "lower" : "higher") + " value" + (pctOf ? " (in %)" : "") + " to make it stricter. A looser value is refused.",
       input: "", ok: "Tighten", check: v => { const n = Number(String(v).replace(/[$,%]/g, "")); return n > 0 && (safer === "lower" ? n < shown : n > shown) ? "" : "Enter a " + safer + " number than " + shown + "."; }});
     if (answer === null || answer === true) return;
@@ -1246,16 +1247,20 @@ async function loadRuns() {
   return (await res.json()).workflow_runs || [];
 }
 
-// Status lines belong to the card holding the button that was pressed.
+// Status lines belong to the card holding the button that was pressed. A button with no status line of its own (the title
+// switch, Verify login) and a failure to load the dashboard show their message in the red line at the top instead.
 function setStatus(text, from) {
   const box = from && from.closest(".card") && from.closest(".card").querySelector(".status");
-  if (box) box.replaceChildren(...(text ? [el("span", {text})] : []));
+  if (box) { box.replaceChildren(...(text ? [el("span", {text})] : [])); return; }
+  $("problem").textContent = text;
+  $("problem").classList.toggle("hidden", !text);
 }
 
+let loadFailed = false;
 async function refresh() {
   if (!store.get("token")) { $("chip").textContent = "Not connected"; return; }
-  try { await loadDashboard(); }
-  catch (e) { reportProblem("Loading the app's data", e.message); }
+  try { await loadDashboard(); if (loadFailed) { loadFailed = false; setStatus(""); } }
+  catch (e) { loadFailed = true; $("chip").textContent = "Can't load"; reportProblem("Loading the app's data", e.message); }
 }
 
 const needed = v => v ? "" : "Add a short reason.";
